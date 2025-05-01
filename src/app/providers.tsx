@@ -1,16 +1,26 @@
 'use client';
 import Loading from '@/components/loading/Loading';
 import { Provider } from '@/states/Provider';
-import React, { Suspense } from 'react';
+import React from 'react';
 import { TamaguiProvider, Stack, Theme } from '@tamagui/web';
 import tamaguiConfig from '../../tamagui.config';
 import { useDarkMode } from '@/hook/useDarkMode';
 import OIDCProvider from '@/components/auth/AuthProvider';
 import ProtectedRoute from '@/components/middleware/ProtectedRoute';
+import dynamic from 'next/dynamic';
+
+const FallbackLoading = dynamic(
+  () =>
+    Promise.resolve(({ children }: { children: React.ReactNode }) => children),
+  {
+    loading: () => <Loading />,
+    ssr: false,
+  }
+);
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Suspense fallback={<Loading />}>
+    <FallbackLoading>
       <OIDCProvider>
         <Provider>
           <TamaguiProvider config={tamaguiConfig}>
@@ -20,7 +30,7 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
           </TamaguiProvider>
         </Provider>
       </OIDCProvider>
-    </Suspense>
+    </FallbackLoading>
   );
 };
 
