@@ -152,7 +152,7 @@ const Navbar: FC = () => {
               <Button
                 size='$3.5'
                 //onPress={generatePDF}
-                onPress={() => router.push('account/orders')}
+                onPress={() => router.push('/account/orders')}
                 icon={<FiPackage size={16} />}
                 justifyContent='flex-start'
                 backgroundColor='transparent'
@@ -163,7 +163,7 @@ const Navbar: FC = () => {
               </Button>
 
               <Button
-                onPress={() => router.push('account/wishlist')}
+                onPress={() => router.push('/account/wishlist')}
                 icon={<FaHeart size={16} />}
                 justifyContent='flex-start'
                 backgroundColor='transparent'
@@ -259,7 +259,7 @@ const Navbar: FC = () => {
 
               <Button
                 size='$3.5'
-                onPress={() => router.push('/orders')}
+                onPress={() => router.push('/account/orders')}
                 icon={<FiPackage size={16} />}
                 justifyContent='flex-start'
                 backgroundColor='transparent'
@@ -270,7 +270,7 @@ const Navbar: FC = () => {
               </Button>
 
               <Button
-                onPress={() => router.push('/wishlist')}
+                onPress={() => router.push('/account/wishlist')}
                 icon={<FaHeart size={16} />}
                 justifyContent='flex-start'
                 backgroundColor='transparent'
