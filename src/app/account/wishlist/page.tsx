@@ -37,7 +37,7 @@ const Wishlist: FC = () => {
         <WishlistHeader wishList={wishList} />
         {loading ? (
           <Loader />
-        ) : wishList?.products.length === 0 ? (
+        ) : !wishList || wishList?.products.length === 0 ? (
           <YStack marginTop='$8'>
             <Card backgroundColor='$cardBackground'>
               <EmptyState

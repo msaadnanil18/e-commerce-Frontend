@@ -1,3 +1,4 @@
+'use client';
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { merge } from 'lodash-es';
 import toast from 'react-hot-toast';
@@ -24,7 +25,10 @@ export const Service =
       //  withCredentials: true,
       ...(config || {}),
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('sessionToken')}`,
+        Authorization:
+          typeof window !== 'undefined'
+            ? `Bearer ${localStorage.getItem('sessionToken')}`
+            : 'Bearer',
         ...(config?.headers || {}),
       },
     });

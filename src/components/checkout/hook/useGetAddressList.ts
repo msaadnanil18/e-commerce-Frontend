@@ -34,7 +34,8 @@ const useGetAddressList = ({
     fetchAddressList();
   }, []);
 
-  return { loading, addressList };
+  const reload = () => fetchAddressList();
+  return { loading, addressList, reload };
 };
 
 export default useGetAddressList;

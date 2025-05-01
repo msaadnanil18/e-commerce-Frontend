@@ -6,10 +6,9 @@ import { RootState } from '@/states/store/store';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
 import { IconType } from 'react-icons';
-import { FaHeart } from 'react-icons/fa';
+import { FaHeart, FaMapMarkerAlt } from 'react-icons/fa';
 import { GiShoppingBag } from 'react-icons/gi';
 import { IoMenu } from 'react-icons/io5';
-import { RiDashboardFill } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
 import { Card, XStack, YStack, Text, Button } from 'tamagui';
 
@@ -76,15 +75,21 @@ const DivOne = ({ location }: { location: string }) => {
     <div>
       <ul>
         <Li
-          url='/orders'
+          url='/account/orders'
           text='My Orders'
           Icon={() => <GiShoppingBag size={16} />}
           location={location}
         />
         <Li
-          url='/wishlist'
+          url='/account/wishlist'
           text='My Wishlist'
           Icon={() => <FaHeart size={16} />}
+          location={location}
+        />
+        <Li
+          url='/account/manage-address'
+          text='Manage Address'
+          Icon={() => <FaMapMarkerAlt />}
           location={location}
         />
       </ul>

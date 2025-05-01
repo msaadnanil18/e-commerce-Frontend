@@ -42,7 +42,7 @@ const CustomerReviews: FC<{ product: IProduct | null }> = ({ product }) => {
   }, []);
 
   const RenderStartReatign = useMemo(
-    () => <StarRating product={product} />,
+    () => <StarRating product={product} fetchReviewList={fetchReviewList} />,
     []
   );
   return (
@@ -112,119 +112,121 @@ const CustomerReviews: FC<{ product: IProduct | null }> = ({ product }) => {
 
 export default CustomerReviews;
 
-const StarRating: FC<{ product: IProduct | null }> = React.memo(
-  ({ product }) => {
-    const { getFileUpload } = useFileUpload();
-    const fileUploadRef = useRef<{ resetFile: () => void }>(null);
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const [newReview, setNewReview] = useState('');
-    const [reviewImage, setReviewImage] = useState<Array<File>>([]);
-    const [rating, setRating] = useState(0);
-    const [hover, setHover] = useState(0);
+const StarRating: FC<{
+  product: IProduct | null;
+  fetchReviewList: () => void;
+}> = React.memo(({ product, fetchReviewList }) => {
+  const { getFileUpload } = useFileUpload();
+  const fileUploadRef = useRef<{ resetFile: () => void }>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [newReview, setNewReview] = useState('');
+  const [reviewImage, setReviewImage] = useState<Array<File>>([]);
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
 
-    const handleClick = (selectedRating: number) => {
-      setRating(selectedRating);
-    };
+  const handleClick = (selectedRating: number) => {
+    setRating(selectedRating);
+  };
 
-    const handleAddReview = async () => {
-      setIsSubmitting(true);
-      const uploadedFile = await getFileUpload(reviewImage);
-      await ServiceErrorManager(
-        AddNewReviewService({
-          data: {
-            payload: {
-              product: product?._id,
-              comment: newReview,
-              attachments: uploadedFile,
-              rating,
-            },
+  const handleAddReview = async () => {
+    setIsSubmitting(true);
+    const uploadedFile = await getFileUpload(reviewImage);
+    await ServiceErrorManager(
+      AddNewReviewService({
+        data: {
+          payload: {
+            product: product?._id,
+            comment: newReview,
+            attachments: uploadedFile,
+            rating,
           },
-        }),
-        {}
-      );
-      setIsSubmitting(false);
-      setNewReview('');
-      setRating(0);
-      fileUploadRef.current?.resetFile();
-    };
-    return (
-      <YStack alignItems='center' width='100%'>
-        <XStack marginBottom='$4'>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Button
-              key={star}
-              unstyled
-              fontSize={32}
-              marginHorizontal='$1'
-              color={(hover || rating) >= star ? '$yellow10' : '$gray5'}
-              onPress={() => handleClick(star)}
-              onHoverIn={() => setHover(star)}
-              onHoverOut={() => setHover(0)}
-              accessibilityLabel={`Rate ${star} stars`}
-              pressStyle={{
-                scale: 1.1,
-              }}
-              hoverStyle={{
-                scale: 1.1,
-              }}
-            >
-              ★
-            </Button>
-          ))}
-        </XStack>
+        },
+      }),
+      {}
+    );
+    setIsSubmitting(false);
+    setNewReview('');
+    setRating(0);
+    fileUploadRef.current?.resetFile();
+    fetchReviewList();
+  };
+  return (
+    <YStack alignItems='center' width='100%'>
+      <XStack marginBottom='$4'>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Button
+            key={star}
+            unstyled
+            fontSize={32}
+            marginHorizontal='$1'
+            color={(hover || rating) >= star ? '$yellow10' : '$gray5'}
+            onPress={() => handleClick(star)}
+            onHoverIn={() => setHover(star)}
+            onHoverOut={() => setHover(0)}
+            accessibilityLabel={`Rate ${star} stars`}
+            pressStyle={{
+              scale: 1.1,
+            }}
+            hoverStyle={{
+              scale: 1.1,
+            }}
+          >
+            ★
+          </Button>
+        ))}
+      </XStack>
 
-        <YStack height={24} justifyContent='center'>
-          {rating > 0 && (
-            <Text color='$gray11'>
-              You rated this {rating} {rating === 1 ? 'star' : 'stars'}
-            </Text>
-          )}
-          {!rating && hover > 0 && (
-            <Text color='$gray9'>
-              Rate {hover} {hover === 1 ? 'star' : 'stars'}
-            </Text>
-          )}
-        </YStack>
-
+      <YStack height={24} justifyContent='center'>
         {rating > 0 && (
-          <YStack marginTop='$4' width='100%'>
-            <FileUpload
-              fileUploadRef={fileUploadRef}
-              onFileChange={(e) => setReviewImage(e)}
-            />
-            <TextArea
-              width='100%'
-              padding='$3'
-              value={newReview}
-              onChangeText={(e) => setNewReview(e)}
-              marginTop='$3'
-              borderWidth={1}
-              borderColor='$gray6'
-              borderRadius='$3'
-              focusStyle={{
-                borderColor: '$blue8',
-                borderWidth: 2,
-              }}
-              placeholder='Share your experience (optional)'
-            />
-            <Button
-              onPress={handleAddReview}
-              disabled={newReview.trim() === '' || isSubmitting}
-              marginTop='$3'
-              width='100%'
-              icon={isSubmitting ? <Spinner /> : null}
-              backgroundColor='$primary'
-              color='white'
-              fontWeight='500'
-              paddingVertical='$2'
-              paddingHorizontal='$4'
-              borderRadius='$3'
-            >
-              Submit Review
-            </Button>
-          </YStack>
+          <Text color='$gray11'>
+            You rated this {rating} {rating === 1 ? 'star' : 'stars'}
+          </Text>
+        )}
+        {!rating && hover > 0 && (
+          <Text color='$gray9'>
+            Rate {hover} {hover === 1 ? 'star' : 'stars'}
+          </Text>
         )}
       </YStack>
-    );
-  }
-);
+
+      {rating > 0 && (
+        <YStack marginTop='$4' width='100%'>
+          <FileUpload
+            fileUploadRef={fileUploadRef}
+            onFileChange={(e) => setReviewImage(e)}
+          />
+          <TextArea
+            width='100%'
+            padding='$3'
+            value={newReview}
+            onChangeText={(e) => setNewReview(e)}
+            marginTop='$3'
+            borderWidth={1}
+            borderColor='$gray6'
+            borderRadius='$3'
+            focusStyle={{
+              borderColor: '$blue8',
+              borderWidth: 2,
+            }}
+            placeholder='Share your experience (optional)'
+          />
+          <Button
+            onPress={handleAddReview}
+            disabled={newReview.trim() === '' || isSubmitting}
+            marginTop='$3'
+            width='100%'
+            icon={isSubmitting ? <Spinner /> : null}
+            backgroundColor='$primary'
+            color='white'
+            fontWeight='500'
+            paddingVertical='$2'
+            paddingHorizontal='$4'
+            borderRadius='$3'
+          >
+            Submit Review
+          </Button>
+        </YStack>
+      )}
+    </YStack>
+  );
+});

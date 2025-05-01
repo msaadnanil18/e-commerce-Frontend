@@ -59,9 +59,7 @@ const DeliveryZoneForm: FC<{
       <XStack justifyContent='space-between' alignItems='center'>
         <H6>{isEditing ? 'Edit Delivery Zone' : 'Create Delivery Zone'}</H6>
       </XStack>
-
       <Separator />
-
       <ScrollView showsVerticalScrollIndicator={false}>
         <YStack space='$4' padding='$3' paddingBottom='$8'>
           <YStack space='$2'>

@@ -21,7 +21,7 @@ const Coupon = () => {
   const [coupon, setCoupon] = useState<string>('');
 
   const copyText = async (coupon: string) => {
-    await window.navigator.clipboard.writeText(coupon);
+    // await window.navigator.clipboard.writeText(coupon);
     setIsCopied(true);
   };
 

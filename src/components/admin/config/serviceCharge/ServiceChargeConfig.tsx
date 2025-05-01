@@ -7,16 +7,8 @@ import { useRouter } from 'next/navigation';
 import { FC, ReactElement, useEffect, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { Column } from 'react-table';
-import { FiEdit2, FiMapPin, FiPercent, FiTag } from 'react-icons/fi';
-import {
-  YStack,
-  XStack,
-  Button,
-  H6,
-  ScrollView,
-  SizableText,
-  Text,
-} from 'tamagui';
+import { FiMapPin, FiPercent, FiTag } from 'react-icons/fi';
+import { YStack, XStack, Button, ScrollView, Text } from 'tamagui';
 
 import { useDarkMode } from '@/hook/useDarkMode';
 import Loader from '../../organism/Loader';

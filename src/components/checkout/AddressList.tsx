@@ -2,12 +2,11 @@
 
 import { ServiceErrorManager } from '@/helpers/service';
 import {
-  AddressListService,
   SaveAddressService,
   SetDefaultAddressService,
 } from '@/services/address';
 import { AddressFormValues, IAddress } from '@/types/address';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import {
   YStack,
   XStack,
@@ -85,7 +84,9 @@ const AddressSkeleton = ({ count = 3 }) => {
   );
 };
 
-const AddressList: FC = () => {
+const AddressList: FC<{ disableDiliveryAddressButton?: boolean }> = ({
+  disableDiliveryAddressButton = false,
+}) => {
   const router = useRouter();
   const form = useForm<AddressFormValues>();
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
@@ -94,7 +95,9 @@ const AddressList: FC = () => {
   const [editId, setEditId] = useState<string>();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [isNewAddress, setIsNewAddress] = useState<boolean>(false);
-  const { loading, addressList } = useGetAddressList({ setSelectedAddressId });
+  const { loading, addressList, reload } = useGetAddressList({
+    setSelectedAddressId,
+  });
 
   const handleAddressSelection = (value: string) => {
     if (!value) return;
@@ -122,7 +125,7 @@ const AddressList: FC = () => {
 
   const handleSaveAddress = async (addressData: Record<string, any>) => {
     setSubmitLoading(true);
-    const [_, data] = await ServiceErrorManager(
+    const [err, data] = await ServiceErrorManager(
       SaveAddressService({
         data: {
           payload: addressData,
@@ -131,8 +134,13 @@ const AddressList: FC = () => {
       {}
     );
 
+    if (err) return;
     setSubmitLoading(false);
-    router.push(`/checkout?delivery-address=${data._id || addressData._id}`);
+    setIsEdit(false);
+    if (!disableDiliveryAddressButton) {
+      router.push(`/checkout?delivery-address=${data._id || addressData._id}`);
+    }
+    reload();
   };
 
   const handelOnNewAddressSave = debounce(() => {
@@ -186,7 +194,11 @@ const AddressList: FC = () => {
                               setIsEdit(false);
                               setEditId('');
                             }}
-                            onSaveButtonText='SAVE AND DELEVER HERE'
+                            onSaveButtonText={`${
+                              disableDiliveryAddressButton
+                                ? 'SAVE'
+                                : 'SAVE AND DELEVER HERE'
+                            }`}
                           />
                         </YStack>
                       ) : (
@@ -233,26 +245,27 @@ const AddressList: FC = () => {
                             </Text>
                           </XStack>
 
-                          {selectedAddressId === address._id && (
-                            <XStack
-                              justifyContent='space-between'
-                              marginTop='$3'
-                              marginBottom='$2'
-                            >
-                              <Button
-                                backgroundColor='$primary'
-                                size='$3'
-                                onPress={() =>
-                                  router.push(
-                                    `/checkout?delivery-address=${address._id}`
-                                  )
-                                }
-                                flexBasis='70%'
+                          {!disableDiliveryAddressButton &&
+                            selectedAddressId === address._id && (
+                              <XStack
+                                justifyContent='space-between'
+                                marginTop='$3'
+                                marginBottom='$2'
                               >
-                                Deliver to this Address
-                              </Button>
-                            </XStack>
-                          )}
+                                <Button
+                                  backgroundColor='$primary'
+                                  size='$3'
+                                  onPress={() =>
+                                    router.push(
+                                      `/checkout?delivery-address=${address._id}`
+                                    )
+                                  }
+                                  flexBasis='70%'
+                                >
+                                  Deliver to this Address
+                                </Button>
+                              </XStack>
+                            )}
                         </YStack>
                       )}
                     </XStack>
@@ -278,7 +291,9 @@ const AddressList: FC = () => {
               form.reset({});
               setIsNewAddress(false);
             }}
-            onSaveButtonText='SAVE AND DELEVER HERE'
+            onSaveButtonText={`${
+              disableDiliveryAddressButton ? 'SAVE' : 'SAVE AND DELEVER HERE'
+            }`}
           />
         </YStack>
       ) : (

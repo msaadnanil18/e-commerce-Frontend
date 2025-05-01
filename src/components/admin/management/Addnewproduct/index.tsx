@@ -1,6 +1,5 @@
 'use client';
 import { FC, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import AdminSidebar from '../../organism/AdminSidebar';
 import { Controller, UseFormReturn } from 'react-hook-form';
 
@@ -65,7 +64,6 @@ const AddProduct: FC<AddnewproductProps> = ({
   onSubmit,
   isEdit = false,
 }) => {
-  const router = useRouter();
   const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
 
   const {

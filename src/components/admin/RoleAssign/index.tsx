@@ -43,8 +43,6 @@ const RoleAssign: FC = () => {
     null
   );
 
-  console.log(users, '___suser__');
-
   const columns: Column<DataType>[] = [
     {
       id: 'name',

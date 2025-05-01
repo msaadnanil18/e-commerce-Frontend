@@ -57,7 +57,11 @@ const Navbar: FC = () => {
     );
     dispatch(setUser(data.user));
 
-    localStorage.setItem('sessionToken', data.sessionToken);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sessionToken', data.sessionToken);
+    }
+
+    //  localStorage.setItem('sessionToken', data.sessionToken);
     setRoleChangeLoaidng(false);
   };
 
@@ -148,7 +152,7 @@ const Navbar: FC = () => {
               <Button
                 size='$3.5'
                 //onPress={generatePDF}
-                onPress={() => router.push('/orders')}
+                onPress={() => router.push('account/orders')}
                 icon={<FiPackage size={16} />}
                 justifyContent='flex-start'
                 backgroundColor='transparent'
@@ -159,7 +163,7 @@ const Navbar: FC = () => {
               </Button>
 
               <Button
-                onPress={() => router.push('/wishlist')}
+                onPress={() => router.push('account/wishlist')}
                 icon={<FaHeart size={16} />}
                 justifyContent='flex-start'
                 backgroundColor='transparent'

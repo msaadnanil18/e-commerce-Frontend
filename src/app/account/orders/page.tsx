@@ -9,14 +9,9 @@ import {
   Button,
   Spinner,
   Separator,
-  H3,
   useTheme,
-  Sheet,
-  Image,
   Input,
-  XGroup,
   H6,
-  View,
 } from 'tamagui';
 import {
   FiShoppingBag,
@@ -25,8 +20,6 @@ import {
   FiClock,
   FiCheck,
   FiX,
-  FiSearch,
-  FiFilter,
   FiChevronDown,
   FiChevronRight,
 } from 'react-icons/fi';
@@ -38,7 +31,6 @@ import RenderDriveFile from '@/components/appComponets/fileupload/RenderDriveFil
 import PriceFormatter from '@/components/appComponets/PriceFormatter/PriceFormatter';
 import { GiShoppingBag } from 'react-icons/gi';
 
-// Define types for our components
 interface OrderStatusBadgeProps {
   status: string;
 }
@@ -68,7 +60,6 @@ interface FilterSheetProps {
   >;
 }
 
-// Order status badges with appropriate colors
 const OrderStatusBadge: FC<OrderStatusBadgeProps> = ({ status }) => {
   let color = '';
   let icon = null;
@@ -109,7 +100,6 @@ const OrderStatusBadge: FC<OrderStatusBadgeProps> = ({ status }) => {
   );
 };
 
-// Payment status badge
 const PaymentStatusBadge: FC<PaymentStatusBadgeProps> = ({ status }) => {
   let color = '';
 
@@ -134,7 +124,6 @@ const PaymentStatusBadge: FC<PaymentStatusBadgeProps> = ({ status }) => {
   );
 };
 
-// Order Item Component
 const OrderItem: FC<OrderItemProps> = ({ item }) => {
   const [expanded, setExpanded] = useState(false);
 

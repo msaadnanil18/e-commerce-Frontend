@@ -30,25 +30,6 @@ const ServiceChargeCreate: FC = () => {
       form.reset();
       setIsisSubmiting(false);
     });
-    // try {
-    //   const formattedData = {
-    //     ...data,
-    //     applicableStates: data.applicableStates
-    //       ? data.applicableStates.split(',').map((s) => s.trim())
-    //       : [],
-    //   };
-    //   if (editId) {
-    //     await axios.put(`/api/service-charges/${editId}`, formattedData);
-    //   } else {
-    //     await axios.post('/api/service-charges', formattedData);
-    //   }
-    //   // Refresh data
-    //   const { data: refreshedData } = await axios.get('/api/service-charges');
-    //   setServiceCharges(refreshedData.docs || refreshedData);
-    //   setIsFormOpen(false);
-    // } catch (error) {
-    //   console.error('Error saving data:', error);
-    // }
   };
   return (
     <div className='admin-container'>

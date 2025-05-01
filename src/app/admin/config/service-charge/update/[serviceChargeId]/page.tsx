@@ -25,7 +25,7 @@ const ServiceChargeUpdate: FC<ServiceChargeUpdatePageProps> = ({ params }) => {
 
   const fetchServiceCharge = () => {
     setLoading(true);
-    ServiceErrorManager(GetServiceCharge(params.serviceChargeId)({}), {})
+    ServiceErrorManager(GetServiceCharge(params.serviceChargeId)(), {})
       .then(([_, response]) => {
         form.reset(response);
       })

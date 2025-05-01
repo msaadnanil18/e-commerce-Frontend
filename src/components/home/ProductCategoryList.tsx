@@ -1,3 +1,5 @@
+'use client';
+
 export const productsByCategory = [
   {
     category: 'Electronics',
@@ -207,7 +209,6 @@ export const productsByCategory = [
   },
 ];
 
-('use client');
 import React, { useRef } from 'react';
 import { View, Text, ScrollView, Button } from 'tamagui';
 import ProductCard from './ProductCard';

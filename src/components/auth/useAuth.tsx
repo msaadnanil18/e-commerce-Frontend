@@ -1,3 +1,5 @@
+'use client';
+
 import { ServiceErrorManager } from '@/helpers/service';
 import { GoogleLoginService } from '@/services/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -34,7 +36,10 @@ export const useAuth = () => {
       setLoading(false);
       dispatch(setUser(result.user));
 
-      localStorage.setItem('sessionToken', result.sessionToken);
+      // localStorage.setItem('sessionToken', result.sessionToken);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sessionToken', result.sessionToken);
+      }
     },
     [dispatch, router]
   );
@@ -69,8 +74,12 @@ export const useAuth = () => {
     }, 1000);
   };
   const logOut = async () => {
-    localStorage.removeItem('sessionToken');
-    localStorage.removeItem('token');
+    //  localStorage.removeItem('sessionToken');
+    //localStorage.removeItem('token');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('sessionToken');
+      localStorage.removeItem('token');
+    }
     dispatch(logout());
     signOutRedirect();
     await auth.revokeTokens();

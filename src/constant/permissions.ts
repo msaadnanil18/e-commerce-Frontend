@@ -47,4 +47,41 @@ export const permissions = Object.freeze({
   CAN_CREATE_SERVICE_CHARGE: 'can_create_service_charge',
   CAN_VIEW_SERVICE_CHARGE: 'can_view_service_charge',
   CAN_MANAGE_SERVICE_CHARGE: 'can_manage_service_charge',
+
+  /* COMMISSION CONFIGURATION */
+  CAN_MANAGE_COMMISSION_CONFIGURATION: 'can_manage_commission configuration',
+  CAN_CREATE_COMMISSION_CONFIGURATION: 'can_create_commission configuration',
+  CAN_VIEW_COMMISSION_CONFIGURATION: 'can_view_commission configuration',
+  /* COMMISSION CONFIGURATION */
+});
+
+export const Routes: Record<string, string[]> = Object.freeze({
+  '/admin/dashboard': [],
+
+  /* CONFIG */
+  '/admin/config/commission': [permissions.CAN_VIEW_COMMISSION_CONFIGURATION],
+  '/admin/config/commission/create': [],
+  '/admin/config/commission/update': [],
+  '/admin/config/service-charge': [permissions.CAN_VIEW_SERVICE_CHARGE],
+  '/admin/config/service-charge/create': [],
+  '/admin/config/service-charge/update': [],
+  '/admin/config/delivery-zone ': [permissions.CAN_VIEW_DELIVERY_ZONE],
+  '/admin/config/delivery-zone/create': [],
+  '/admin/config/delivery-zone/update': [],
+  /* CONFIG */
+
+  '/admin/role-assign': [permissions.CAN_VIEW_ADMIN_AND_SUPER_ADMIN_LIST],
+
+  /* Seller */
+  '/admin/seller': [permissions.CAN_VIEW_SELLER_LIST],
+  '/admin/seller/seller-details': [],
+  /* Seller */
+
+  /* Product */
+  '/admin/product': [],
+  /* Product */
+
+  /* ORDERS */
+  '/admin/orders': [permissions.CAN_VIEW_ORDERS],
+  /* ORDERS */
 });

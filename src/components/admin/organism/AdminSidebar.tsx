@@ -2,9 +2,7 @@
 
 import { FC, useState } from 'react';
 import { AiFillFileText } from 'react-icons/ai';
-import { FaChartBar, FaChartLine, FaChartPie } from 'react-icons/fa';
 import { GiShoppingBag } from 'react-icons/gi';
-
 import { IoIosPeople } from 'react-icons/io';
 import {
   RiAdminFill,
@@ -12,6 +10,7 @@ import {
   RiDashboardFill,
   RiShoppingBag3Fill,
 } from 'react-icons/ri';
+
 import { usePathname } from 'next/navigation';
 
 import { IconType } from 'react-icons';
@@ -28,6 +27,7 @@ import {
 } from 'react-icons/md';
 import usePermission from '@/hook/usePermission';
 import { permissions } from '@/constant/permissions';
+import { FaBriefcase } from 'react-icons/fa';
 
 const AdminSidebar: FC = () => {
   const {
@@ -156,6 +156,15 @@ const DivOne = ({ location }: { location: string }) => {
             url='/admin/config/service-charge'
             text='Service Charge'
             Icon={MdOutlineMiscellaneousServices}
+            location={location}
+          />
+        )}
+
+        {hasPermission(permissions.CAN_VIEW_COMMISSION_CONFIGURATION) && (
+          <Li
+            url='/admin/config/commission'
+            text='Commission Config'
+            Icon={FaBriefcase}
             location={location}
           />
         )}

@@ -1,4 +1,4 @@
-'useClient';
+'use client';
 import { IUser } from '@/types/auth';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { jwtDecode } from 'jwt-decode';
@@ -10,7 +10,12 @@ interface UserState {
 }
 
 const getUserFromToken = (): IUser | null => {
-  const token = localStorage.getItem('sessionToken');
+  let token;
+
+  if (typeof window !== 'undefined') {
+    token = localStorage.getItem('sessionToken');
+  }
+  //localStorage.getItem('sessionToken');
   if (!token) return null;
 
   try {
@@ -40,7 +45,10 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('sessionToken');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('sessionToken');
+      }
+      // localStorage.removeItem('sessionToken');
     },
   },
 });
