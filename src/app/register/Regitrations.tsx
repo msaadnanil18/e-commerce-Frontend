@@ -4,7 +4,7 @@ import {
   MakeAdminAndSuperAdmin,
   TokenVerificationService,
 } from '@/services/auth';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useMemo } from 'react';
 import {
   XStack,
   YStack,
@@ -20,11 +20,7 @@ import { useAuth as cognitoUseAuth } from 'react-oidc-context';
 import { MdMail, MdCheckCircle, MdWarning } from 'react-icons/md';
 import { FaGoogle } from 'react-icons/fa';
 
-interface RegitrationsProps {
-  searchParams: { token?: string };
-}
-
-const Regitrations: FC<RegitrationsProps> = ({ searchParams }) => {
+const Regitrations: FC<{ token?: string | null }> = ({ token }) => {
   const auth = cognitoUseAuth();
   const [isVerifying, setIsVerifying] = useState<boolean>(true);
   const [isVerified, setIsVerified] = useState<boolean>(false);
@@ -32,14 +28,14 @@ const Regitrations: FC<RegitrationsProps> = ({ searchParams }) => {
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
   const verifyToken = async () => {
-    if (!searchParams.token) return;
+    if (!token) return;
 
     setIsVerifying(true);
 
     ServiceErrorManager(
       TokenVerificationService({
         data: {
-          payload: { token: searchParams.token },
+          payload: { token: token },
         },
       }),
       {}
@@ -65,7 +61,7 @@ const Regitrations: FC<RegitrationsProps> = ({ searchParams }) => {
         data: {
           payload: {
             access_token: user.access_token,
-            token: searchParams.token,
+            token: token,
           },
         },
       }),
@@ -77,7 +73,7 @@ const Regitrations: FC<RegitrationsProps> = ({ searchParams }) => {
     verifyToken();
   }, []);
 
-  if (!searchParams.token) {
+  if (!token) {
     return (
       <Card
         elevate
