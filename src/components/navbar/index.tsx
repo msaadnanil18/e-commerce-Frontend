@@ -1,7 +1,7 @@
 'use client';
 import React, { FC, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Popover, Button, Image, Separator, Text, Card } from 'tamagui';
+import { Button, Image, Separator, Text, Card } from 'tamagui';
 import { View } from '@tamagui/core';
 import { FiPackage } from 'react-icons/fi';
 import { LiaGiftsSolid } from 'react-icons/lia';
@@ -24,7 +24,6 @@ import { UserSwitchRoleService } from '@/services/auth';
 import { setUser } from '@/states/slices/authSlice';
 import AsyncSelect from '../appComponets/select/AsyncSelect';
 import { startCase } from 'lodash-es';
-import axios from 'axios';
 import TMGPopover from '../appComponets/popover/Popover';
 
 const Navbar: FC = () => {

@@ -15,7 +15,7 @@ import { usePathname } from 'next/navigation';
 
 import { IconType } from 'react-icons';
 import { useRouter } from 'next/navigation';
-import { Button, Card, Paragraph, Text, View, XStack, YStack } from 'tamagui';
+import { Button, Card, Paragraph, Text, XStack, YStack } from 'tamagui';
 import { useDarkMode } from '@/hook/useDarkMode';
 import { IoMenu } from 'react-icons/io5';
 import { useScreen } from '@/hook/useScreen';
@@ -52,12 +52,20 @@ const AdminSidebar: FC = () => {
         style={
           screen.xs
             ? {
+                // width: '20rem',
+                // height: '100vh',
+                // position: 'fixed',
+                // top: 0,
+                // left: showModal ? '0' : '-20rem',
+                // transition: 'all 0.5s',
                 width: '20rem',
                 height: '100vh',
                 position: 'fixed',
                 top: 0,
                 left: showModal ? '0' : '-20rem',
                 transition: 'all 0.5s',
+                overflowY: 'auto', // ✅ Add this
+                WebkitOverflowScrolling: 'touch', //
               }
             : {}
         }
