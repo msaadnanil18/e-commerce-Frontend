@@ -5,7 +5,7 @@ import { FaRegUserCircle, FaTrash, FaUser } from 'react-icons/fa';
 import { Column } from 'react-table';
 import { NewTableHOC } from './organism/TableHOC';
 import AdminSidebar from './organism/AdminSidebar';
-import { Button } from 'tamagui';
+import { Button, ScrollView, XStack, YStack } from 'tamagui';
 import { ServiceErrorManager } from '@/helpers/service';
 
 import { useRouter } from 'next/navigation';
@@ -160,17 +160,16 @@ const Sellers = () => {
   }));
 
   return (
-    <div className='admin-container'>
-      <AdminSidebar />
+    <YStack>
+      <XStack padding='$4' justifyContent='flex-end' />
       {loading ? (
         <Loader />
       ) : (
-        <main>
-          <div className='flex justify-end items-center mb-6' />
+        <ScrollView>
           <NewTableHOC
             columns={columns}
             data={rows}
-            title='Customers'
+            title='Sellers'
             pagination={true}
             filtering={true}
             onRowClick={handleRowClick}
@@ -187,9 +186,9 @@ const Sellers = () => {
               onPageSizeChange: handlePageSizeChange,
             }}
           />
-        </main>
+        </ScrollView>
       )}
-    </div>
+    </YStack>
   );
 };
 

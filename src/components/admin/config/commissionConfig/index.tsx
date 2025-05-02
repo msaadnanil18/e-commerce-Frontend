@@ -1,63 +1,9 @@
-// 'use client';
-
-// import { ServiceErrorManager } from '@/helpers/service';
-// import { ListCommissionConfigService } from '@/services/Commission';
-// import { ICommissionConfig } from '@/types/Commission';
-// import { useRouter } from 'next/navigation';
-// import { FC, useEffect, useState } from 'react';
-// import { FaPlus } from 'react-icons/fa';
-// import { Button, XStack, YStack } from 'tamagui';
-
-// const Commission: FC = () => {
-//   const [commissionConfig, setCommissionConfig] = useState<
-//     Array<ICommissionConfig>
-//   >([]);
-//   const [loading, setLoading] = useState<boolean>(false);
-//   const router = useRouter();
-
-//   const fetchCommissionConfigList = () => {
-//     setLoading(true);
-//     ServiceErrorManager(ListCommissionConfigService(), {})
-//       .then(([_, data]) => {
-//         setCommissionConfig(data.docs);
-//       })
-//       .finally(() => {
-//         setLoading(false);
-//       });
-//   };
-
-//   useEffect(() => {
-//     fetchCommissionConfigList();
-//   }, []);
-//   return (
-//     <YStack>
-//       <XStack padding='$4' justifyContent='flex-end'>
-//         <Button
-//           onPress={() => {
-//             router.push('/admin/config/commission/create');
-//           }}
-//           icon={<FaPlus />}
-//           color='$text'
-//           size='$3'
-//           fontSize='$3'
-//           marginRight='$2'
-//           backgroundColor='$primary'
-//           hoverStyle={{ backgroundColor: '$primaryHover' }}
-//         >
-//           Set Commission Config
-//         </Button>
-//       </XStack>
-//     </YStack>
-//   );
-// };
-
-// export default Commission;
-
 'use client';
 
 import TmgDrawer from '@/components/appComponets/Drawer/TmgDrawer';
 import PriceFormatter from '@/components/appComponets/PriceFormatter/PriceFormatter';
 import { ServiceErrorManager } from '@/helpers/service';
+import { useScreen } from '@/hook/useScreen';
 import { ListCommissionConfigService } from '@/services/Commission';
 import { ICommissionConfig } from '@/types/Commission';
 import { head, startCase } from 'lodash-es';
@@ -94,6 +40,7 @@ import {
 } from 'tamagui';
 
 const Commission: FC = () => {
+  const screen = useScreen();
   const [commissionConfig, setCommissionConfig] = useState<
     Array<ICommissionConfig>
   >([]);
@@ -271,6 +218,19 @@ const Commission: FC = () => {
             )
           ) : undefined
         }
+        paddingHorizontal='$2'
+        paddingVertical='$1'
+        {...{
+          '@sm': {
+            size: '$2.5',
+            paddingHorizontal: '$2.5',
+            fontSize: '$2.5',
+          },
+          '@md': {
+            size: '$4',
+            fontSize: '$4',
+          },
+        }}
       >
         {label}
       </Button>
@@ -279,8 +239,9 @@ const Commission: FC = () => {
 
   return (
     <YStack>
-      <YStack padding='$2' space='$4'>
-        <Card padding='$4'>
+      <XStack padding='$3' />
+      <YStack padding='$1' space='$4'>
+        <Card padding='$3'>
           <XStack
             justifyContent='space-between'
             alignItems='center'
@@ -313,7 +274,6 @@ const Commission: FC = () => {
 
         <Card bordered>
           <YStack>
-            {/* Search and filter bar */}
             <XStack
               padding='$4'
               space='$2'
@@ -345,12 +305,23 @@ const Commission: FC = () => {
                 </XStack>
               </XStack>
 
-              <XStack space='$2' alignItems='center' flexWrap='wrap' gap='$2'>
+              <XStack space='$2' alignItems='center' gap='$2'>
                 <Button
-                  icon={<FaFilter size={14} />}
+                  icon={<FaFilter />}
                   onPress={() => setOpenFilterSheet(true)}
                   variant='outlined'
                   size='$3'
+                  {...{
+                    '@sm': {
+                      size: '$2.5',
+                      paddingHorizontal: '$2.5',
+                      fontSize: '$2.5',
+                    },
+                    '@md': {
+                      size: '$4',
+                      fontSize: '$4',
+                    },
+                  }}
                 >
                   Filters
                   {(filterActive !== null || filterType !== null) && (
@@ -367,15 +338,27 @@ const Commission: FC = () => {
                   paddingHorizontal='$2'
                   paddingVertical='$1'
                   borderRadius='$4'
-                  space='$1'
+                  space='$2'
+                  flexWrap='wrap'
+                  gap='$2'
                 >
                   <Text color='$gray11' fontSize='$3'>
                     Sort:
                   </Text>
-                  {renderSortButton('category', 'Category')}
-                  {renderSortButton('commissionType', 'Type')}
-                  {renderSortButton('value', 'Value')}
-                  {renderSortButton('minOrderAmount', 'Min Order')}
+                  <ScrollView
+                    space='$3'
+                    horizontal
+                    {...(screen.xs
+                      ? {
+                          maxWidth: 200,
+                        }
+                      : {})}
+                  >
+                    {renderSortButton('category', 'Category')}
+                    {renderSortButton('commissionType', 'Type')}
+                    {renderSortButton('value', 'Value')}
+                    {renderSortButton('minOrderAmount', 'Min Order')}
+                  </ScrollView>
                 </XStack>
               </XStack>
             </XStack>

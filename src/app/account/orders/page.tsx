@@ -12,6 +12,7 @@ import {
   useTheme,
   Input,
   H6,
+  Sheet,
 } from 'tamagui';
 import {
   FiShoppingBag,
@@ -22,6 +23,7 @@ import {
   FiX,
   FiChevronDown,
   FiChevronRight,
+  FiFilter,
 } from 'react-icons/fi';
 import dayjs from 'dayjs';
 import { ServiceErrorManager } from '@/helpers/service';
@@ -30,6 +32,7 @@ import { IOrder } from '@/types/order';
 import RenderDriveFile from '@/components/appComponets/fileupload/RenderDriveFile';
 import PriceFormatter from '@/components/appComponets/PriceFormatter/PriceFormatter';
 import { GiShoppingBag } from 'react-icons/gi';
+import { useScreen } from '@/hook/useScreen';
 
 interface OrderStatusBadgeProps {
   status: string;
@@ -43,9 +46,7 @@ interface OrderItemProps {
   item: IOrder;
 }
 
-interface FilterSheetProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface FilterProps {
   filters: {
     status: string;
     dateFrom: Date | null;
@@ -58,6 +59,7 @@ interface FilterSheetProps {
       dateTo: Date | null;
     }>
   >;
+  onClose?: () => void;
 }
 
 const OrderStatusBadge: FC<OrderStatusBadgeProps> = ({ status }) => {
@@ -91,7 +93,14 @@ const OrderStatusBadge: FC<OrderStatusBadgeProps> = ({ status }) => {
   }
 
   return (
-    <XStack alignItems='center' space='sm'>
+    <XStack
+      alignItems='center'
+      space='sm'
+      backgroundColor={`$${color}9`}
+      paddingHorizontal='$2'
+      paddingVertical='$1'
+      borderRadius='$2'
+    >
       {icon}
       <Text color='white' fontWeight='bold' textTransform='capitalize'>
         {status}
@@ -118,14 +127,22 @@ const PaymentStatusBadge: FC<PaymentStatusBadgeProps> = ({ status }) => {
   }
 
   return (
-    <Text color='white' fontWeight='bold' textTransform='capitalize'>
-      {status}
-    </Text>
+    <XStack
+      backgroundColor={`$${color}9`}
+      paddingHorizontal='$2'
+      paddingVertical='$1'
+      borderRadius='$2'
+    >
+      <Text color='white' fontWeight='bold' textTransform='capitalize'>
+        {status}
+      </Text>
+    </XStack>
   );
 };
 
 const OrderItem: FC<OrderItemProps> = ({ item }) => {
   const [expanded, setExpanded] = useState(false);
+  const screen = useScreen();
 
   return (
     <Card bordered size='$2' marginVertical='$2'>
@@ -134,14 +151,15 @@ const OrderItem: FC<OrderItemProps> = ({ item }) => {
           justifyContent='space-between'
           alignItems='center'
           flexWrap='wrap'
+          gap='$2'
         >
           <XStack space='$2' alignItems='center'>
             <GiShoppingBag size={20} />
-            <Text fontSize='$4' fontWeight='bold'>
+            <Text fontSize={screen.sm ? '$3' : '$4'} fontWeight='bold'>
               #{item.orderNumber}
             </Text>
           </XStack>
-          <XStack space='sm'>
+          <XStack space='sm' flexWrap='wrap' gap='$1'>
             <OrderStatusBadge status={'pending'} />
             <PaymentStatusBadge status={item.paymentStatus} />
           </XStack>
@@ -155,19 +173,24 @@ const OrderItem: FC<OrderItemProps> = ({ item }) => {
           justifyContent='space-between'
           alignItems='center'
           flexWrap='wrap'
-          space='$3'
+          gap='$2'
         >
-          <Text color='$gray10'>
+          <Text color='$gray10' fontSize={screen.sm ? '$2' : '$3'}>
             {dayjs(item.createdAt).format('MMM DD, YYYY')}
           </Text>
-          <XStack space='$5' alignItems='center'>
-            <Text fontWeight='bold'>
+          <XStack
+            space={screen.sm ? '$2' : '$5'}
+            alignItems='center'
+            flexWrap='wrap'
+            gap='$1'
+          >
+            <Text fontWeight='bold' fontSize={screen.sm ? '$2' : '$3'}>
               <PriceFormatter value={item.totalAmount} />
             </Text>
             <Button
               unstyled
-              padding={10}
-              size='$3'
+              padding={screen.sm ? 5 : 10}
+              size={screen.sm ? '$2' : '$3'}
               chromeless
               onPress={() => setExpanded(!expanded)}
             >
@@ -176,11 +199,11 @@ const OrderItem: FC<OrderItemProps> = ({ item }) => {
                   hoverStyle={{
                     color: '$linkColor',
                   }}
-                  fontSize={12}
+                  fontSize={screen.sm ? 10 : 12}
                 >
-                  <XStack>
-                    <FiChevronDown size={18} />
-                    Hide Details
+                  <XStack alignItems='center' space='$1'>
+                    <FiChevronDown size={screen.sm ? 14 : 18} />
+                    <Text>Hide Details</Text>
                   </XStack>
                 </Text>
               ) : (
@@ -188,11 +211,11 @@ const OrderItem: FC<OrderItemProps> = ({ item }) => {
                   hoverStyle={{
                     color: '$linkColor',
                   }}
-                  fontSize={12}
+                  fontSize={screen.sm ? 10 : 12}
                 >
-                  <XStack>
-                    <FiChevronRight size={18} />
-                    View Details
+                  <XStack alignItems='center' space='$1'>
+                    <FiChevronRight size={screen.sm ? 14 : 18} />
+                    <Text>View Details</Text>
                   </XStack>
                 </Text>
               )}
@@ -202,28 +225,37 @@ const OrderItem: FC<OrderItemProps> = ({ item }) => {
       </Card.Footer>
 
       {expanded && (
-        <YStack padding='$4' space='md'>
+        <YStack padding={screen.sm ? '$2' : '$4'} space='md'>
           <Separator />
           <Text fontWeight='bold'>Order Items ({item.items.length})</Text>
 
           {item.items.map((orderItem, idx) => (
             <Card key={idx} bordered size='$1' margin='$1'>
-              <XStack space='md' padding='$3' alignItems='center'>
+              <XStack
+                space='md'
+                padding={screen.sm ? '$2' : '$3'}
+                alignItems='center'
+                flexDirection={screen.sm ? 'column' : 'row'}
+              >
                 <RenderDriveFile
                   style={{
-                    width: '64px',
-                    height: '64px',
+                    width: screen.sm ? '100%' : '64px',
+                    height: screen.sm ? '120px' : '64px',
                     objectFit: 'cover',
                     borderRadius: '4px',
                   }}
                   file={orderItem.product.thumbnail}
                 />
 
-                <YStack flex={1} space='sm'>
+                <YStack flex={1} space='sm' width={screen.sm ? '100%' : 'auto'}>
                   <Text fontWeight='bold'>
                     {orderItem.product?.name || 'Product Name'}
                   </Text>
-                  <XStack justifyContent='space-between'>
+                  <XStack
+                    justifyContent='space-between'
+                    flexWrap='wrap'
+                    gap='$1'
+                  >
                     <Text>
                       {orderItem.quantityOrdered} × {orderItem.price}
                     </Text>
@@ -289,10 +321,14 @@ const OrderItem: FC<OrderItemProps> = ({ item }) => {
 
           <Separator />
 
-          <XStack justifyContent='space-between' flexWrap='wrap'>
+          <XStack
+            justifyContent={screen.sm ? 'center' : 'space-between'}
+            flexWrap='wrap'
+            gap='$2'
+          >
             <Button
-              size='$3'
-              icon={<FiTruck />}
+              size={screen.sm ? '$2' : '$3'}
+              icon={<FiTruck size={screen.sm ? 14 : 16} />}
               disabled={
                 !['shipped', 'delivered'].includes((item as any)?.overallStatus)
               }
@@ -301,7 +337,7 @@ const OrderItem: FC<OrderItemProps> = ({ item }) => {
             </Button>
 
             <Button
-              size='$3'
+              size={screen.sm ? '$2' : '$3'}
               variant='outlined'
               color='$red10'
               disabled={
@@ -317,56 +353,87 @@ const OrderItem: FC<OrderItemProps> = ({ item }) => {
   );
 };
 
-const FilterSheet: FC<FilterSheetProps> = ({
-  isOpen,
-  onClose,
-  filters,
-  setFilters,
-}) => {
+const FilterContent: FC<FilterProps> = ({ filters, setFilters, onClose }) => {
   const [localFilters, setLocalFilters] = useState(filters);
+  const screen = useScreen();
 
   return (
-    <YStack>
+    <YStack padding={screen.sm ? '$2' : '$4'} space='$2'>
       <H6>Filter Orders</H6>
       <YStack space='$1.5' marginTop='$1'>
         <Text fontWeight='bold'>Order Status</Text>
-        <YStack space='sm'>
-          {[
-            'all',
-            'pending',
-            'accepted',
-            'shipped',
-            'delivered',
-            'canceled',
-          ].map((status) => (
-            <Button
-              key={status}
-              size='$3'
-              margin='$1'
-              backgroundColor={localFilters.status === status ? '$primary' : ''}
-              variant={localFilters.status !== status ? 'outlined' : undefined}
-              onPress={() => setLocalFilters({ ...localFilters, status })}
-            >
-              {status === 'all'
-                ? 'All'
-                : status.charAt(0).toUpperCase() + status.slice(1)}
-            </Button>
-          ))}
-        </YStack>
+
+        {screen.xs ? (
+          <XStack flexWrap='wrap' gap='$1'>
+            {[
+              'all',
+              'pending',
+              'accepted',
+              'shipped',
+              'delivered',
+              'canceled',
+            ].map((status) => (
+              <Button
+                key={status}
+                size={screen.sm ? '$2' : '$3'}
+                margin='$1'
+                backgroundColor={
+                  localFilters.status === status ? '$primary' : ''
+                }
+                variant={
+                  localFilters.status !== status ? 'outlined' : undefined
+                }
+                onPress={() => setLocalFilters({ ...localFilters, status })}
+              >
+                {status === 'all'
+                  ? 'All'
+                  : status.charAt(0).toUpperCase() + status.slice(1)}
+              </Button>
+            ))}
+          </XStack>
+        ) : (
+          <YStack space='sm'>
+            {[
+              'all',
+              'pending',
+              'accepted',
+              'shipped',
+              'delivered',
+              'canceled',
+            ].map((status) => (
+              <Button
+                key={status}
+                size='$3'
+                margin='$1'
+                backgroundColor={
+                  localFilters.status === status ? '$primary' : ''
+                }
+                variant={
+                  localFilters.status !== status ? 'outlined' : undefined
+                }
+                onPress={() => setLocalFilters({ ...localFilters, status })}
+              >
+                {status === 'all'
+                  ? 'All'
+                  : status.charAt(0).toUpperCase() + status.slice(1)}
+              </Button>
+            ))}
+          </YStack>
+        )}
 
         <Separator marginVertical='$1.5' />
 
         <Text fontWeight='bold'>Date Range</Text>
         <YStack space='$1.5'>
           <Text>From</Text>
-          <Input size='$3' placeholder='MM/DD/YYYY' />
+          <Input size={screen.sm ? '$2' : '$3'} placeholder='MM/DD/YYYY' />
           <Text marginTop='$1.5'>To</Text>
-          <Input size='$3' placeholder='MM/DD/YYYY' />
+          <Input size={screen.sm ? '$2' : '$3'} placeholder='MM/DD/YYYY' />
         </YStack>
 
         <YStack space='$2' marginTop='$2'>
           <Button
-            size='$3'
+            size={screen.sm ? '$2' : '$3'}
             variant='outlined'
             onPress={() =>
               setLocalFilters({
@@ -379,11 +446,11 @@ const FilterSheet: FC<FilterSheetProps> = ({
             Reset Filters
           </Button>
           <Button
-            size='$3'
+            size={screen.sm ? '$2' : '$3'}
             backgroundColor='$primary'
             onPress={() => {
               setFilters(localFilters);
-              onClose();
+              if (onClose) onClose();
             }}
           >
             Apply Filters
@@ -403,8 +470,9 @@ const OrdersList: FC = () => {
     dateFrom: null as Date | null,
     dateTo: null as Date | null,
   });
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const theme = useTheme();
+  const screen = useScreen();
 
   const fetchOrderList = () => {
     setLoading(true);
@@ -441,28 +509,67 @@ const OrdersList: FC = () => {
   });
 
   return (
-    <YStack padding='$5' flex={1}>
-      <XStack space='$5'>
-        <FilterSheet
-          isOpen={isFilterOpen}
-          onClose={() => setIsFilterOpen(false)}
-          filters={filters}
-          setFilters={setFilters}
-        />
-        <ScrollView>
-          <H6>My Orders</H6>
-          <XStack marginTop='$4' space='$5'>
-            <XStack width='100%'>
-              <Input
-                flex={1}
-                size='$3'
-                placeholder='Search by order number...'
-                value={searchQuery}
-                onChangeText={(text: string) => setSearchQuery(text)}
-              />
-            </XStack>
+    <YStack padding={screen.sm ? '$2' : '$5'} flex={1}>
+      <XStack flexDirection={!screen.xs ? 'row' : 'column'} space='$3'>
+        {/* Left side - Filter panel (visible only on large screens) */}
+        {!screen.xs && (
+          <Card width={250} padding='$4' bordered height='fit-content'>
+            <FilterContent filters={filters} setFilters={setFilters} />
+          </Card>
+        )}
+
+        {/* Right side - Orders content */}
+        <YStack flex={1}>
+          <XStack
+            justifyContent='space-between'
+            alignItems='center'
+            marginBottom='$4'
+          >
+            <H6>My Orders</H6>
+
+            {/* Filter button for mobile */}
+            {!screen.md && (
+              <FiFilter onClick={() => setIsFilterSheetOpen(true)} />
+            )}
           </XStack>
 
+          {/* Search bar */}
+          <XStack marginBottom='$4' space='$2'>
+            <Input
+              flex={1}
+              size={screen.sm ? '$2' : '$3'}
+              placeholder='Search by order number...'
+              value={searchQuery}
+              onChangeText={(text: string) => setSearchQuery(text)}
+            />
+
+            {screen.sm && (
+              <Button size='$2' onPress={fetchOrderList}>
+                Search
+              </Button>
+            )}
+          </XStack>
+
+          {/* Mobile filter sheet */}
+          <Sheet
+            modal
+            open={isFilterSheetOpen}
+            onOpenChange={setIsFilterSheetOpen}
+            snapPoints={[60]}
+            dismissOnSnapToBottom
+          >
+            <Sheet.Overlay />
+            <Sheet.Frame padding='$4'>
+              <Sheet.Handle />
+              <FilterContent
+                filters={filters}
+                setFilters={setFilters}
+                onClose={() => setIsFilterSheetOpen(false)}
+              />
+            </Sheet.Frame>
+          </Sheet>
+
+          {/* Orders content */}
           {loading ? (
             <YStack
               alignItems='center'
@@ -476,20 +583,30 @@ const OrdersList: FC = () => {
               </Text>
             </YStack>
           ) : filteredOrders.length > 0 ? (
-            <YStack space='md'>
-              {filteredOrders.map((order) => (
-                <OrderItem key={order._id} item={order} />
-              ))}
-            </YStack>
+            <ScrollView>
+              <YStack space='md'>
+                {filteredOrders.map((order) => (
+                  <OrderItem key={order._id} item={order} />
+                ))}
+              </YStack>
+            </ScrollView>
           ) : (
             <YStack
               alignItems='center'
               justifyContent='center'
               flex={1}
-              padding='$8'
+              padding={screen.sm ? '$4' : '$8'}
             >
-              <FiShoppingBag size={60} color={theme.gray8.get()} />
-              <Text color='$gray10' marginTop='$4' textAlign='center'>
+              <FiShoppingBag
+                size={screen.sm ? 40 : 60}
+                color={theme.gray8.get()}
+              />
+              <Text
+                color='$gray10'
+                marginTop='$4'
+                textAlign='center'
+                fontSize={screen.sm ? '$2' : '$3'}
+              >
                 No orders found
                 {searchQuery ? ` matching "${searchQuery}"` : ''}
                 {filters.status !== 'all'
@@ -500,6 +617,7 @@ const OrdersList: FC = () => {
                 <Button
                   marginTop='$4'
                   variant='outlined'
+                  size={screen.sm ? '$2' : '$3'}
                   onPress={() => {
                     setSearchQuery('');
                     setFilters({ ...filters, status: 'all' });
@@ -510,7 +628,7 @@ const OrdersList: FC = () => {
               )}
             </YStack>
           )}
-        </ScrollView>
+        </YStack>
       </XStack>
     </YStack>
   );

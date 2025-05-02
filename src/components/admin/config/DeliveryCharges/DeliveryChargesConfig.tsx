@@ -51,6 +51,7 @@ const DeliveryChargesConfig = () => {
   }, []);
   return (
     <YStack>
+      <XStack padding='$4' />
       <XStack padding='$4' justifyContent='space-between'>
         <H6 fontWeight='bold'>Delivery Zones</H6>
         <Button

@@ -1,11 +1,13 @@
 'use client';
 
+import AdminSidebar from '@/components/admin/organism/AdminSidebar';
 import Sellers from '@/components/admin/seller';
-import React from 'react';
+import React, { FC } from 'react';
 
-const AdminSeller = () => {
+const AdminSeller: FC = () => {
   return (
-    <div>
+    <div className='admin-container'>
+      <AdminSidebar />
       <Sellers />
     </div>
   );
