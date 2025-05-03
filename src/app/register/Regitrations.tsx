@@ -16,12 +16,17 @@ import {
   Paragraph,
   H6,
 } from 'tamagui';
+import { setUser } from '@/states/slices/authSlice';
 import { useAuth as cognitoUseAuth } from 'react-oidc-context';
 import { MdMail, MdCheckCircle, MdWarning } from 'react-icons/md';
 import { FaGoogle } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
 
 const Regitrations: FC<{ token?: string | null }> = ({ token }) => {
   const auth = cognitoUseAuth();
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [isVerifying, setIsVerifying] = useState<boolean>(true);
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
@@ -56,7 +61,7 @@ const Regitrations: FC<{ token?: string | null }> = ({ token }) => {
       },
     });
 
-    ServiceErrorManager(
+    const [err, data] = await ServiceErrorManager(
       MakeAdminAndSuperAdmin({
         data: {
           payload: {
@@ -67,6 +72,12 @@ const Regitrations: FC<{ token?: string | null }> = ({ token }) => {
       }),
       {}
     );
+    dispatch(setUser(data.user));
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sessionToken', data.sessionToken);
+    }
+    router.push('/');
   };
 
   useEffect(() => {

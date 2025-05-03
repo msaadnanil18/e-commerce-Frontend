@@ -63,26 +63,25 @@ export const useAuth = () => {
   };
 
   const signOutRedirect = async () => {
+    auth.removeUser();
     router.push(
       `${process.env.NEXT_PUBLIC_CONGNITO_DOMAIN}/logout?client_id=${
         process.env.NEXT_PUBLIC_CONGNITO_CLIENT_ID
       }&logout_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_LOGOUT_URI!)}`
     );
 
-    setTimeout(() => {
-      auth.removeUser();
-    }, 1000);
+    // setTimeout(() => {
+    //   auth.removeUser();
+    // }, 1000);
   };
   const logOut = async () => {
-    //  localStorage.removeItem('sessionToken');
-    //localStorage.removeItem('token');
     if (typeof window !== 'undefined') {
       localStorage.removeItem('sessionToken');
       localStorage.removeItem('token');
     }
     dispatch(logout());
+    auth.revokeTokens();
     signOutRedirect();
-    await auth.revokeTokens();
   };
 
   return { login, loading, logOut, user };

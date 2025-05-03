@@ -59,6 +59,7 @@ const Navbar: FC = () => {
       }),
       {}
     );
+    if (err) return;
     dispatch(setUser(data.user));
 
     if (typeof window !== 'undefined') {
