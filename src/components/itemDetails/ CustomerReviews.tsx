@@ -23,8 +23,10 @@ import { IProduct } from '@/types/products';
 import { IReview } from '@/types/reviews';
 import RenderDriveFile from '../appComponets/fileupload/RenderDriveFile';
 import { head, startCase } from 'lodash-es';
+import { useScreen } from '@/hook/useScreen';
 
 const CustomerReviews: FC<{ product: IProduct | null }> = ({ product }) => {
+  const screen = useScreen();
   const [loading, setLoading] = useState<boolean>(false);
   const [reviews, setReviews] = useState<Array<IReview>>([]);
 
@@ -46,7 +48,12 @@ const CustomerReviews: FC<{ product: IProduct | null }> = ({ product }) => {
     []
   );
   return (
-    <View flex={1} flexDirection='row' padding='$10' gap='$10'>
+    <View
+      flex={1}
+      flexDirection={screen.xs ? 'column' : 'row'}
+      padding={screen.xs ? '$2' : '$10'}
+      gap='$10'
+    >
       <View>
         <Text fontSize='$5' fontWeight='bold'>
           Customer Reviews
@@ -61,16 +68,15 @@ const CustomerReviews: FC<{ product: IProduct | null }> = ({ product }) => {
                 </Text>
               </Avatar>
 
-              <YStack>
+              <YStack space='$4' flex={1} width={screen.xs ? '100%' : '55%'}>
                 <Text fontWeight='bold'>{review.customer.name}</Text>
-                <Paragraph fontSize='$4' className='text-gray-600'>
-                  {review.comment}
-                </Paragraph>
+
+                <Paragraph fontSize='$4'>{review.comment}</Paragraph>
 
                 <ScrollView
                   horizontal
                   //showsVerticalScrollIndicator={false}
-                  style={{ maxWidth: 500 }}
+                  style={{ maxWidth: screen.xs ? 350 : 500 }}
                 >
                   {review.attachments.map((i, index) => (
                     <View

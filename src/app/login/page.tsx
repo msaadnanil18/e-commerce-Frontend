@@ -30,7 +30,7 @@ const AuthenticationUI = () => {
 
   const verifyOTP = async (T: any) => {};
 
-  const handleLoginClick = (method: any) => {
+  const handleLoginClick = (method: string) => {
     if (method === 'google') {
       if (role === 'seller-registration') {
         login('seller');
@@ -93,10 +93,7 @@ const AuthenticationUI = () => {
         Sign In
       </Text>
 
-      <Button
-        onPress={() => handleLoginClick('google')}
-        className='flex items-center justify-center gap-2 py-4 rounded-lg bg-white text-gray-800 hover:bg-gray-100 transition-all shadow-md'
-      >
+      <Button onPress={() => handleLoginClick('google')}>
         <FaGoogle className='text-xl' />
         <Text>Continue with Google</Text>
       </Button>
@@ -109,21 +106,17 @@ const AuthenticationUI = () => {
         <Separator flex={1} />
       </XStack>
 
-      <Button
-        onPress={() => handleLoginClick('email')}
-        className='flex items-center justify-center gap-2 py-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all shadow-md'
-      >
-        <FaEnvelope className='text-xl' />
-        <Text>Continue with Email</Text>
-      </Button>
+      <YStack gap='$4' spaceDirection='vertical'>
+        <Button onPress={() => handleLoginClick('email')}>
+          <FaEnvelope className='text-xl' />
+          <Text>Continue with Email</Text>
+        </Button>
 
-      <Button
-        onPress={() => handleLoginClick('phone')}
-        className='flex items-center justify-center gap-2 py-4 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-all shadow-md'
-      >
-        <FaPhone className='text-xl' />
-        <Text>Continue with Phone</Text>
-      </Button>
+        <Button onPress={() => handleLoginClick('phone')}>
+          <FaPhone className='text-xl' />
+          <Text>Continue with Phone</Text>
+        </Button>
+      </YStack>
     </YStack>
   );
 

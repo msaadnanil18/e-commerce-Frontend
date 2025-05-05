@@ -6,10 +6,11 @@ export const permissions = Object.freeze({
   /* SELLER PERMISSION */
 
   /* PRODUCT PERMISSION */
+  CAN_VIEW_PRODUCT: 'can_view_product',
   CAN_VIEW_PRODUCT_LIST: 'view_product_list',
   CAN_MANAGE_PRODUCTS: 'manage_products',
   CAN_APPROVE_PRODUCT: 'approve_product',
-  CAN_VIEW_PRODUCTS: 'view_products',
+  VIEW_PRODUCTS: 'view_products',
   /* PRODUCT PERMISSION */
 
   CAN_VIEW_ANALYTICS: 'view_analytics',
@@ -55,7 +56,10 @@ export const permissions = Object.freeze({
   /* COMMISSION CONFIGURATION */
 });
 
-export const Routes: Record<string, string[]> = Object.freeze({
+export const ProtectedRoutes: Record<string, string[]> = Object.freeze({
+  '/cart': [],
+  '/seller-registration': [],
+
   '/admin/dashboard': [],
 
   /* CONFIG */
@@ -78,7 +82,7 @@ export const Routes: Record<string, string[]> = Object.freeze({
   /* Seller */
 
   /* Product */
-  '/admin/product': [],
+  '/admin/product': [permissions.CAN_VIEW_PRODUCT],
   /* Product */
 
   /* ORDERS */

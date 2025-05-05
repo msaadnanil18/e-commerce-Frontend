@@ -22,9 +22,10 @@ export const Service =
       url,
       method: options?.method || 'POST',
       baseURL: process.env.NEXT_PUBLIC_API_URL,
-      //  withCredentials: true,
+      withCredentials: true,
       ...(config || {}),
       headers: {
+        'Content-Type': 'application/json',
         Authorization:
           typeof window !== 'undefined'
             ? `Bearer ${localStorage.getItem('sessionToken')}`

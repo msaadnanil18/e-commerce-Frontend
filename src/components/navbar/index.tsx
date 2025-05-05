@@ -248,7 +248,6 @@ const Navbar: FC = () => {
       borderRadius={0}
       backgroundColor='$cardBackground'
     >
-      {/* Main navbar layout */}
       <XStack
         flex={1}
         alignItems='center'
@@ -290,117 +289,104 @@ const Navbar: FC = () => {
           )}
         </XStack>
 
-        {/* Desktop menu items - visible only on medium screens and larger */}
-        {
-          !screen.xs ? (
-            <XStack alignItems='center' space='$2'>
-              {/* Account Menu */}
-              {isLoggedIn ? (
-                <TMGPopover
-                  placement='bottom'
-                  size='medium'
-                  trigger={
-                    <Button
-                      backgroundColor='$background'
-                      fontSize='$3'
-                      color='$text'
-                      padding='$2'
-                      marginRight='$2'
-                      icon={<FaUserCircle size={18} />}
-                    >
-                      {userName}
-                    </Button>
-                  }
-                  content={accountMenuContent}
-                />
-              ) : (
-                <TMGPopover
-                  placement='bottom'
-                  size='medium'
-                  trigger={
-                    <Button
-                      backgroundColor='$background'
-                      fontSize='$3'
-                      color='$text'
-                      padding='$2'
-                      marginRight='$2'
-                      icon={<FaRegUser size={18} />}
-                    >
-                      Login
-                    </Button>
-                  }
-                  content={accountMenuContent}
-                />
-              )}
+        {!screen.xs ? (
+          <XStack alignItems='center' space='$2'>
+            {/* Account Menu */}
+            {isLoggedIn ? (
+              <TMGPopover
+                placement='bottom'
+                size='medium'
+                trigger={
+                  <Button
+                    backgroundColor='$background'
+                    fontSize='$3'
+                    color='$text'
+                    padding='$2'
+                    marginRight='$2'
+                    icon={<FaUserCircle size={18} />}
+                  >
+                    {userName}
+                  </Button>
+                }
+                content={accountMenuContent}
+              />
+            ) : (
+              <TMGPopover
+                placement='bottom'
+                size='medium'
+                trigger={
+                  <Button
+                    backgroundColor='$background'
+                    fontSize='$3'
+                    color='$text'
+                    padding='$2'
+                    marginRight='$2'
+                    icon={<FaRegUser size={18} />}
+                  >
+                    Login
+                  </Button>
+                }
+                content={accountMenuContent}
+              />
+            )}
 
-              {/* Cart Button */}
+            <Button
+              onPress={() => router.push('/cart')}
+              fontSize='$3'
+              flexDirection='row'
+              alignItems='center'
+              marginRight='$2'
+              icon={<RiShoppingCart2Line size={20} />}
+            >
+              {screen.lg ? 'Cart' : null}
+            </Button>
+
+            {(!isLoggedIn || !userRoles.includes('seller')) && (
               <Button
-                onPress={() => router.push('/cart')}
+                backgroundColor='$background'
+                color='$text'
+                padding='$2'
                 fontSize='$3'
-                flexDirection='row'
-                alignItems='center'
                 marginRight='$2'
-                icon={<RiShoppingCart2Line size={20} />}
+                icon={<LiaGiftsSolid size={20} />}
+                onPress={() =>
+                  router.push('/login?redirect=seller-registration')
+                }
               >
-                {screen.lg ? 'Cart' : null}
+                {screen.lg ? 'Become a Seller' : null}
               </Button>
+            )}
 
-              {/* Become a Seller Button */}
-              {(!isLoggedIn || !userRoles.includes('seller')) && (
-                <Button
-                  backgroundColor='$background'
-                  color='$text'
-                  padding='$2'
-                  fontSize='$3'
-                  marginRight='$2'
-                  icon={<LiaGiftsSolid size={20} />}
-                  onPress={() =>
-                    router.push('/login?redirect=seller-registration')
-                  }
-                >
-                  {screen.lg ? 'Become a Seller' : null}
-                </Button>
-              )}
-
-              {/* Theme Toggle */}
+            <div
+              className='relative inline-flex items-center cursor-pointer'
+              onClick={() => dispatch(toggleTheme())}
+            >
               <div
-                className='relative inline-flex items-center cursor-pointer'
-                onClick={() => dispatch(toggleTheme())}
+                className={`w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 transition-all ${
+                  theme.mode === 'DARK' ? 'bg-gray-700' : ''
+                }`}
               >
                 <div
-                  className={`w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 transition-all ${
-                    theme.mode === 'DARK' ? 'bg-gray-700' : ''
+                  className={`w-5 h-5 bg-white rounded-full shadow-md flex items-center justify-center transform transition-transform ${
+                    theme.mode === 'DARK' ? 'translate-x-6' : ''
                   }`}
                 >
-                  <div
-                    className={`w-5 h-5 bg-white rounded-full shadow-md flex items-center justify-center transform transition-transform ${
-                      theme.mode === 'DARK' ? 'translate-x-6' : ''
-                    }`}
-                  >
-                    {theme.mode === 'DARK' ? (
-                      <FaMoon size={12} className='text-gray-900' />
-                    ) : (
-                      <FaSun size={12} className='text-yellow-500' />
-                    )}
-                  </div>
+                  {theme.mode === 'DARK' ? (
+                    <FaMoon size={12} className='text-gray-900' />
+                  ) : (
+                    <FaSun size={12} className='text-yellow-500' />
+                  )}
                 </div>
               </div>
-            </XStack>
-          ) : mobileMenuOpen ? (
-            <FaTimes onClick={toggleMobileMenu} size={24} />
-          ) : (
-            <FiMenu size={24} onClick={toggleMobileMenu} />
-          )
-          /* Mobile menu hamburger icon - visible only on small screens */
-          // <IconButton
-          //   size="$3"
-          //   onPress={toggleMobileMenu}
-          //   icon={mobileMenuOpen ? <FaTimes size={24} /> : <FiMenu size={24} />}
-          // />
-        }
+            </div>
+          </XStack>
+        ) : mobileMenuOpen ? (
+          <FaTimes onClick={toggleMobileMenu} size={24} />
+        ) : (
+          <FiMenu size={24} onClick={toggleMobileMenu} />
+        )}
       </XStack>
 
-      {/* Mobile menu - appears when hamburger is clicked */}
       {!screen.md && mobileMenuOpen && (
         <YStack
           position='absolute'
@@ -418,7 +404,6 @@ const Navbar: FC = () => {
           shadowRadius={3.84}
           elevation={5}
         >
-          {/* Mobile Search Bar */}
           <View marginBottom='$3'>
             <div
               className={`flex items-center space-x-2 w-full ${
@@ -434,9 +419,7 @@ const Navbar: FC = () => {
             </div>
           </View>
 
-          {/* Mobile Menu Items */}
           <YStack space='$2'>
-            {/* Account Button for Mobile */}
             <Button
               onPress={() => {
                 if (isLoggedIn) {
@@ -460,7 +443,6 @@ const Navbar: FC = () => {
               {isLoggedIn ? userName : 'Login / Sign Up'}
             </Button>
 
-            {/* Additional items for logged in users */}
             {isLoggedIn && (
               <>
                 <Button
@@ -519,7 +501,6 @@ const Navbar: FC = () => {
               </>
             )}
 
-            {/* Cart Button for Mobile */}
             <Button
               onPress={() => {
                 router.push('/cart');
@@ -533,7 +514,6 @@ const Navbar: FC = () => {
               Cart
             </Button>
 
-            {/* Become a Seller Button for Mobile */}
             {(!isLoggedIn || !userRoles.includes('seller')) && (
               <Button
                 onPress={() => {
@@ -549,7 +529,6 @@ const Navbar: FC = () => {
               </Button>
             )}
 
-            {/* Log Out Button for Mobile */}
             {isLoggedIn && (
               <Button
                 onPress={() => {
@@ -564,7 +543,6 @@ const Navbar: FC = () => {
               </Button>
             )}
 
-            {/* Theme Toggle for Mobile */}
             <XStack
               justifyContent='space-between'
               alignItems='center'

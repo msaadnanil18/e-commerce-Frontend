@@ -20,7 +20,7 @@ export const useAuth = () => {
   const redirect = searchParams.get('redirect') || '/';
 
   const saveUserData = useCallback(
-    async (token?: string, role: string = 'customer') => {
+    async (token: string, role?: string) => {
       if (!token) return;
       setLoading(true);
       const [, result] = await ServiceErrorManager(
@@ -36,7 +36,6 @@ export const useAuth = () => {
       setLoading(false);
       dispatch(setUser(result.user));
 
-      // localStorage.setItem('sessionToken', result.sessionToken);
       if (typeof window !== 'undefined') {
         localStorage.setItem('sessionToken', result.sessionToken);
       }
@@ -45,7 +44,7 @@ export const useAuth = () => {
   );
 
   const handleLogin = useCallback(
-    async (role: string) => {
+    async (role?: string) => {
       const user = await auth.signinPopup({
         extraQueryParams: {
           prompt: 'select_account',
@@ -56,7 +55,7 @@ export const useAuth = () => {
     [auth, saveUserData]
   );
 
-  const login = async (role: 'seller' | 'customer') => {
+  const login = async (role?: string) => {
     await handleLogin(role);
     await signOutRedirect();
     router.replace(redirect);

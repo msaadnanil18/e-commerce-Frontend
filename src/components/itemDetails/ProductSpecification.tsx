@@ -6,7 +6,9 @@ const ProductSpecification: FC<{ product: IProduct | null }> = ({
   product,
 }) => {
   return (
-    <YStack className='max-w-6xl  px-8 pb-12'>
+    <YStack
+    //className='max-w-6xl px-8 pb-12'
+    >
       <Tabs
         defaultValue='details'
         orientation='horizontal'
