@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useState } from 'react';
+import React, { Dispatch, FC, SetStateAction, useState } from 'react';
 import { View, Button, Spinner } from 'tamagui';
 import { FaUser, FaFlag, FaSave } from 'react-icons/fa';
 import { PiBankFill } from 'react-icons/pi';
@@ -9,12 +9,9 @@ import AddressInformation from '@/components/auth/SellerRegistration/AddressInfo
 import BankDetails from '@/components/auth/SellerRegistration/BankDetails';
 import RegistrationCompletion from '@/components/auth/SellerRegistration/RegistrationCompletion';
 import SellerDocument from '@/components/auth/SellerRegistration/SellerDocument';
-import { useForm } from 'react-hook-form';
 import BusinessInformation from '@/components/auth/SellerRegistration/ BusinessInformation';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
-import useFileUpload from '@/components/appComponets/fileupload/useFileUpload';
-import { ServiceErrorManager } from '@/helpers/service';
-import { SellerRegistrationService } from '@/services/seller';
+import { UseFormReturn } from 'react-hook-form';
 
 export interface SellerFormData {
   businessName: string;
@@ -37,45 +34,28 @@ export const validateRequired = (value: string) => {
   return value ? true : 'This field is required';
 };
 
-const SellerRegistrationSteps: FC = () => {
-  const { getFileUpload } = useFileUpload();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formValue, setFormValue] = useState<Partial<SellerFormData>>({});
-
-  const businessInformationForm = useForm<SellerFormData>();
-  const addressInformationForm = useForm<SellerFormData>();
-  const bankDetailsFrom = useForm<SellerFormData>();
-  const documentsUploadFrom = useForm({});
-
-  const onSubmit = async (selectedDocuments: File[]) => {
-    try {
-      setIsSubmitting(true);
-      const uploadFile = await getFileUpload(selectedDocuments);
-
-      await ServiceErrorManager(
-        SellerRegistrationService({
-          data: {
-            payload: {
-              documents: uploadFile,
-              ...formValue,
-            },
-          },
-        }),
-        {
-          failureMessage: 'Error while registration Please try sometime later',
-          successMessage: 'Registration successful',
-        }
-      );
-
-      setCurrentStep((prev) => prev + 1);
-      setIsSubmitting(false);
-    } catch (error) {
-      console.error('Submission error:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+const SellerRegistrationSteps: FC<{
+  currentStep: number;
+  setCurrentStep: Dispatch<SetStateAction<number>>;
+  isSubmitting: boolean;
+  onSubmit: (r: File[]) => void;
+  setFormValue: Dispatch<SetStateAction<Partial<SellerFormData>>>;
+  businessInformationForm: UseFormReturn<SellerFormData>;
+  addressInformationForm: UseFormReturn<SellerFormData>;
+  bankDetailsFrom: UseFormReturn<SellerFormData>;
+  documentsUploadFrom: UseFormReturn;
+}> = (props) => {
+  const {
+    currentStep,
+    setCurrentStep,
+    isSubmitting,
+    onSubmit,
+    setFormValue,
+    businessInformationForm,
+    addressInformationForm,
+    bankDetailsFrom,
+    documentsUploadFrom,
+  } = props;
 
   const steps = [
     {
@@ -187,7 +167,6 @@ const SellerRegistrationSteps: FC = () => {
             icon={isSubmitting ? () => <Spinner /> : <FaSave />}
             onPress={async () => {
               await documentsUploadFrom.handleSubmit((data) => {
-                console.log(data);
                 if (data) {
                   onSubmit(data.documents);
                 }

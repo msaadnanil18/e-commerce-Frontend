@@ -4,6 +4,7 @@ import { twMerge } from 'tailwind-merge';
 import Modal from '../modal/PopupModal';
 import AttachmentViewer from './AttachmentViewer';
 import { MdCancel } from 'react-icons/md';
+import { useScreen } from '@/hook/useScreen';
 
 const RenderFileList: FC<{
   fileListClassName?: string;
@@ -20,6 +21,7 @@ const RenderFileList: FC<{
   style,
   renderFileOnClick: RenderFileOnClick,
 }) => {
+  const screen = useScreen();
   const [approveDialogOpen, setApproveDialogOpen] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -35,12 +37,17 @@ const RenderFileList: FC<{
     <div style={style} className='mt-4 space-y-2'>
       <Modal
         height={500}
-        width={600}
+        width={screen.xs ? 400 : 900}
         open={approveDialogOpen}
         cancelTextButtonProps={{ size: '$3', icon: <MdCancel /> }}
         onClose={setApproveDialogOpen}
         children={
-          selectedFile && <AttachmentViewer file={uri || selectedFile} />
+          selectedFile && (
+            <AttachmentViewer
+              file={uri || selectedFile}
+              style={{ width: '100%', height: '100%' }}
+            />
+          )
         }
       />
 

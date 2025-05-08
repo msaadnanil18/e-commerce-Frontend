@@ -73,7 +73,6 @@ const Navbar: FC = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  // Account options menu content
   const accountMenuContent = (
     <View padding='$3' width={screen.xs ? 200 : 250}>
       {isLoggedIn ? (
@@ -291,7 +290,6 @@ const Navbar: FC = () => {
 
         {!screen.xs ? (
           <XStack alignItems='center' space='$2'>
-            {/* Account Menu */}
             {isLoggedIn ? (
               <TMGPopover
                 placement='bottom'
@@ -350,7 +348,7 @@ const Navbar: FC = () => {
                 marginRight='$2'
                 icon={<LiaGiftsSolid size={20} />}
                 onPress={() =>
-                  router.push('/login?redirect=seller-registration')
+                  router.push('/login?redirect=seller/seller-registration')
                 }
               >
                 {screen.lg ? 'Become a Seller' : null}
@@ -423,7 +421,7 @@ const Navbar: FC = () => {
             <Button
               onPress={() => {
                 if (isLoggedIn) {
-                  router.push('/account');
+                  //router.push('/account');
                 } else {
                   router.push('/login');
                 }
@@ -442,6 +440,22 @@ const Navbar: FC = () => {
             >
               {isLoggedIn ? userName : 'Login / Sign Up'}
             </Button>
+
+            {userRoles.length > 1 && (
+              <AsyncSelect
+                loading={roleChangeLoading}
+                options={[
+                  ...userRoles.map((role) => ({
+                    label: startCase(role),
+                    value: role,
+                  })),
+                ]}
+                groupLabel='Available Roles'
+                size='$3'
+                value={currentRole}
+                onChange={handleRoleChange}
+              />
+            )}
 
             {isLoggedIn && (
               <>
@@ -517,7 +531,7 @@ const Navbar: FC = () => {
             {(!isLoggedIn || !userRoles.includes('seller')) && (
               <Button
                 onPress={() => {
-                  router.push('/login?redirect=seller-registration');
+                  router.push('/login?redirect=seller/seller-registration');
                   setMobileMenuOpen(false);
                 }}
                 icon={<LiaGiftsSolid size={18} />}

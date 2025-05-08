@@ -16,18 +16,21 @@ import Modal from '../appComponets/modal/PopupModal';
 import useGetAddressList from '../checkout/hook/useGetAddressList';
 import { SetDefaultAddressService } from '@/services/address';
 import { ServiceErrorManager } from '@/helpers/service';
+import { useScreen } from '@/hook/useScreen';
 
 const CartDefaulAddress: FC<{
   defaultAddres: IAddress | null;
   reload: () => void;
 }> = ({ defaultAddres, reload }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const media = useScreen();
+
   return (
-    <Card bordered marginBottom='$4' padding='$3'>
+    <Card bordered marginBottom='$4' padding={media.sm ? '$2' : '$3'}>
       <View
         flex={1}
-        flexDirection='row'
-        alignItems='center'
+        flexDirection={media.xs ? 'column' : 'row'}
+        alignItems={media.xs ? 'flex-start' : 'center'}
         justifyContent='space-between'
         gap='$3'
       >
@@ -37,14 +40,19 @@ const CartDefaulAddress: FC<{
             spaceDirection='vertical'
             gap='$2'
             alignItems='center'
+            flexWrap='wrap'
           >
             <Text fontSize={12}>Deliver To:</Text>
-            <Text fontSize='$3' fontWeight='bold'>
+            <Text fontSize={media.sm ? '$2' : '$3'} fontWeight='bold'>
               {defaultAddres?.name}, {defaultAddres?.postalCode}
             </Text>
           </View>
           <View flex={1}>
-            <Text numberOfLines={2} fontSize={12} color='$gray10'>
+            <Text
+              numberOfLines={media.sm ? 3 : 2}
+              fontSize={12}
+              color='$gray10'
+            >
               {defaultAddres?.street}, {defaultAddres?.city},{' '}
               {defaultAddres?.state}
             </Text>
@@ -52,7 +60,13 @@ const CartDefaulAddress: FC<{
         </View>
         {openModal && <AddressPopup {...{ openModal, setOpenModal, reload }} />}
 
-        <Button onPress={() => setOpenModal(true)} variant='outlined' size='$3'>
+        <Button
+          onPress={() => setOpenModal(true)}
+          variant='outlined'
+          size={media.sm ? '$2' : '$3'}
+          marginTop={media.sm ? '$2' : '0'}
+          alignSelf={media.sm ? 'flex-start' : 'center'}
+        >
           Change
         </Button>
       </View>
@@ -70,6 +84,8 @@ const AddressPopup: FC<{
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const { loading, addressList } = useGetAddressList({ setSelectedAddressId });
   const [selectionLoading, setSelectionLoading] = useState<boolean>(false);
+  const media = useScreen();
+
   const handleAddressSelection = (value: string) => {
     if (!value) return;
     setSelectionLoading(true);
@@ -89,9 +105,10 @@ const AddressPopup: FC<{
       reload();
     });
   };
+
   return (
     <Modal
-      width={400}
+      width={media.sm ? '90%' : 400}
       title='Select Delivery Address'
       open={openModal}
       onClose={setOpenModal}
@@ -108,7 +125,7 @@ const AddressPopup: FC<{
             <YStack>
               {(addressList || []).map((address, index) => (
                 <YStack key={address._id}>
-                  <XStack>
+                  <XStack flexWrap={media.xs ? 'wrap' : 'nowrap'}>
                     <RadioGroup.Item
                       value={address?._id}
                       id={address._id}
@@ -118,26 +135,31 @@ const AddressPopup: FC<{
                     >
                       <RadioGroup.Indicator />
                     </RadioGroup.Item>
-                    <YStack flex={1}>
+                    <YStack flex={1} paddingRight={media.xs ? '$2' : '0'}>
                       <XStack
                         justifyContent='space-between'
                         alignItems='center'
+                        flexWrap='wrap'
                       >
-                        <Text fontWeight='bold' fontSize={12}>
+                        <Text fontWeight='bold' fontSize={media.xs ? 11 : 12}>
                           {address?.name}
                         </Text>
                       </XStack>
-                      <Text numberOfLines={2} fontSize={10} color='$gray10'>
+                      <Text
+                        numberOfLines={media.xs ? 3 : 2}
+                        fontSize={media.xs ? 9 : 10}
+                        color='$gray10'
+                      >
                         {address.street}, {address.city}, {address.state}{' '}
                         {address.postalCode}
                       </Text>
                       {address.landmark && (
-                        <Text fontSize={10} color='$gray10'>
+                        <Text fontSize={media.xs ? 9 : 10} color='$gray10'>
                           Landmark: {address.landmark}
                         </Text>
                       )}
                       <XStack marginTop='$1'>
-                        <Text fontSize={10} color='$gray10'>
+                        <Text fontSize={media.xs ? 9 : 10} color='$gray10'>
                           {address.phoneNumber}
                         </Text>
                       </XStack>

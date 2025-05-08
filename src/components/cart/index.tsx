@@ -26,8 +26,10 @@ import { IAddress } from '@/types/address';
 import CartDefaulAddress from './CartDefaulAddress';
 import OrderSummary from './OrderSummary';
 import { useRouter } from 'next/navigation';
+import { useScreen } from '@/hook/useScreen';
 
 const CartPage: FC = () => {
+  const media = useScreen();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [selectItem, setSelectedItem] = useState<string>('');
@@ -107,17 +109,28 @@ const CartPage: FC = () => {
       {loading ? (
         <Loader />
       ) : (
-        <YStack height='100vh'>
+        <YStack>
           <XStack flex={1} flexWrap='wrap' padding='$4' justifyContent='center'>
-            <YStack width='65%' padding='$4'>
+            <YStack
+              {...(media.xs
+                ? {
+                    flex: 1,
+                    flexWrap: 'wrap',
+                  }
+                : { width: '65%' })}
+              padding={media.xs ? '$1' : '$4'}
+            >
               <CartDefaulAddress
                 defaultAddres={defaultAddres}
                 reload={fetchCartDetails}
               />
 
-              <ScrollView>
+              <ScrollView
+                maxHeight={media.xs ? 250 : 360}
+                showsVerticalScrollIndicator
+              >
                 {(cartDetail?.items || [])?.length === 0 ? (
-                  <Text fontSize='$5' color='$gray10'>
+                  <Text fontSize={media.sm ? '$4' : '$5'} color='$gray10'>
                     Your cart is empty.
                   </Text>
                 ) : (
@@ -127,14 +140,29 @@ const CartPage: FC = () => {
                         (v) => v._id.toString() === item.variant.toString()
                       );
                       return (
-                        <Card key={item._id} width='100%' padding='$4'>
-                          <XStack gap='$3' alignItems='center'>
+                        <Card
+                          key={item._id}
+                          width='100%'
+                          padding={media.sm ? '$3' : '$4'}
+                        >
+                          <XStack
+                            gap={media.sm ? '$2' : '$3'}
+                            alignItems='center'
+                            flexDirection={media.xs ? 'column' : 'row'}
+                          >
                             <RenderDriveFile
                               file={item.product.thumbnail}
-                              style={{ width: 80, height: 80 }}
+                              style={{
+                                width: media.xs ? 60 : 80,
+                                height: media.xs ? 60 : 80,
+                                alignSelf: media.xs ? 'center' : 'flex-start',
+                              }}
                             />
 
-                            <YStack flex={1}>
+                            <YStack
+                              flex={1}
+                              alignItems={media.xs ? 'center' : 'flex-start'}
+                            >
                               <Text
                                 onPress={() =>
                                   router.push(
@@ -145,13 +173,14 @@ const CartPage: FC = () => {
                                   color: '$linkColor',
                                   cursor: 'pointer',
                                 }}
-                                fontSize='$3'
+                                fontSize={media.sm ? '$2' : '$3'}
                                 fontWeight='500'
+                                textAlign={media.xs ? 'center' : 'left'}
                               >
                                 {item.product.name}
                               </Text>
                               <Text
-                                fontSize='$4'
+                                fontSize={media.sm ? '$3' : '$4'}
                                 color='$primary'
                                 fontWeight='700'
                               >
@@ -159,9 +188,13 @@ const CartPage: FC = () => {
                                   value={item.price * item.quantity}
                                 />
                               </Text>
-                              <XStack alignItems='center' gap='$2'>
+                              <XStack
+                                alignItems='center'
+                                gap='$2'
+                                marginTop={media.xs ? '$2' : '0'}
+                              >
                                 <Button
-                                  size='$2'
+                                  size={media.sm ? '$1' : '$2'}
                                   onPress={() =>
                                     updateQuantity(item.variant, -1)
                                   }
@@ -173,16 +206,21 @@ const CartPage: FC = () => {
                                     selectItem === item.variant ? (
                                       <Spinner />
                                     ) : (
-                                      <CiCircleMinus size={20} />
+                                      <CiCircleMinus
+                                        size={media.sm ? 16 : 20}
+                                      />
                                     )
                                   }
                                 />
 
-                                <Text fontSize='$4' fontWeight='600'>
+                                <Text
+                                  fontSize={media.sm ? '$3' : '$4'}
+                                  fontWeight='600'
+                                >
                                   {item.quantity}
                                 </Text>
                                 <Button
-                                  size='$2'
+                                  size={media.sm ? '$1' : '$2'}
                                   onPress={() => {
                                     updateQuantity(item.variant, 1);
                                   }}
@@ -192,7 +230,7 @@ const CartPage: FC = () => {
                                     selectItem === item.variant ? (
                                       <Spinner />
                                     ) : (
-                                      <CiCirclePlus size={20} />
+                                      <CiCirclePlus size={media.sm ? 16 : 20} />
                                     )
                                   }
                                 />
@@ -206,14 +244,15 @@ const CartPage: FC = () => {
                                 color: '$linkColor',
                               }}
                               hoverTheme={false}
-                              size='$3'
-                              fontSize='$4'
+                              size={media.sm ? '$2' : '$3'}
+                              fontSize={media.sm ? '$3' : '$4'}
                               chromeless
                               onPress={() => {
                                 removeFromCart(item.variant);
                                 setSelectedItem(item.variant);
                               }}
                               disabled={removeLoading}
+                              marginTop={media.xs ? '$2' : '0'}
                             >
                               {removeLoading && selectItem === item.variant
                                 ? 'Removing...'

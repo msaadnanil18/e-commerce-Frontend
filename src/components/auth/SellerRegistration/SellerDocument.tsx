@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import FileUpload from '@/components/appComponets/fileupload/FileUpload';
 import { YStack, Text, Separator } from 'tamagui';
-import { validateRequired } from '@/app/seller-registration/page';
+import { validateRequired } from '.';
 import { UseFormReturn } from 'react-hook-form';
 
 const SellerDocument: FC<{

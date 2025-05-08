@@ -29,7 +29,7 @@ const RenderDriveFile = ({
   const uri = `${process.env.NEXT_PUBLIC_API_URL}/file/${file?.key}`;
 
   if (inline) {
-    const _uri = `${process.env.NEXT_PUBLIC_API_URL}/file/${selectedFile?.key}`;
+    // const _uri = `${process.env.NEXT_PUBLIC_API_URL}/file/${selectedFile?.key}`;
     return (
       <div>
         <RenderFileList

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AiOutlineFilePdf,
   AiOutlineFileImage,
@@ -8,6 +8,7 @@ import {
   AiOutlineFileWord,
   AiOutlineFileText,
 } from 'react-icons/ai';
+import { Spinner } from 'tamagui';
 
 interface AttachmentViewerProps {
   file: File | string;
@@ -62,17 +63,22 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({
   const fileType = getFileType(typeof file === 'string' ? file : file.name);
 
   const renderContent = () => {
+    const [loading, setLoading] = useState(true);
     switch (fileType) {
       case 'image':
         return (
-          <img
-            src={fileUrl}
-            alt='Attachment'
-            className={className}
-            //className='max-w-full max-h-96 object-contain'
-            style={style}
-            onClick={onClick}
-          />
+          <>
+            {loading && <Spinner />}
+            <img
+              src={fileUrl}
+              alt='Attachment'
+              className={className}
+              //className='max-w-full max-h-96 object-contain'
+              style={style}
+              onClick={onClick}
+              onLoad={() => setLoading(false)}
+            />
+          </>
         );
       case 'video':
         return (
@@ -90,12 +96,16 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({
         );
       case 'document':
         return (
-          <iframe
-            onClick={onClick}
-            src={fileUrl}
-            className={className}
-            style={style}
-          />
+          <>
+            {loading && <Spinner />}
+            <iframe
+              onClick={onClick}
+              src={fileUrl}
+              className={className}
+              onLoad={() => setLoading(false)}
+              style={style}
+            />
+          </>
         );
       default:
         return (

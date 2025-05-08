@@ -2,10 +2,7 @@
 import React, { FC } from 'react';
 import { YStack, Text, XStack, Input, Separator } from 'tamagui';
 import { Controller, UseFormReturn } from 'react-hook-form';
-import {
-  SellerFormData,
-  validateRequired,
-} from '@/app/seller-registration/page';
+import { SellerFormData, validateRequired } from '.';
 
 const AddressInformation: FC<{
   form: UseFormReturn<SellerFormData>;

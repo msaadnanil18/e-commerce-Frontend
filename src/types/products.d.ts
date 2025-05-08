@@ -9,7 +9,7 @@ export interface Product {
   thumbnail: File;
 
   variants: {
-    _id: string;
+    _id?: string;
     sku: string;
     variantName: string;
     originalPrice: number;

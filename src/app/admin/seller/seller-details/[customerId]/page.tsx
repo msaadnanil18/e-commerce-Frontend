@@ -1,47 +1,43 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect, FC } from 'react';
+
 import {
   XStack,
   YStack,
-  H1,
-  H2,
   Text,
   Card,
   Button,
-  Separator,
   ScrollView,
   Spinner,
-  Image,
-  Dialog,
   TextArea,
   Tabs,
-  H4,
   H5,
+  Separator,
 } from 'tamagui';
 import {
-  FaCheck as Check,
-  FaTimes as X,
-  FaChevronRight as ChevronRight,
-  FaEye as Eye,
   FaFileAlt as FileText,
-  FaUser as User,
   FaBuilding as Building,
   FaCreditCard as CreditCard,
   FaMapMarkerAlt as MapPin,
-  FaArrowLeft,
+  FaTimes,
+  FaCheck,
+  FaHistory,
 } from 'react-icons/fa';
 
 import { ServiceErrorManager } from '@/helpers/service';
-
+import dayjs from 'dayjs';
 import { useParams } from 'next/navigation';
 import { IoAlertCircle } from 'react-icons/io5';
 import RenderDriveFile from '@/components/appComponets/fileupload/RenderDriveFile';
-import { GetService } from '@/services/crud';
-import { ISeller } from '@/types/seller';
+import { ISeller, IStatusLog } from '@/types/seller';
+import {
+  ApproveRejectSellerService,
+  GetSellerDetailsService,
+} from '@/services/seller';
+import Modal from '@/components/appComponets/modal/PopupModal';
+import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
 
-const SellerDetails = () => {
-  const router = useRouter();
+const SellerDetails: FC = () => {
   const params = useParams();
   const [seller, setSeller] = useState<ISeller | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,60 +45,90 @@ const SellerDetails = () => {
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [processingAction, setProcessingAction] = useState(false);
+  const [status, setStatus] = useState<string>('');
 
   const fetchSellers = async () => {
     setIsLoading(true);
-    try {
-      const [err, response] = await ServiceErrorManager(
-        GetService({
-          data: {
-            schema: 'Seller',
-            query: {
-              _id: params.customerId,
-            },
+    const [err, response] = await ServiceErrorManager(
+      GetSellerDetailsService({
+        data: {
+          query: {
+            _id: params.customerId,
           },
-        }),
-        {
-          failureMessage: 'Error while fetching customer details!',
-        }
-      );
-      if (err || !response) return;
-      setSeller(response || {});
-    } catch (error) {
-      console.error('Failed to fetch sellers:', error);
-    } finally {
-      setIsLoading(false);
-    }
+        },
+      }),
+      {
+        failureMessage: 'Error while fetching customer details!',
+      }
+    );
+    if (err || !response) return;
+    setSeller(response || {});
+    setIsLoading(false);
   };
 
   useEffect(() => {
     fetchSellers();
   }, []);
 
-  const handleApprove = async () => {
+  const handleApprove = () => {
     setProcessingAction(true);
-    try {
-      setShowConfirmDialog(false);
-    } catch (error) {
-      console.error('Failed to approve seller:', error);
-    } finally {
-      setProcessingAction(false);
-    }
+    ServiceErrorManager(
+      ApproveRejectSellerService({
+        data: {
+          payload: {
+            isApproved: true,
+            sellerId: params.customerId,
+            status: 'approved',
+            reason: 'Application approved',
+          },
+        },
+      }),
+      {}
+    )
+      .then(([_, data]) => {
+        setSeller(data.updateSellerStatus);
+      })
+      .finally(() => {
+        setShowConfirmDialog(false);
+        setProcessingAction(false);
+      });
   };
 
   const handleReject = async () => {
-    if (!rejectionReason.trim()) {
-      return;
-    }
+    if (!rejectionReason.trim() || !status) return;
     setProcessingAction(true);
-    try {
-      setShowRejectDialog(false);
-      setRejectionReason('');
-    } catch (error) {
-      console.error('Failed to reject seller:', error);
-    } finally {
-      setProcessingAction(false);
-    }
+    ServiceErrorManager(
+      ApproveRejectSellerService({
+        data: {
+          payload: {
+            isApproved: false,
+            sellerId: params.customerId,
+            status: status,
+            rejectionReason: rejectionReason,
+            reason: rejectionReason,
+            canRefill: status === 'rejected' ? true : false,
+          },
+        },
+      }),
+      {}
+    )
+      .then(([_, data]) => {
+        if (data?.updateSellerStatus) {
+          setSeller(data.updateSellerStatus);
+        }
+      })
+      .finally(() => {
+        setShowRejectDialog(false);
+        setRejectionReason('');
+        setProcessingAction(false);
+      });
+  };
+
+  const handleStatusChange = () => {
+    // For sellers that aren't in pending state
+    if (!seller || seller.status === 'pending') return;
+
+    setShowRejectDialog(true);
   };
 
   const getStatusColor = (status: string) => {
@@ -122,6 +148,22 @@ const SellerDetails = () => {
     }
   };
 
+  const getStatusBadge = (status: string) => {
+    const color = getStatusColor(status);
+    return (
+      <YStack
+        backgroundColor={`$${color}2`}
+        paddingHorizontal='$2'
+        paddingVertical='$1'
+        borderRadius='$2'
+      >
+        <Text color={`$${color}10`} fontWeight='bold' textTransform='uppercase'>
+          {status}
+        </Text>
+      </YStack>
+    );
+  };
+
   if (isLoading || !seller) {
     return (
       <YStack
@@ -138,19 +180,8 @@ const SellerDetails = () => {
 
   return (
     <YStack padding='$4' space='$4' flex={1} backgroundColor='$background'>
-      {/* <XStack alignItems='center' space='$3'>
-        <Button
-          icon={<FaArrowLeft />}
-          variant='outlined'
-          onPress={() => router.back()}
-          circular
-        />
-        <H4>Seller Review</H4>
-      </XStack> */}
-
       <ScrollView showsVerticalScrollIndicator={false}>
         <YStack space='$4'>
-          {/* Header */}
           <Card padding='$4' bordered>
             <XStack justifyContent='space-between' alignItems='center'>
               <YStack>
@@ -162,7 +193,7 @@ const SellerDetails = () => {
                 </Text>
               </YStack>
 
-              {seller.status.toUpperCase()}
+              {getStatusBadge(seller.status)}
             </XStack>
 
             {seller.rejectionReason && (
@@ -173,14 +204,10 @@ const SellerDetails = () => {
                 borderRadius='$2'
               >
                 <XStack alignItems='center' space='$2'>
-                  <IoAlertCircle color='$red10' />
-                  <Text fontWeight='bold' color='$red10'>
-                    Rejection Reason:
-                  </Text>
+                  <IoAlertCircle />
+                  <Text fontWeight='bold'>Reason:</Text>
+                  <Text marginTop='$1'>{seller.rejectionReason}</Text>
                 </XStack>
-                <Text color='$red10' marginTop='$1'>
-                  {seller.rejectionReason}
-                </Text>
               </YStack>
             )}
           </Card>
@@ -191,24 +218,30 @@ const SellerDetails = () => {
             flex={1}
             flexDirection='column'
           >
-            <Tabs.List>
-              <Tabs.Tab space='$2' value='details'>
-                <Building />
-                <Text>Business Details</Text>
-              </Tabs.Tab>
-              <Tabs.Tab space='$2' value='address'>
-                <MapPin />
-                <Text>Address</Text>
-              </Tabs.Tab>
-              <Tabs.Tab space='$2' value='bank'>
-                <CreditCard />
-                <Text>Bank Details</Text>
-              </Tabs.Tab>
-              <Tabs.Tab space='$2' value='documents'>
-                <FileText />
-                <Text>Documents</Text>
-              </Tabs.Tab>
-            </Tabs.List>
+            <ScrollView horizontal>
+              <Tabs.List>
+                <Tabs.Tab space='$2' value='details'>
+                  <Building />
+                  <Text>Business Details</Text>
+                </Tabs.Tab>
+                <Tabs.Tab space='$2' value='address'>
+                  <MapPin />
+                  <Text>Address</Text>
+                </Tabs.Tab>
+                <Tabs.Tab space='$2' value='bank'>
+                  <CreditCard />
+                  <Text>Bank Details</Text>
+                </Tabs.Tab>
+                <Tabs.Tab space='$2' value='documents'>
+                  <FileText />
+                  <Text>Documents</Text>
+                </Tabs.Tab>
+                <Tabs.Tab space='$2' value='history'>
+                  <FaHistory />
+                  <Text>Status History</Text>
+                </Tabs.Tab>
+              </Tabs.List>
+            </ScrollView>
 
             <Tabs.Content value='details'>
               <Card padding='$4' bordered marginTop='$4'>
@@ -224,9 +257,9 @@ const SellerDetails = () => {
                   />
                   <InfoItem
                     label='Registration Date'
-                    value={new Date(
-                      (seller as any)?.createdAt
-                    ).toLocaleDateString()}
+                    value={dayjs((seller as any)?.createdAt).format(
+                      'DD/MM/YYYY'
+                    )}
                   />
                   <InfoItem
                     label='Can Refill'
@@ -235,7 +268,7 @@ const SellerDetails = () => {
                   {seller.refilledAt && (
                     <InfoItem
                       label='Last Refilled'
-                      value={new Date(seller.refilledAt).toLocaleDateString()}
+                      value={dayjs(seller.refilledAt).format('DD/MM/YYYY')}
                     />
                   )}
                 </YStack>
@@ -318,20 +351,59 @@ const SellerDetails = () => {
                 )}
               </Card>
             </Tabs.Content>
+
+            <Tabs.Content value='history'>
+              <Card padding='$4' bordered marginTop='$4'>
+                <H5 marginBottom='$4'>Status History</H5>
+                {seller.statusLogs && seller.statusLogs.length > 0 ? (
+                  <YStack space='$3'>
+                    {seller.statusLogs.map((log: IStatusLog, index: number) => (
+                      <ScrollView maxHeight={200}>
+                        <YStack key={index} paddingVertical='$2'>
+                          {index > 0 && <Separator marginVertical='$2' />}
+                          <XStack
+                            justifyContent='space-between'
+                            alignItems='center'
+                          >
+                            <XStack space='$2' alignItems='center'>
+                              {getStatusBadge(log.status)}
+                              <Text>{log.reason}</Text>
+                            </XStack>
+                            <Text fontSize='$3' color='$gray11'>
+                              {dayjs(log.createdAt).format('DD/MM/YYYY')}
+                            </Text>
+                          </XStack>
+                        </YStack>
+                      </ScrollView>
+                    ))}
+                  </YStack>
+                ) : (
+                  <YStack
+                    height={100}
+                    justifyContent='center'
+                    alignItems='center'
+                  >
+                    <Text color='$gray11'>No status history available</Text>
+                  </YStack>
+                )}
+              </Card>
+            </Tabs.Content>
           </Tabs>
 
-          {seller.status === 'pending' && (
+          {seller.status === 'pending' ? (
             <Card padding='$4' bordered marginTop='$2'>
               <XStack space='$4' justifyContent='flex-end'>
                 <Button
+                  icon={<FaTimes />}
                   variant='outlined'
-                  size='$4'
+                  size='$3'
                   onPress={() => setShowRejectDialog(true)}
                 >
                   Reject
                 </Button>
                 <Button
-                  size='$4'
+                  icon={<FaCheck />}
+                  size='$3'
                   backgroundColor='$primary'
                   onPress={() => setShowConfirmDialog(true)}
                 >
@@ -339,99 +411,88 @@ const SellerDetails = () => {
                 </Button>
               </XStack>
             </Card>
+          ) : (
+            <Card padding='$4' bordered marginTop='$2'>
+              <XStack space='$4' justifyContent='flex-end'>
+                <Button
+                  icon={<FaHistory />}
+                  size='$3'
+                  variant='outlined'
+                  onPress={handleStatusChange}
+                >
+                  Change Status
+                </Button>
+              </XStack>
+            </Card>
           )}
         </YStack>
       </ScrollView>
 
-      <Dialog open={showRejectDialog} onOpenChange={setShowRejectDialog}>
-        <Dialog.Portal>
-          <Dialog.Overlay
-            key='overlay'
-            opacity={0.5}
-            enterStyle={{ opacity: 0 }}
-            exitStyle={{ opacity: 0 }}
+      <Modal
+        open={showRejectDialog}
+        isLoading={processingAction}
+        onClose={() => {
+          setShowRejectDialog(false);
+          setRejectionReason('');
+          setStatus('');
+        }}
+        title={
+          seller?.status === 'pending'
+            ? 'Reject Seller'
+            : 'Change Seller Status'
+        }
+        description={
+          seller?.status === 'pending'
+            ? 'Please provide a reason for rejecting this seller application.'
+            : "Update the seller's status and provide a reason for the change."
+        }
+        confirmText={
+          seller?.status === 'pending' ? 'Confirm Rejection' : 'Update Status'
+        }
+        confirmButtonProps={{
+          backgroundColor: '$red10',
+        }}
+        {...(rejectionReason.trim() && status
+          ? { onConfirm: handleReject }
+          : {})}
+      >
+        <YStack marginTop='$3' space='$3'>
+          <AsyncSelect
+            size='$3'
+            options={[
+              { value: 'approved', label: 'Approved' },
+              { value: 'rejected', label: 'Rejected' },
+              { value: 'restricted', label: 'Restricted' },
+              { value: 'suspended', label: 'Suspended' },
+            ].filter(
+              (option) =>
+                // Don't show current status as an option
+                seller?.status !== option.value
+            )}
+            placeholder='Select status'
+            onChange={(value) => {
+              setStatus(value);
+            }}
           />
-          <Dialog.Content
-            bordered
-            elevate
-            key='content'
-            enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
-            exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
-            space
-          >
-            <Dialog.Title fontSize='$4.5' fontWeight='bold'>
-              Reject Seller
-            </Dialog.Title>
-            <Dialog.Description>
-              Please provide a reason for rejecting this seller application.
-            </Dialog.Description>
-
-            <TextArea
-              placeholder='Enter rejection reason...'
-              value={rejectionReason}
-              onChangeText={setRejectionReason}
-              minHeight={100}
-            />
-
-            <XStack space='$3' justifyContent='flex-end'>
-              <Dialog.Close asChild>
-                <Button variant='outlined' disabled={processingAction}>
-                  Cancel
-                </Button>
-              </Dialog.Close>
-              <Button
-                // theme="red"
-                onPress={handleReject}
-                disabled={!rejectionReason.trim() || processingAction}
-              >
-                {processingAction ? <Spinner /> : 'Confirm Rejection'}
-              </Button>
-            </XStack>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog>
-
-      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <Dialog.Portal>
-          <Dialog.Overlay
-            key='overlay'
-            opacity={0.5}
-            enterStyle={{ opacity: 0 }}
-            exitStyle={{ opacity: 0 }}
+          <TextArea
+            placeholder='Enter reason for status change...'
+            value={rejectionReason}
+            onChangeText={setRejectionReason}
+            minHeight={100}
           />
-          <Dialog.Content
-            bordered
-            elevate
-            key='content'
-            enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
-            exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
-            space
-          >
-            <Dialog.Title fontWeight='bold' fontSize='$4.5'>
-              Approve Seller
-            </Dialog.Title>
-            <Dialog.Description>
-              Are you sure you want to approve this seller? They will be able to
-              list products on the platform.
-            </Dialog.Description>
+        </YStack>
+      </Modal>
 
-            <XStack space='$3' justifyContent='flex-end'>
-              <Dialog.Close asChild>
-                <Button variant='outlined' disabled={processingAction}>
-                  Cancel
-                </Button>
-              </Dialog.Close>
-              <Button
-                backgroundColor='$primary'
-                onPress={handleApprove}
-                disabled={processingAction}
-              >
-                {processingAction ? <Spinner /> : 'Confirm Approval'}
-              </Button>
-            </XStack>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog>
+      <Modal
+        open={showConfirmDialog}
+        title='Approve Seller'
+        description='Are you sure you want to approve this seller? They will be able to list products on the platform.'
+        onClose={() => setShowConfirmDialog(false)}
+        onConfirm={handleApprove}
+        confirmButtonProps={{ backgroundColor: '$primary' }}
+        isLoading={processingAction}
+        confirmText='Confirm Approve'
+      />
     </YStack>
   );
 };
@@ -442,7 +503,7 @@ const InfoItem = ({ label, value }: { label: string; value: string }) => (
       {label}:
     </Text>
     <Text flex={1} fontSize='$3' fontWeight='500'>
-      {value}
+      {value || 'N/A'}
     </Text>
   </XStack>
 );

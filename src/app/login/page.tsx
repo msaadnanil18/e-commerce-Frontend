@@ -32,7 +32,10 @@ const AuthenticationUI = () => {
 
   const handleLoginClick = (method: string) => {
     if (method === 'google') {
-      if (role === 'seller-registration') {
+      if (
+        role === '/seller/seller-registration' ||
+        'seller/seller-registration'
+      ) {
         login('seller');
       } else {
         login('customer');

@@ -15,8 +15,10 @@ export const permissions = Object.freeze({
 
   CAN_VIEW_ANALYTICS: 'view_analytics',
   CAN_MANAGE_USERS: 'manage_users',
-
   CAN_PROCESS_REFUNDS: 'process_refunds',
+
+  CAN_VIEW_CART: 'can_view_cart',
+  CAN_ADD_PRODUCT_CART: 'can_add_product_cart',
 
   /* ORDER */
   CAN_VIEW_ORDERS: 'view_orders',
@@ -54,11 +56,14 @@ export const permissions = Object.freeze({
   CAN_CREATE_COMMISSION_CONFIGURATION: 'can_create_commission configuration',
   CAN_VIEW_COMMISSION_CONFIGURATION: 'can_view_commission configuration',
   /* COMMISSION CONFIGURATION */
+
+  CAN_SELLER_REGISTERED: 'can_seller_registered',
 });
 
 export const ProtectedRoutes: Record<string, string[]> = Object.freeze({
-  '/cart': [],
-  '/seller-registration': [],
+  '/cart': [permissions.CAN_VIEW_CART],
+  '/seller/seller-registration': [permissions.CAN_SELLER_REGISTERED],
+  // '/seller/refill': [],
 
   '/admin/dashboard': [],
 
