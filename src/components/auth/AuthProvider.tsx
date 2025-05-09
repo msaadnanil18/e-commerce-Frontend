@@ -10,6 +10,9 @@ const cognitoAuthConfig: AuthProviderProps = {
   response_type: 'code',
   scope: 'aws.cognito.signin.user.admin email openid profile',
   post_logout_redirect_uri: process.env.NEXT_PUBLIC_LOGOUT_URI,
+  extraQueryParams: {
+    prompt: 'select_account',
+  },
 };
 
 const OIDCProvider = ({ children }: { children: React.ReactNode }) => {

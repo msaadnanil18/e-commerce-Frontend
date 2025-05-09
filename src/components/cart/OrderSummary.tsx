@@ -33,9 +33,11 @@ const OrderSummary: FC<{
   const tax = (subtotal - totalDiscount) * 0;
 
   const totalPrice =
-    cartDetail?.totalPrice +
+    (cartDetail?.totalPrice || 0) +
     ((extraCharges as any)?.total?.delivery || 0) +
     ((extraCharges as any)?.total?.service || 0);
+
+  console.log(totalPrice, 'totalPrice');
 
   return (
     <YStack

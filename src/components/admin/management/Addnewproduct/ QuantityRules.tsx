@@ -17,6 +17,7 @@ const QuantityRules = ({ form }: { form: UseFormReturn<Product> }) => {
     control,
     formState: { errors },
   } = form;
+
   const {
     fields: predefinedFields,
     append: appendPredefined,
@@ -26,6 +27,17 @@ const QuantityRules = ({ form }: { form: UseFormReturn<Product> }) => {
     //@ts-ignore
     name: 'quantityRules.predefined',
   });
+
+  const {
+    fields: discountTiersFields,
+    append: appendDiscountTiers,
+    remove: removeDiscountTiers,
+  } = useFieldArray({
+    control,
+    // @ts-ignore
+    name: 'quantityRules.discountTiers',
+  });
+
   return (
     <YStack space='$4'>
       <SizableText size='$5' fontWeight='bold' marginTop='$4'>
@@ -91,26 +103,28 @@ const QuantityRules = ({ form }: { form: UseFormReturn<Product> }) => {
           )}
         </YStack>
 
-        <YStack space='$2' flex={1} minWidth={150}>
-          <Text>Step Size</Text>
-          <Controller
-            name='quantityRules.step'
-            control={control}
-            rules={{
-              min: { value: 1, message: 'Step must be at least 1' },
-            }}
-            render={({ field }) => (
-              <Input
-                {...field}
-                placeholder='Step'
-                inputMode='numeric'
-                keyboardType='numeric'
-                value={(field.value || '').toString()}
-                onChangeText={(value) => field.onChange(parseInt(value) || 1)}
-              />
-            )}
-          />
-        </YStack>
+        {!form.watch('quantityRules').predefined.length && (
+          <YStack space='$2' flex={1} minWidth={150}>
+            <Text>Step Size</Text>
+            <Controller
+              name='quantityRules.step'
+              control={control}
+              rules={{
+                min: { value: 1, message: 'Step must be at least 1' },
+              }}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder='Step'
+                  inputMode='numeric'
+                  keyboardType='numeric'
+                  value={(field.value || '').toString()}
+                  onChangeText={(value) => field.onChange(parseInt(value) || 1)}
+                />
+              )}
+            />
+          </YStack>
+        )}
       </XStack>
 
       <YStack space='$3'>
@@ -152,6 +166,95 @@ const QuantityRules = ({ form }: { form: UseFormReturn<Product> }) => {
           }}
         >
           Add Predefined Quantities
+        </Button>
+      </YStack>
+      <YStack space='$3'>
+        <Text fontWeight='bold'>Discount Tiers</Text>
+
+        {discountTiersFields.map((field, index) => (
+          <XStack
+            key={field.id}
+            space='$2'
+            marginBottom='$3'
+            alignItems='center'
+          >
+            <YStack space='$2' flex={1} minWidth={150}>
+              <Text>Quantity </Text>
+              <Controller
+                name={`quantityRules.discountTiers.${index}.quantity`}
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    flex={1}
+                    {...field}
+                    inputMode='numeric'
+                    keyboardType='numeric'
+                    value={(field.value || '').toString()}
+                    onChangeText={(value) =>
+                      field.onChange(parseInt(value) || 0)
+                    }
+                  />
+                )}
+              />
+            </YStack>
+            <YStack space='$2' flex={1} minWidth={150}>
+              <Text>Discount Percentage </Text>
+              <Controller
+                name={`quantityRules.discountTiers.${index}.discountPercentage`}
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    flex={1}
+                    {...field}
+                    inputMode='numeric'
+                    keyboardType='numeric'
+                    value={(field.value || '').toString()}
+                    onChangeText={(value) =>
+                      field.onChange(parseInt(value) || 0)
+                    }
+                  />
+                )}
+              />
+            </YStack>
+            <YStack space='$2' flex={1} minWidth={150}>
+              <Text>Discount Percentage </Text>
+              <Controller
+                name={`quantityRules.discountTiers.${index}.flatDiscount`}
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    flex={1}
+                    {...field}
+                    inputMode='numeric'
+                    keyboardType='numeric'
+                    value={(field.value || '').toString()}
+                    onChangeText={(value) =>
+                      field.onChange(parseInt(value) || 0)
+                    }
+                  />
+                )}
+              />
+            </YStack>
+            <Button
+              size='$2'
+              marginTop='$5'
+              icon={<FiTrash2 size={16} />}
+              onPress={() => removeDiscountTiers(index)}
+            />
+          </XStack>
+        ))}
+
+        <Button
+          icon={<FiPlus size={16} />}
+          onPress={() => {
+            appendDiscountTiers({
+              quantity: 0,
+              discountPercentage: 0,
+              flatDiscount: 0,
+            });
+          }}
+        >
+          Add Discount Tiers
         </Button>
       </YStack>
     </YStack>

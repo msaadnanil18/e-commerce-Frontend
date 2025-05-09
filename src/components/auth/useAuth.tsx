@@ -2,7 +2,7 @@
 
 import { ServiceErrorManager } from '@/helpers/service';
 import { GoogleLoginService } from '@/services/auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAuth as cognitoUseAuth } from 'react-oidc-context';
@@ -24,7 +24,6 @@ export const useAuth = () => {
       setLoading(true);
       const [err, result] = await ServiceErrorManager(
         GoogleLoginService({
-          method: 'POST',
           data: { token, selectedRole: role },
         }),
         {
@@ -39,10 +38,12 @@ export const useAuth = () => {
 
       if (result.redirect) {
         router.push(result.redirect);
-        dispatch(setUser(result.user));
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('sessionToken', result.sessionToken);
-        }
+        dispatch(
+          setUser({ ...result.user, sessionToken: result.sessionToken })
+        );
+        // if (typeof window !== 'undefined') {
+        //   localStorage.setItem('sessionToken', result.sessionToken);
+        // }
         return result.redirect;
       }
 
@@ -62,30 +63,31 @@ export const useAuth = () => {
           prompt: 'select_account',
         },
       });
-      return await saveUserData(user.access_token, role);
+      if (user?.access_token) {
+        return await saveUserData(user.access_token, role);
+      }
     },
     [auth, saveUserData]
   );
 
   const login = async (role?: string) => {
-    const R = await handleLogin(role);
-    if (!R) {
+    const result = await handleLogin(role);
+    if (!result) {
       await signOutRedirect();
-      router.replace(R || redirect);
+      router.replace(redirect);
     }
   };
 
   const signOutRedirect = async () => {
     auth.removeUser();
-    router.push(
-      `${process.env.NEXT_PUBLIC_CONGNITO_DOMAIN}/logout?client_id=${
-        process.env.NEXT_PUBLIC_CONGNITO_CLIENT_ID
-      }&logout_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_LOGOUT_URI!)}`
-    );
 
-    setTimeout(() => {
-      auth.removeUser();
-    }, 1000);
+    const logoutUrl = `${
+      process.env.NEXT_PUBLIC_CONGNITO_DOMAIN
+    }/logout?client_id=${
+      process.env.NEXT_PUBLIC_CONGNITO_CLIENT_ID
+    }&logout_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_LOGOUT_URI!)}`;
+
+    window.location.href = logoutUrl;
   };
   const logOut = async () => {
     if (typeof window !== 'undefined') {

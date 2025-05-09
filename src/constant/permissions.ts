@@ -6,6 +6,7 @@ export const permissions = Object.freeze({
   /* SELLER PERMISSION */
 
   /* PRODUCT PERMISSION */
+  CAN_ADD_PRODUCT: 'can_add_products',
   CAN_VIEW_PRODUCT: 'can_view_product',
   CAN_VIEW_PRODUCT_LIST: 'view_product_list',
   CAN_MANAGE_PRODUCTS: 'manage_products',
@@ -69,14 +70,23 @@ export const ProtectedRoutes: Record<string, string[]> = Object.freeze({
 
   /* CONFIG */
   '/admin/config/commission': [permissions.CAN_VIEW_COMMISSION_CONFIGURATION],
-  '/admin/config/commission/create': [],
-  '/admin/config/commission/update': [],
+  '/admin/config/commission/create': [
+    permissions.CAN_CREATE_COMMISSION_CONFIGURATION,
+  ],
+  '/admin/config/commission/update': [
+    permissions.CAN_MANAGE_COMMISSION_CONFIGURATION,
+  ],
   '/admin/config/service-charge': [permissions.CAN_VIEW_SERVICE_CHARGE],
-  '/admin/config/service-charge/create': [],
-  '/admin/config/service-charge/update': [],
-  '/admin/config/delivery-zone ': [permissions.CAN_VIEW_DELIVERY_ZONE],
-  '/admin/config/delivery-zone/create': [],
-  '/admin/config/delivery-zone/update': [],
+  '/admin/config/service-charge/create': [
+    permissions.CAN_CREATE_SERVICE_CHARGE,
+  ],
+  '/admin/config/service-charge/update': [
+    permissions.CAN_MANAGE_SERVICE_CHARGE,
+  ],
+  '/admin/config/delivery-zone': [permissions.CAN_VIEW_DELIVERY_ZONE],
+  '/admin/config/delivery-zone/create': [permissions.CAN_CREATE_DELIVERY_ZONE],
+
+  '/admin/config/delivery-zone/update': [permissions.CAN_MANAGE_DELIVERY_ZONE],
   /* CONFIG */
 
   '/admin/role-assign': [permissions.CAN_VIEW_ADMIN_AND_SUPER_ADMIN_LIST],
@@ -88,6 +98,7 @@ export const ProtectedRoutes: Record<string, string[]> = Object.freeze({
 
   /* Product */
   '/admin/product': [permissions.CAN_VIEW_PRODUCT],
+  '/admin/product/create': [permissions.CAN_ADD_PRODUCT],
   /* Product */
 
   /* ORDERS */

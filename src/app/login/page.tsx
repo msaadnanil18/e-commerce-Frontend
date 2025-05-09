@@ -34,7 +34,7 @@ const AuthenticationUI = () => {
     if (method === 'google') {
       if (
         role === '/seller/seller-registration' ||
-        'seller/seller-registration'
+        role == 'seller/seller-registration'
       ) {
         login('seller');
       } else {

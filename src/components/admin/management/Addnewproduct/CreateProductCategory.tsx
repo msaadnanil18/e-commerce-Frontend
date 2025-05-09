@@ -17,7 +17,6 @@ const CreateProductCategory: FC<{
     const [_, respone] = await ServiceErrorManager(
       ProductcategoryCreateService({
         data: {
-          schema: 'Productcategory',
           payload: {
             type,
             title: inputValue.toLowerCase(),

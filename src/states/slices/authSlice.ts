@@ -15,17 +15,23 @@ const getUserFromToken = (): IUser | null => {
   if (typeof window !== 'undefined') {
     token = localStorage.getItem('sessionToken');
   }
-  //localStorage.getItem('sessionToken');
+
   if (!token) return null;
 
   try {
-    const decoded: IUser = jwtDecode<IUser>(token);
+    const decoded: IUser & { exp: number } = jwtDecode(token);
+    const now = Date.now() / 1000;
+
+    if (decoded.exp && decoded.exp < now) {
+      localStorage.removeItem('sessionToken');
+      return null;
+    }
+
     return decoded;
   } catch {
     return null;
   }
 };
-
 const initialUser = getUserFromToken();
 
 const initialState: UserState = {
@@ -48,10 +54,23 @@ const authSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.removeItem('sessionToken');
       }
-      // localStorage.removeItem('sessionToken');
+    },
+    validateSession: (state) => {
+      const user = getUserFromToken();
+      console.log(user, 'user');
+      if (!user) {
+        state.user = null;
+        state.isAuthenticated = false;
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('sessionToken');
+        }
+      } else {
+        state.user = user;
+        state.isAuthenticated = true;
+      }
     },
   },
 });
 
-export const { setUser, logout } = authSlice.actions;
+export const { setUser, logout, validateSession } = authSlice.actions;
 export default authSlice.reducer;

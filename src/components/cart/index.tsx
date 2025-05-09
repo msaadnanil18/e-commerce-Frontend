@@ -27,6 +27,7 @@ import CartDefaulAddress from './CartDefaulAddress';
 import OrderSummary from './OrderSummary';
 import { useRouter } from 'next/navigation';
 import { useScreen } from '@/hook/useScreen';
+import EmptyState from '../appComponets/Empty/EmptyState';
 
 const CartPage: FC = () => {
   const media = useScreen();
@@ -120,19 +121,22 @@ const CartPage: FC = () => {
                 : { width: '65%' })}
               padding={media.xs ? '$1' : '$4'}
             >
-              <CartDefaulAddress
-                defaultAddres={defaultAddres}
-                reload={fetchCartDetails}
-              />
+              {defaultAddres && (
+                <CartDefaulAddress
+                  defaultAddres={defaultAddres}
+                  reload={fetchCartDetails}
+                />
+              )}
 
               <ScrollView
                 maxHeight={media.xs ? 250 : 360}
                 showsVerticalScrollIndicator
               >
                 {(cartDetail?.items || [])?.length === 0 ? (
-                  <Text fontSize={media.sm ? '$4' : '$5'} color='$gray10'>
-                    Your cart is empty.
-                  </Text>
+                  <EmptyState
+                    title='Your cart is empty'
+                    description='Looks like you have not added any items to your cart yet.'
+                  />
                 ) : (
                   <YStack gap='$4'>
                     {(cartDetail?.items || [])?.map((item) => {
@@ -268,7 +272,12 @@ const CartPage: FC = () => {
               </ScrollView>
             </YStack>
 
-            <OrderSummary cartDetail={cartDetail} extraCharges={extraCharges} />
+            {(cartDetail?.items || []).length > 0 && (
+              <OrderSummary
+                cartDetail={cartDetail}
+                extraCharges={extraCharges}
+              />
+            )}
           </XStack>
         </YStack>
       )}

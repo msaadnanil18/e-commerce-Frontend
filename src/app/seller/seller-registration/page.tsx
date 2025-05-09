@@ -7,11 +7,14 @@ import SellerRegistrationSteps, {
 import useAuth from '@/components/auth/useAuth';
 import { ServiceErrorManager } from '@/helpers/service';
 import { SellerRegistrationService } from '@/services/seller';
+import { RootState } from '@/states/store/store';
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
 
 const SellerRegistration: FC = () => {
   const { logOut } = useAuth();
+  const user = useSelector((state: RootState) => state.user);
   const [currentStep, setCurrentStep] = useState(0);
   const [formValue, setFormValue] = useState<Partial<SellerFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,6 +36,10 @@ const SellerRegistration: FC = () => {
               documents: uploadFile,
               ...formValue,
             },
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${(user?.user as any).sessionToken}`,
           },
         }),
         {

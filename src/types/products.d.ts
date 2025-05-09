@@ -1,5 +1,11 @@
 import { ISeller } from './seller';
 
+export interface IDiscountTiers {
+  quantity: number;
+  discountPercentage: number;
+  flatDiscount: number;
+}
+
 export interface Product {
   name: string;
   reason?: string;
@@ -27,6 +33,7 @@ export interface Product {
     max: number;
     step: number;
     predefined: number[];
+    discountTiers: IDiscountTiers[];
   };
   sellerSpecificDetails: {
     manufacturer: string;
