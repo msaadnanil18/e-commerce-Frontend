@@ -99,7 +99,7 @@ const ProductDetails: FC<ProductDetailsPageProps> = ({ params }) => {
   return (
     <ScrollView padding='$4'>
       <XStack flexDirection={screen.xs ? 'column' : 'row'}>
-        <View flexBasis='40%' flexShrink={0} flexGrow={1}>
+        <View flexShrink={0} flexGrow={1}>
           <ProductstatusColor product={product} />
           <ProductImage {...{ product, handleImageClick, selectedVariant }} />
         </View>

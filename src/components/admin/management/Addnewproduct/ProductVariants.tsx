@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { Controller, useFieldArray, UseFormReturn } from 'react-hook-form';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
 import {
@@ -256,6 +256,7 @@ const ProductVariants = ({ form }: { form: UseFormReturn<Product> }) => {
                 </Text>
               </Text>
               <FileUpload
+                maxSize={60} // 60 MB
                 form={form}
                 multiple
                 accept={[
@@ -339,4 +340,4 @@ const ProductVariants = ({ form }: { form: UseFormReturn<Product> }) => {
   );
 };
 
-export default memo(ProductVariants);
+export default ProductVariants;

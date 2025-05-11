@@ -7,9 +7,7 @@ export const UpdateDeliveryZoneService = (id: string) =>
     method: 'PUT',
   });
 
-export const ListDeliveryZoneService = Service('/delivery-zones/list', {
-  method: 'GET',
-});
+export const ListDeliveryZoneService = Service('/delivery-zones/list');
 
 export const GetDeliveryZoneService = (id: string) =>
   Service(`/delivery-zones/get/${id}`, {

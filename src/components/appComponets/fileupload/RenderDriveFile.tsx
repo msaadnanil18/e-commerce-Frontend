@@ -17,12 +17,16 @@ const RenderDriveFile = ({
   inline = false,
   className,
   onClick,
+  MediaHTMLAttributes,
 }: {
   file: fileProps;
   style?: React.CSSProperties;
   inline?: boolean;
   className?: string;
   onClick?: () => void;
+  MediaHTMLAttributes?:
+    | React.VideoHTMLAttributes<HTMLVideoElement>
+    | React.AudioHTMLAttributes<HTMLAudioElement>;
 }) => {
   if (!file?.key) return <Spinner />;
   const [selectedFile, setSelectedFile] = useState<fileProps | null>(null);
@@ -51,6 +55,7 @@ const RenderDriveFile = ({
 
   return (
     <AttachmentViewer
+      MediaHTMLAttributes={MediaHTMLAttributes}
       className={className}
       style={style}
       file={uri}

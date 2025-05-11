@@ -1,5 +1,5 @@
 'use client';
-import { FC, useEffect, useState, ReactElement } from 'react';
+import { FC, useEffect, useState, ReactElement, useCallback } from 'react';
 import { YStack, Text, XStack, Button, ScrollView } from 'tamagui';
 import Modal from '../../appComponets/modal/PopupModal';
 import { ServiceErrorManager } from '@/helpers/service';
@@ -9,13 +9,13 @@ import { IUser } from '@/types/auth';
 import { RiEdit2Fill } from 'react-icons/ri';
 import { NewTableHOC } from '../organism/TableHOC';
 import { useDarkMode } from '@/hook/useDarkMode';
-import Loader from '../organism/Loader';
 import { Tag } from '../../appComponets/tag/Tag';
 import { TbTrash } from 'react-icons/tb';
 import { startCase } from 'lodash-es';
 import SendInvitation from './SendInvitation';
 import { permissions } from '@/constant/permissions';
 import usePermission from '@/hook/usePermission';
+import { usePagination } from '@/hook/usePagination';
 
 interface DataType {
   _id: string;
@@ -29,19 +29,44 @@ interface DataType {
 const RoleAssign: FC = () => {
   const { hasPermission } = usePermission();
   const isDark = useDarkMode();
-  const [loading, setLoading] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
-  const [users, setUsers] = useState<Array<IUser>>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const [pageCount, setPageCount] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
   const [roles, setRoles] = useState<Array<string>>([]);
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [confirmDeleteRole, setConfirmDeleteRole] = useState<string | null>(
     null
   );
+
+  const fetchAdmisList = useCallback(
+    async (page: number, limit: number, search: string) => {
+      const [err, data] = await ServiceErrorManager(
+        UserAdminsListService({
+          data: {
+            options: {
+              page,
+              limit,
+            },
+            query: {
+              searchFields: ['name', 'email', 'phone'],
+              search,
+            },
+          },
+        }),
+        {}
+      );
+      if (err || !data) return;
+      return data;
+    },
+    []
+  );
+
+  const {
+    state: { loading, items: users },
+    action,
+    paginationProps,
+  } = usePagination<IUser>({
+    fetchFunction: fetchAdmisList,
+  });
 
   const columns: Column<DataType>[] = [
     {
@@ -124,41 +149,6 @@ const RoleAssign: FC = () => {
     setEditModalOpen(true);
   };
 
-  const fetchAdmisList = () => {
-    setLoading(true);
-    ServiceErrorManager(
-      UserAdminsListService({
-        data: {
-          options: {
-            page: currentPage,
-            limit: pageSize,
-          },
-        },
-      }),
-      {}
-    )
-      .then(([_, response]) => {
-        setUsers(response?.docs || []);
-        setTotalCount(response?.totalDocs || 0);
-        setPageCount(response?.totalPages || 0);
-      })
-      .catch(console.log)
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    fetchAdmisList();
-  }, [currentPage, pageSize]);
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const handlePageSizeChange = (newPageSize: number) => {
-    setPageSize(newPageSize);
-    setCurrentPage(1);
-  };
-
   const handleRemoveRole = (roleToRemove: string) => {
     if (roleToRemove === 'admin') {
       setConfirmDeleteRole(roleToRemove);
@@ -188,7 +178,7 @@ const RoleAssign: FC = () => {
     )
       .then(() => {
         setEditModalOpen(false);
-        fetchAdmisList();
+        action.refresh();
       })
       .catch(console.error)
       .finally(() => setIsSaving(false));
@@ -288,30 +278,22 @@ const RoleAssign: FC = () => {
         </YStack>
       </Modal>
 
-      {loading ? (
-        <Loader />
-      ) : (
-        <ScrollView>
-          <NewTableHOC
-            isDark={isDark}
-            columns={columns}
-            data={rows}
-            title='Admins'
-            pagination={true}
-            filtering={true}
-            variant={isDark ? 'default' : 'striped'}
-            emptyMessage='No admins found'
-            serverSidePagination={{
-              pageCount: pageCount,
-              pageIndex: currentPage - 1,
-              pageSize: pageSize,
-              totalCount: totalCount,
-              onPageChange: handlePageChange,
-              onPageSizeChange: handlePageSizeChange,
-            }}
-          />
-        </ScrollView>
-      )}
+      <ScrollView>
+        <NewTableHOC
+          isLoading={loading}
+          onSearch={(e) => action.handleOnSearch(e, 600)}
+          pageSize={paginationProps.pageSize}
+          isDark={isDark}
+          columns={columns}
+          data={rows}
+          title='Admins'
+          pagination={true}
+          filtering={true}
+          variant={isDark ? 'default' : 'striped'}
+          emptyMessage='No admins found'
+          serverSidePagination={paginationProps}
+        />
+      </ScrollView>
     </YStack>
   );
 };

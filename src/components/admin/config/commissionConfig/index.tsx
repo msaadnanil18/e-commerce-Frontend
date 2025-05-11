@@ -1,24 +1,16 @@
 'use client';
 
-import TmgDrawer from '@/components/appComponets/Drawer/TmgDrawer';
 import PriceFormatter from '@/components/appComponets/PriceFormatter/PriceFormatter';
 import { ServiceErrorManager } from '@/helpers/service';
-import { useScreen } from '@/hook/useScreen';
 import { ListCommissionConfigService } from '@/services/Commission';
 import { ICommissionConfig } from '@/types/Commission';
 import { head, startCase } from 'lodash-es';
 import { useRouter } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import {
   FaPlus,
-  FaSearch,
-  FaFilter,
-  FaChevronDown,
-  FaChevronUp,
   FaPercentage,
   FaLayerGroup,
-  FaCheckCircle,
-  FaTimesCircle,
   FaSync,
   FaTag,
 } from 'react-icons/fa';
@@ -31,136 +23,91 @@ import {
   Card,
   Paragraph,
   Separator,
-  Input,
   ScrollView,
   Spinner,
   Tooltip,
   Avatar,
   H6,
 } from 'tamagui';
+import CommissionFilters from './CommissionFilters';
+import CommissionConfigHeader from './CommissionConfigHeader';
+import { usePagination } from '@/hook/usePagination';
+import Pagination from '@/components/appComponets/Pagination';
 
 const Commission: FC = () => {
-  const screen = useScreen();
-  const [commissionConfig, setCommissionConfig] = useState<
-    Array<ICommissionConfig>
-  >([]);
-  const [filteredConfig, setFilteredConfig] = useState<
-    Array<ICommissionConfig>
-  >([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [sortField, setSortField] = useState<string>('category');
   const [filterActive, setFilterActive] = useState<boolean | null>(null);
   const [filterType, setFilterType] = useState<string | null>(null);
   const [openFilterSheet, setOpenFilterSheet] = useState(false);
-  const [selectedConfig, setSelectedConfig] =
-    useState<ICommissionConfig | null>(null);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const router = useRouter();
 
-  const fetchCommissionConfigList = () => {
-    setLoading(true);
-    ServiceErrorManager(ListCommissionConfigService(), {})
-      .then(([_, data]) => {
-        setCommissionConfig(data.docs);
-        setFilteredConfig(data.docs);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const fetchCommissionConfigList = useCallback(
+    async (
+      page: number,
+      limit: number,
+      search: string,
+      categoryFilter: string
+    ) => {
+      const [err, data] = await ServiceErrorManager(
+        ListCommissionConfigService({
+          data: {
+            schema: 'CommissionConfig',
+            options: {
+              limit,
+              page,
+              ...(sortField
+                ? {
+                    sort: {
+                      [sortField]: sortOrder === 'asc' ? 1 : -1,
+                    },
+                  }
+                : {}),
+            },
+            query: {
+              ...(categoryFilter ? { category: categoryFilter } : {}),
+              ...(search ? { search: search } : {}),
+              ...(filterActive !== null
+                ? { 'conditions.isActive': filterActive }
+                : {}),
+              ...(filterType ? { commissionType: filterType } : {}),
+            },
+          },
+        }),
+        {
+          failureMessage: 'Error while getting commission config list',
+        }
+      );
+
+      if (err || !data) return;
+      return data;
+    },
+    [filterActive, filterType, sortField, sortOrder]
+  );
+
+  const {
+    state: { loading, items: commissionConfig },
+    action,
+    paginationProps,
+  } = usePagination<ICommissionConfig>({
+    fetchFunction: fetchCommissionConfigList,
+  });
+
+  const handelOnCategoryFilter = async (r: string) => {
+    console.log(r, 'ihiluhed');
+    setCategoryFilter(r);
+    await action.fetchData('', r);
   };
 
-  useEffect(() => {
-    fetchCommissionConfigList();
-  }, []);
-
-  useEffect(() => {
-    applyFiltersAndSort();
-  }, [
-    searchQuery,
-    sortOrder,
-    sortField,
-    filterActive,
-    filterType,
-    commissionConfig,
-  ]);
-
-  const applyFiltersAndSort = () => {
-    let filtered = [...commissionConfig];
-
-    // Apply search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter((config) => {
-        // Get category name from mock data (replace with actual logic)
-        const category = config.category.title || '';
-        return category.toLowerCase().includes(query);
-      });
-    }
-
-    // Apply active filter
-    if (filterActive !== null) {
-      filtered = filtered.filter(
-        (config) => config.conditions?.isActive === filterActive
-      );
-    }
-
-    // Apply commission type filter
-    if (filterType) {
-      filtered = filtered.filter(
-        (config) => config.commissionType === filterType
-      );
-    }
-
-    // Apply sorting
-    filtered.sort((a, b) => {
-      let aValue, bValue;
-
-      switch (sortField) {
-        case 'category':
-          aValue = a.category.title || '';
-          bValue = a.category.title || '';
-          break;
-        case 'commissionType':
-          aValue = a.commissionType;
-          bValue = b.commissionType;
-          break;
-        case 'value':
-          aValue = a.value || 0;
-          bValue = b.value || 0;
-          break;
-        case 'minOrderAmount':
-          aValue = a.minOrderAmount;
-          bValue = b.minOrderAmount;
-          break;
-        case 'createdAt':
-          aValue = new Date(a.createdAt).getTime();
-          bValue = new Date(b.createdAt).getTime();
-          break;
-        default:
-          aValue = a.createdAt;
-          bValue = b.createdAt;
-      }
-
-      if (sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
-    });
-
-    setFilteredConfig(filtered);
-  };
-
-  const resetFilters = () => {
-    setSearchQuery('');
+  const resetFilters = async () => {
+    setCategoryFilter('');
     setSortOrder('asc');
     setSortField('category');
     setFilterActive(null);
     setFilterType(null);
     setOpenFilterSheet(false);
+    await action.refresh();
   };
 
   const editConfig = (config: ICommissionConfig) => {
@@ -192,55 +139,10 @@ const Commission: FC = () => {
     }
   };
 
-  const renderSortButton = (field: string, label: string) => {
-    const isActive = sortField === field;
-
-    return (
-      <Button
-        size='$3'
-        variant='outlined'
-        onPress={() => {
-          if (isActive) {
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-          } else {
-            setSortField(field);
-            setSortOrder('asc');
-          }
-        }}
-        borderColor={isActive ? '$blue8' : undefined}
-        color={isActive ? '$blue10' : '$gray11'}
-        iconAfter={
-          isActive ? (
-            sortOrder === 'asc' ? (
-              <FaChevronUp size={12} />
-            ) : (
-              <FaChevronDown size={12} />
-            )
-          ) : undefined
-        }
-        paddingHorizontal='$2'
-        paddingVertical='$1'
-        {...{
-          '@sm': {
-            size: '$2.5',
-            paddingHorizontal: '$2.5',
-            fontSize: '$2.5',
-          },
-          '@md': {
-            size: '$4',
-            fontSize: '$4',
-          },
-        }}
-      >
-        {label}
-      </Button>
-    );
-  };
-
   return (
     <YStack>
       <XStack padding='$3' />
-      <YStack padding='$1' space='$4'>
+      <YStack padding='$1' paddingBottom='$3' space='$4'>
         <Card padding='$3'>
           <XStack
             justifyContent='space-between'
@@ -251,7 +153,7 @@ const Commission: FC = () => {
             <H6 color='$gray12'>Commission Configurations</H6>
             <XStack space='$2' alignItems='center'>
               <Button
-                onPress={() => fetchCommissionConfigList()}
+                onPress={() => action.refresh()}
                 icon={loading ? <Spinner /> : <FaSync size={14} />}
                 variant='outlined'
                 size='$3'
@@ -274,103 +176,27 @@ const Commission: FC = () => {
 
         <Card bordered>
           <YStack>
-            <XStack
-              padding='$4'
-              space='$2'
-              alignItems='center'
-              flexWrap='wrap'
-              gap='$2'
-            >
-              <XStack
-                flex={1}
-                minWidth={200}
-                maxWidth={400}
-                position='relative'
-              >
-                <Input
-                  flex={1}
-                  size='$3'
-                  placeholder='Search by category...'
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  paddingLeft='$8'
-                />
-                <XStack
-                  position='absolute'
-                  left='$2'
-                  top='25%'
-                  pointerEvents='none'
-                >
-                  <FaSearch size={16} color='#94a3b8' />
-                </XStack>
-              </XStack>
-
-              <XStack space='$2' alignItems='center' gap='$2'>
-                <Button
-                  icon={<FaFilter />}
-                  onPress={() => setOpenFilterSheet(true)}
-                  variant='outlined'
-                  size='$3'
-                  {...{
-                    '@sm': {
-                      size: '$2.5',
-                      paddingHorizontal: '$2.5',
-                      fontSize: '$2.5',
-                    },
-                    '@md': {
-                      size: '$4',
-                      fontSize: '$4',
-                    },
-                  }}
-                >
-                  Filters
-                  {(filterActive !== null || filterType !== null) && (
-                    <Text color='white' fontSize='$1'>
-                      {(filterActive !== null ? 1 : 0) +
-                        (filterType !== null ? 1 : 0)}
-                    </Text>
-                  )}
-                </Button>
-
-                <XStack
-                  alignItems='center'
-                  backgroundColor='$gray2'
-                  paddingHorizontal='$2'
-                  paddingVertical='$1'
-                  borderRadius='$4'
-                  space='$2'
-                  flexWrap='wrap'
-                  gap='$2'
-                >
-                  <Text color='$gray11' fontSize='$3'>
-                    Sort:
-                  </Text>
-                  <ScrollView
-                    space='$3'
-                    horizontal
-                    {...(screen.xs
-                      ? {
-                          maxWidth: 200,
-                        }
-                      : {})}
-                  >
-                    {renderSortButton('category', 'Category')}
-                    {renderSortButton('commissionType', 'Type')}
-                    {renderSortButton('value', 'Value')}
-                    {renderSortButton('minOrderAmount', 'Min Order')}
-                  </ScrollView>
-                </XStack>
-              </XStack>
-            </XStack>
+            <CommissionConfigHeader
+              {...{
+                sortField,
+                setSortField,
+                setSortOrder,
+                sortOrder,
+                handelOnCategoryFilter,
+                setOpenFilterSheet,
+                filterActive,
+                filterType,
+                categoryFilter,
+              }}
+            />
 
             <Separator />
 
-            {/* Commission Config List */}
             {loading ? (
               <XStack padding='$8' justifyContent='center' alignItems='center'>
                 <Spinner size='large' color='$blue10' />
               </XStack>
-            ) : filteredConfig.length === 0 ? (
+            ) : commissionConfig.length === 0 ? (
               <YStack
                 padding='$8'
                 justifyContent='center'
@@ -381,11 +207,11 @@ const Commission: FC = () => {
                   No commission configurations found
                 </Text>
                 <Paragraph color='$gray9' textAlign='center'>
-                  {searchQuery || filterActive !== null || filterType
+                  {categoryFilter || filterActive !== null || filterType
                     ? 'Try adjusting your search or filters'
                     : 'Create your first commission configuration to get started'}
                 </Paragraph>
-                {(searchQuery || filterActive !== null || filterType) && (
+                {(categoryFilter || filterActive !== null || filterType) && (
                   <Button onPress={resetFilters} icon={<FaSync size={14} />}>
                     Reset Filters
                   </Button>
@@ -394,7 +220,7 @@ const Commission: FC = () => {
             ) : (
               <ScrollView>
                 <YStack padding='$2' space='$3'>
-                  {filteredConfig.map((config) => {
+                  {commissionConfig.map((config) => {
                     const category = startCase(config.category.title);
 
                     return (
@@ -532,105 +358,19 @@ const Commission: FC = () => {
           </YStack>
         </Card>
       </YStack>
-
-      <TmgDrawer
-        open={openFilterSheet}
-        onOpenChange={setOpenFilterSheet}
-        showCloseButton
-        dismissOnSnapToBottom
-        title='Filters'
-      >
-        <ScrollView maxHeight={400}>
-          <YStack padding='$3' space='$4'>
-            <YStack space='$2'>
-              <Text fontWeight='bold' color='$gray11'>
-                Status
-              </Text>
-              <XStack space='$4'>
-                <Button
-                  // variant={filterActive === true ? "filled" : "outlined"}
-                  // theme={filterActive === true ? "green" : "gray"}
-                  onPress={() =>
-                    setFilterActive(filterActive === true ? null : true)
-                  }
-                  icon={<FaCheckCircle size={14} />}
-                  size='$3'
-                >
-                  Active
-                </Button>
-                <Button
-                  //  variant={filterActive === false ? "filled" : "outlined"}
-                  //  theme={filterActive === false ? "gray" : "gray"}
-                  onPress={() =>
-                    setFilterActive(filterActive === false ? null : false)
-                  }
-                  icon={<FaTimesCircle size={14} />}
-                  size='$3'
-                >
-                  Inactive
-                </Button>
-              </XStack>
-            </YStack>
-
-            <YStack space='$2'>
-              <Text fontWeight='bold' color='$gray11'>
-                Commission Type
-              </Text>
-              <XStack space='$2' flexWrap='wrap' gap='$2'>
-                <Button
-                  //  variant={filterType === 'percentage' ? "filled" : "outlined"}
-                  //  theme={filterType === 'percentage' ? "blue" : "gray"}
-                  onPress={() =>
-                    setFilterType(
-                      filterType === 'percentage' ? null : 'percentage'
-                    )
-                  }
-                  icon={<FaPercentage size={14} />}
-                  size='$3'
-                >
-                  Percentage
-                </Button>
-                <Button
-                  //  variant={filterType === 'fixed' ? "filled" : "outlined"}
-                  //  theme={filterType === 'fixed' ? "green" : "gray"}
-                  onPress={() =>
-                    setFilterType(filterType === 'fixed' ? null : 'fixed')
-                  }
-                  icon={() => <div>₹</div>}
-                  size='$3'
-                >
-                  Fixed
-                </Button>
-                <Button
-                  // variant={filterType === 'tiered' ? 'filled' : 'outlined'}
-                  //theme={filterType === 'tiered' ? 'purple' : 'gray'}
-                  onPress={() =>
-                    setFilterType(filterType === 'tiered' ? null : 'tiered')
-                  }
-                  icon={<FaLayerGroup size={14} />}
-                  size='$3'
-                >
-                  Tiered
-                </Button>
-              </XStack>
-            </YStack>
-
-            <XStack paddingTop='$4' space='$2' justifyContent='flex-end'>
-              <Button
-                size='$3'
-                onPress={resetFilters}
-                variant='outlined'
-                icon={<FaSync size={14} />}
-              >
-                Reset
-              </Button>
-              <Button size='$3' onPress={() => setOpenFilterSheet(false)}>
-                Apply Filters
-              </Button>
-            </XStack>
-          </YStack>
-        </ScrollView>
-      </TmgDrawer>
+      <Pagination {...paginationProps} />
+      <XStack padding='$2' />
+      <CommissionFilters
+        {...{
+          openFilterSheet,
+          setOpenFilterSheet,
+          setFilterActive,
+          setFilterType,
+          filterType,
+          filterActive,
+          resetFilters,
+        }}
+      />
     </YStack>
   );
 };

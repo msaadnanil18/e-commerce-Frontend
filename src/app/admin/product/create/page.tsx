@@ -32,8 +32,8 @@ const AddProduct: FC = () => {
       quantityRules: {
         min: 1,
         max: 100,
-        step: 1,
-        predefined: [1],
+        step: 0,
+        predefined: [],
       },
       sellerSpecificDetails: {
         manufacturer: '',

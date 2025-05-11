@@ -4,17 +4,16 @@ import { ServiceErrorManager } from '@/helpers/service';
 import { ListServiceCharges } from '@/services/serviceCharges';
 import { ServiceCharge } from '@/types/ServiceCharge';
 import { useRouter } from 'next/navigation';
-import { FC, ReactElement, useEffect, useState } from 'react';
+import { FC, ReactElement, useCallback } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { Column } from 'react-table';
 import { FiMapPin, FiPercent, FiTag } from 'react-icons/fi';
 import { YStack, XStack, Button, ScrollView, Text } from 'tamagui';
-
 import { useDarkMode } from '@/hook/useDarkMode';
-import Loader from '../../organism/Loader';
 import { NewTableHOC } from '../../organism/TableHOC';
 import { startCase } from 'lodash-es';
 import { RiEdit2Fill } from 'react-icons/ri';
+import { usePagination } from '@/hook/usePagination';
 
 interface DataType {
   _id: string;
@@ -28,40 +27,38 @@ interface DataType {
 const ServiceChargeConfig: FC = () => {
   const router = useRouter();
   const isDark = useDarkMode();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [serviceCharges, setServiceCharges] = useState<ServiceCharge[]>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const [pageCount, setPageCount] = useState<number>(1);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
 
-  const fetchServiceCharge = () => {
-    setLoading(true);
-    ServiceErrorManager(ListServiceCharges(), {})
-      .then(([_, response]) => {
-        setServiceCharges(response.docs);
-        setTotalCount(response.totalDocs || 0);
-        setPageCount(response.totalPages || 1);
-        setCurrentPage(response.page || 1);
-      })
-      .catch(console.log)
-      .finally(() => setLoading(false));
-  };
+  const fetchServiceCharge = useCallback(
+    async (page: number, limit: number, search: string) => {
+      const [err, data] = await ServiceErrorManager(
+        ListServiceCharges({
+          data: {
+            options: {
+              page,
+              limit,
+            },
+            query: {
+              searchFields: ['businessName', 'contactEmail'],
+              search,
+            },
+          },
+        }),
+        {}
+      );
 
-  useEffect(() => {
-    fetchServiceCharge();
-  }, []);
+      if (err || !data) return;
+      return data;
+    },
+    []
+  );
 
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    // Add implementation to fetch data for the new page
-  };
-
-  const handlePageSizeChange = (newPageSize: number) => {
-    setPageSize(newPageSize);
-    setCurrentPage(1);
-    // Add implementation to fetch data with new page size
-  };
+  const {
+    state: { loading, items: serviceCharges },
+    action,
+    paginationProps,
+  } = usePagination<ServiceCharge>({
+    fetchFunction: fetchServiceCharge,
+  });
 
   const handleEdit = (charge: ServiceCharge) => {
     router.push(`/admin/config/service-charge/update/${charge._id}`);
@@ -153,30 +150,22 @@ const ServiceChargeConfig: FC = () => {
         </Button>
       </XStack>
 
-      {loading ? (
-        <Loader />
-      ) : (
-        <ScrollView>
-          <NewTableHOC
-            isDark={isDark}
-            columns={columns}
-            data={rows}
-            title='Service Charge List'
-            pagination={true}
-            filtering={true}
-            variant='default'
-            emptyMessage='No service charges found'
-            serverSidePagination={{
-              pageCount: pageCount,
-              pageIndex: currentPage - 1,
-              pageSize: pageSize,
-              totalCount: totalCount,
-              onPageChange: handlePageChange,
-              onPageSizeChange: handlePageSizeChange,
-            }}
-          />
-        </ScrollView>
-      )}
+      <ScrollView>
+        <NewTableHOC
+          isLoading={loading}
+          onSearch={(e) => action.handleOnSearch(e, 600)}
+          isDark={isDark}
+          pageSize={paginationProps.pageSize}
+          columns={columns}
+          data={rows}
+          title='Service Charge List'
+          pagination={true}
+          filtering={true}
+          variant='default'
+          emptyMessage='No service charges found'
+          serverSidePagination={paginationProps}
+        />
+      </ScrollView>
     </YStack>
   );
 };

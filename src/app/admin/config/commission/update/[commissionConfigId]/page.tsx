@@ -9,24 +9,28 @@ import {
 } from '@/services/Commission';
 import { ICommissionConfigForm } from '@/types/Commission';
 import { useRouter } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, use } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, Spinner, View, Text } from 'tamagui';
 
 interface CommissionConfigUpdatePageProps {
-  params: { commissionConfigId: string };
+  params: Promise<{ commissionConfigId: string }>;
 }
 
 const UpdateCommisionConfig: FC<CommissionConfigUpdatePageProps> = ({
   params,
 }) => {
+  const unwrappedParams = use(params);
   const router = useRouter();
   const [isSubmitting, setIsisSubmitting] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchCommissionConfig = () => {
     setLoading(true);
-    ServiceErrorManager(GetCommissionConfig(params.commissionConfigId)(), {})
+    ServiceErrorManager(
+      GetCommissionConfig(unwrappedParams.commissionConfigId)(),
+      {}
+    )
       .then(([_, data]) => {
         form.reset(data);
       })
@@ -55,7 +59,7 @@ const UpdateCommisionConfig: FC<CommissionConfigUpdatePageProps> = ({
     };
 
     ServiceErrorManager(
-      UpdatedCommissionConfigService(params.commissionConfigId)({
+      UpdatedCommissionConfigService(unwrappedParams.commissionConfigId)({
         data: payload,
       }),
       {}

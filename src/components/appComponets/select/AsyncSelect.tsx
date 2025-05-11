@@ -1,7 +1,13 @@
 'use client';
 import { debounce } from 'lodash-es';
 import React, { FC, useState, useEffect, useCallback } from 'react';
-import { FaAngleDown, FaAngleUp, FaCheck, FaSearch } from 'react-icons/fa';
+import {
+  FaAngleDown,
+  FaAngleUp,
+  FaCheck,
+  FaSearch,
+  FaTimes,
+} from 'react-icons/fa';
 import {
   Select,
   Adapt,
@@ -13,6 +19,7 @@ import {
   Text,
   SelectProps,
   View,
+  Button,
 } from 'tamagui';
 import { LinearGradient } from 'tamagui/linear-gradient';
 
@@ -44,6 +51,7 @@ interface AsyncSelectProps {
   loading?: boolean;
   menuChildren?: FC<any>;
   footerChildren?: FC<any>;
+  allowCancel?: boolean;
 }
 
 const AsyncSelect: FC<AsyncSelectProps> = ({
@@ -69,6 +77,7 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
   loading = false,
   menuChildren: MenuChildren,
   footerChildren: FooterChildren,
+  allowCancel = false,
 }) => {
   const [position, setPosition] = useState(0);
   const [selectedValue, setSelectedValue] = useState<string>(value || '');
@@ -174,15 +183,47 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
         size={size}
         {...selectProps}
       >
-        <Select.Trigger
-          width={width}
-          iconAfter={loading ? <Spinner /> : <FaAngleDown />}
-          disabled={disabled}
-        >
-          <Select.Value placeholder={placeholder}>
-            {getSelectedLabel()}
-          </Select.Value>
-        </Select.Trigger>
+        {allowCancel && selectedValue ? (
+          <XStack flex={1} minWidth={200} maxWidth={400} position='relative'>
+            <Select.Trigger
+              width={width}
+              iconAfter={loading ? <Spinner /> : <FaAngleDown />}
+              disabled={disabled}
+            >
+              <Select.Value placeholder={placeholder}>
+                {getSelectedLabel()}
+              </Select.Value>
+            </Select.Trigger>
+            <XStack marginTop='$2' marginLeft='$1'>
+              <Button
+                size='$1'
+                circular
+                chromeless
+                onPress={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setSelectedValue('');
+                  onChange('');
+                  return false;
+                }}
+                zIndex={20}
+                hitSlop={10}
+              >
+                <FaTimes size={14} />
+              </Button>
+            </XStack>
+          </XStack>
+        ) : (
+          <Select.Trigger
+            width={width}
+            iconAfter={loading ? <Spinner /> : <FaAngleDown />}
+            disabled={disabled}
+          >
+            <Select.Value placeholder={placeholder}>
+              {getSelectedLabel()}
+            </Select.Value>
+          </Select.Trigger>
+        )}
 
         <Adapt platform='touch'>
           <Sheet
@@ -199,6 +240,7 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
                 <XStack padding='$2' alignItems='center'>
                   <Input
                     flex={1}
+                    size='$3'
                     placeholder='Search...'
                     value={searchQuery}
                     onChangeText={handleSearchChange}
@@ -249,6 +291,7 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
               >
                 <Input
                   flex={1}
+                  size={'$3'}
                   placeholder='Search...'
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.nativeEvent.text)}

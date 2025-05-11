@@ -1,11 +1,10 @@
 'use client';
-import { FC, ReactElement, useEffect, useState } from 'react';
+import { FC, ReactElement, useCallback, useEffect, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { Column } from 'react-table';
 import AdminSidebar from './organism/AdminSidebar';
 import { NewTableHOC } from './organism/TableHOC';
 import { useDarkMode } from '@/hook/useDarkMode';
-import Loader from './organism/Loader';
 import { Button, ScrollView, Text, View, XStack, YStack } from 'tamagui';
 import { useRouter } from 'next/navigation';
 import { RiEdit2Fill } from 'react-icons/ri';
@@ -19,6 +18,7 @@ import { permissions } from '@/constant/permissions';
 import usePermission from '@/hook/usePermission';
 import ProductStatusTag from './management/productdetails/ProductstatusColor';
 import PriceFormatter from '../appComponets/PriceFormatter/PriceFormatter';
+import { usePagination } from '@/hook/usePagination';
 
 interface DataType {
   _id: string;
@@ -28,6 +28,7 @@ interface DataType {
   stock: number;
   action: ReactElement;
   status: ReactElement;
+  productID?: string;
 }
 
 const Name = ({
@@ -52,52 +53,40 @@ const Products: FC = () => {
   const { hasPermission } = usePermission();
   const router = useRouter();
   const isDark = useDarkMode();
-  const [productList, setProductList] = useState<Array<IProduct>>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const [pageCount, setPageCount] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
 
-  const fetchProductList = async (page = 1, limit = pageSize) => {
-    setLoading(true);
-
-    const [err, data] = await ServiceErrorManager(
-      ProductListService({
-        data: {
-          options: {
-            page,
-            limit,
+  const fetchProductList = useCallback(
+    async (page: number, limit: number, search: string) => {
+      const [err, data] = await ServiceErrorManager(
+        ProductListService({
+          data: {
+            options: {
+              page,
+              limit,
+            },
+            query: {
+              searchFields: ['name', 'productID'],
+              search,
+            },
           },
-        },
-      }),
-      {
-        failureMessage: 'Error while fetching products',
-      }
-    );
+        }),
+        {
+          failureMessage: 'Error while fetching products',
+        }
+      );
 
-    setLoading(false);
+      if (err || !data) return;
+      return data;
+    },
+    []
+  );
 
-    if (err || !data) return;
-
-    setProductList(data.docs);
-    setTotalCount(data.totalDocs || 0);
-    setPageCount(data.totalPages || 1);
-    setCurrentPage(data.page || 1);
-  };
-
-  useEffect(() => {
-    fetchProductList().catch(console.log);
-  }, []);
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const handlePageSizeChange = (newPageSize: number) => {
-    setPageSize(newPageSize);
-    setCurrentPage(1);
-  };
+  const {
+    state: { loading, items: productList },
+    action,
+    paginationProps,
+  } = usePagination<IProduct>({
+    fetchFunction: fetchProductList,
+  });
 
   const columns: Column<DataType>[] = [
     {
@@ -105,6 +94,11 @@ const Products: FC = () => {
       Header: 'Photo',
       accessor: 'photo',
       //   disableSortBy: true,
+    },
+    {
+      id: 'productID',
+      Header: 'Product ID',
+      accessor: 'productID',
     },
     {
       id: 'name',
@@ -152,6 +146,7 @@ const Products: FC = () => {
     ),
     name: <Name product={product} router={router} />,
     status: <ProductStatusTag product={product} />,
+    productID: product?.productID,
     price: product.variants[0].discount ? (
       <View>
         <PriceFormatter crossed value={product.variants[0]?.price} />
@@ -176,51 +171,42 @@ const Products: FC = () => {
   return (
     <div className={`admin-container`}>
       <AdminSidebar />
-      {loading ? (
-        <Loader />
-      ) : (
-        <YStack>
-          <XStack padding='$4' justifyContent='flex-end'>
-            {hasPermission(permissions.CAN_MANAGE_PRODUCTS) && (
-              <Button
-                onPress={() => router.push('/admin/product/create')}
-                icon={<FaPlus />}
-                color='$text'
-                size='$3'
-                fontSize='$3'
-                marginRight='$2'
-                backgroundColor='$primary'
-                hoverStyle={{ backgroundColor: '$primaryHover' }}
-              >
-                Add New
-              </Button>
-            )}
-          </XStack>
+      <YStack>
+        <XStack padding='$4' justifyContent='flex-end'>
+          {hasPermission(permissions.CAN_MANAGE_PRODUCTS) && (
+            <Button
+              onPress={() => router.push('/admin/product/create')}
+              icon={<FaPlus />}
+              color='$text'
+              size='$3'
+              fontSize='$3'
+              marginRight='$2'
+              backgroundColor='$primary'
+              hoverStyle={{ backgroundColor: '$primaryHover' }}
+            >
+              Add New
+            </Button>
+          )}
+        </XStack>
 
-          <ScrollView>
-            <NewTableHOC
-              isDark={isDark}
-              columns={columns}
-              data={rows}
-              title='Product List'
-              pagination={true}
-              filtering={true}
-              //   onRowClick={handleRowClick}
-              variant={true ? 'default' : 'striped'}
-              //  className={isDark ? 'bg-gray-800 text-white' : ''}
-              emptyMessage='No products found'
-              serverSidePagination={{
-                pageCount: pageCount,
-                pageIndex: currentPage - 1,
-                pageSize: pageSize,
-                totalCount: totalCount,
-                onPageChange: handlePageChange,
-                onPageSizeChange: handlePageSizeChange,
-              }}
-            />
-          </ScrollView>
-        </YStack>
-      )}
+        <ScrollView>
+          <NewTableHOC
+            isDark={isDark}
+            columns={columns}
+            pageSize={paginationProps.pageSize}
+            isLoading={loading}
+            data={rows}
+            onSearch={(e) => action.handleOnSearch(e, 600)}
+            title='Product List'
+            pagination={true}
+            filtering={true}
+            //   onRowClick={handleRowClick}
+            variant={true ? 'default' : 'striped'}
+            emptyMessage='No products found'
+            serverSidePagination={paginationProps}
+          />
+        </ScrollView>
+      </YStack>
     </div>
   );
 };

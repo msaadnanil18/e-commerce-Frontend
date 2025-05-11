@@ -20,6 +20,11 @@ const ProductImage: FC<{
       <XStack alignItems='center' height='24rem' marginBottom='$3'>
         <YStack marginLeft='$4' flex={1}>
           <RenderDriveFile
+            MediaHTMLAttributes={{
+              controls: false,
+              autoPlay: true,
+              loop: true,
+            }}
             file={selectedImage}
             onClick={() => {
               handleImageClick?.();
@@ -39,6 +44,7 @@ const ProductImage: FC<{
               className='w-20 h-40'
             >
               <RenderDriveFile
+                MediaHTMLAttributes={{ controls: false }}
                 key={index}
                 file={media}
                 className='w-full h-full object-cover'

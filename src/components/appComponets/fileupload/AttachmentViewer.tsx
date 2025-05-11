@@ -16,6 +16,9 @@ interface AttachmentViewerProps {
   className?: string;
   fileType?: string;
   onClick?: () => void;
+  MediaHTMLAttributes?:
+    | React.VideoHTMLAttributes<HTMLVideoElement>
+    | React.AudioHTMLAttributes<HTMLAudioElement>;
 }
 
 const AttachmentViewer: React.FC<AttachmentViewerProps> = ({
@@ -24,6 +27,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({
   fileType: _fileType,
   className,
   onClick,
+  MediaHTMLAttributes,
 }) => {
   const getFileType = (fileName: string) => {
     const extension = fileName.split('.').pop()?.toLowerCase() || '';
@@ -82,7 +86,13 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({
         );
       case 'video':
         return (
-          <video controls onClick={onClick} className={className} style={style}>
+          <video
+            {...MediaHTMLAttributes}
+            controls={MediaHTMLAttributes?.controls ?? true}
+            onClick={onClick}
+            className={className}
+            style={style}
+          >
             <source src={fileUrl} />
             Your browser does not support the video tag.
           </video>

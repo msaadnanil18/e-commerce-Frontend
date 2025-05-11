@@ -127,6 +127,7 @@ export interface IReview {
 export interface IProduct {
   _id: string;
   seller: ISeller;
+  productID?: string;
   status: 'pending' | 'approved' | 'restricted' | 'suspended' | 'rejected';
   name: string;
   description?: string;

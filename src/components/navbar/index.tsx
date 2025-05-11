@@ -33,15 +33,11 @@ const Navbar: FC = () => {
   const { logOut } = useAuth();
   const router = useRouter();
   const dispatch = useDispatch();
-
-  const {
-    theme,
-    user: { user, ...restUserDetails },
-  } = useSelector((state: RootState) => state);
-
+  const userdata = useSelector((state: RootState) => state.user);
+  const { user, ...restUserDetails } = userdata;
+  const theme = useSelector((state: RootState) => state.theme);
   const [roleChangeLoading, setRoleChangeLoading] = useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-
   const isLoggedIn = restUserDetails?.isAuthenticated;
   const userRoles: string[] = user?.roles || [];
   const currentRole = user?.activeRole || '';
@@ -65,7 +61,6 @@ const Navbar: FC = () => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('sessionToken', data.sessionToken);
     }
-
     setRoleChangeLoading(false);
   };
 

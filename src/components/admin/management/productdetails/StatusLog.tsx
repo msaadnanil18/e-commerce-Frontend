@@ -82,11 +82,11 @@ const StatusLog: React.FC<{ product: IProduct | null }> = ({ product }) => {
                 </Text>
 
                 <XStack justifyContent='space-between' marginTop='$2'>
-                  <Text fontSize='$2' color='$gray10'>
+                  <Text fontSize='$3' color='$gray10'>
                     Created:{' '}
                     {dayjs(log.createdAt).format('MMMM D, YYYY h:mm A')}
                   </Text>
-                  <Text fontSize='$2' color='$gray10'>
+                  <Text fontSize='$3' color='$gray10'>
                     Updated:{' '}
                     {dayjs(log.updatedAt).format('MMMM D, YYYY h:mm A')}
                   </Text>

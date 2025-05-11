@@ -30,9 +30,7 @@ import { permissions } from '@/constant/permissions';
 import { FaBriefcase } from 'react-icons/fa';
 
 const AdminSidebar: FC = () => {
-  const {
-    user: { user },
-  } = useSelector((state: RootState) => state);
+  const { user } = useSelector((state: RootState) => state.user);
   const isDark = useDarkMode();
   const pathname = usePathname();
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -91,9 +89,7 @@ const AdminSidebar: FC = () => {
 
 const DivOne = ({ location }: { location: string }) => {
   const { hasPermission } = usePermission();
-  const {
-    user: { user },
-  } = useSelector((state: RootState) => state);
+  const { user } = useSelector((state: RootState) => state.user);
   return (
     <div>
       <ul>

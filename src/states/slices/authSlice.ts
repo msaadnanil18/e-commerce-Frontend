@@ -57,7 +57,7 @@ const authSlice = createSlice({
     },
     validateSession: (state) => {
       const user = getUserFromToken();
-      console.log(user, 'user');
+
       if (!user) {
         state.user = null;
         state.isAuthenticated = false;
