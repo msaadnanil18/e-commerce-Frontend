@@ -1,7 +1,7 @@
 'use client';
 import { ServiceErrorManager } from '@/helpers/service';
 import { IProduct } from '@/types/products';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, use, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -27,7 +27,7 @@ import { permissions } from '@/constant/permissions';
 import PriceFormatter from '@/components/appComponets/PriceFormatter/PriceFormatter';
 
 interface ProductDetailsPageProps {
-  params: { productId: string };
+  params: Promise<{ productId: string }>;
   searchParams: { theme?: string };
 }
 
@@ -39,16 +39,17 @@ const ProductDetails: FC<ProductDetailsPageProps> = ({ params }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState(0);
+  const unwrappedParams = use(params);
 
   const fetchProductDetails = async () => {
-    if (!params?.productId) return;
+    if (!unwrappedParams?.productId) return;
     setIsLoading(true);
 
     const [err, response] = await ServiceErrorManager(
       ProductDetailsService({
         data: {
           query: {
-            _id: params?.productId,
+            _id: unwrappedParams?.productId,
           },
         },
       }),
@@ -99,7 +100,7 @@ const ProductDetails: FC<ProductDetailsPageProps> = ({ params }) => {
   return (
     <ScrollView padding='$4'>
       <XStack flexDirection={screen.xs ? 'column' : 'row'}>
-        <View flexShrink={0} flexGrow={1}>
+        <View flexBasis='40%' flexShrink={0} flexGrow={1}>
           <ProductstatusColor product={product} />
           <ProductImage {...{ product, handleImageClick, selectedVariant }} />
         </View>
@@ -126,7 +127,9 @@ const ProductDetails: FC<ProductDetailsPageProps> = ({ params }) => {
                       value={product.variants?.[selectedVariant].price}
                       crossed
                     />
-                    {product.variants?.[selectedVariant].discount}% Off
+                    <Text fontSize='$3' color='$red10'>
+                      {product.variants?.[selectedVariant].discount}% Off
+                    </Text>
                   </View>
                   <Text fontSize='$4' fontWeight='bold' color='$primary'>
                     <PriceFormatter

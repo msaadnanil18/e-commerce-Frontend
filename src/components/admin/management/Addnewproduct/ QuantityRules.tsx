@@ -14,7 +14,6 @@ import {
 } from 'tamagui';
 
 const QuantityRules = ({ form }: { form: UseFormReturn<Product> }) => {
-  const [distcountType, setDiscountType] = React.useState<string | null>(null);
   const {
     control,
     formState: { errors },
@@ -111,17 +110,14 @@ const QuantityRules = ({ form }: { form: UseFormReturn<Product> }) => {
             <Controller
               name='quantityRules.step'
               control={control}
-              rules={{
-                min: { value: 1, message: 'Step must be at least 1' },
-              }}
               render={({ field }) => (
                 <Input
                   {...field}
                   placeholder='Step'
-                  inputMode='numeric'
+                  inputMode='decimal'
                   keyboardType='numeric'
                   value={(field.value || '').toString()}
-                  onChangeText={(value) => field.onChange(parseInt(value) || 1)}
+                  onChangeText={(value) => field.onChange(parseInt(value) || 0)}
                 />
               )}
             />
@@ -189,7 +185,54 @@ const QuantityRules = ({ form }: { form: UseFormReturn<Product> }) => {
                   <Input
                     flex={1}
                     {...field}
-                    placeholder='Enter Discount Tiers Quantity'
+                    placeholder='Enter Discount Value'
+                    inputMode='numeric'
+                    keyboardType='numeric'
+                    value={(field.value || '').toString()}
+                    onChangeText={(value) => {
+                      const parsed = parseInt(value, 10);
+                      if (
+                        !isNaN(parsed) &&
+                        parsed <= form.watch('quantityRules.max')
+                      ) {
+                        field.onChange(parsed);
+                      } else if (value === '') {
+                        field.onChange('');
+                      }
+                    }}
+                  />
+                )}
+              />
+            </YStack>
+            <YStack space='$2' flex={1} minWidth={150}>
+              <Text>Select Discount Type </Text>
+              <Controller
+                name={`quantityRules.discountTiers.${index}.discountType`}
+                control={control}
+                render={({ field }) => (
+                  <AsyncSelect
+                    marginBottom={0}
+                    options={[
+                      { label: 'Discount Percentage', value: 'percentage' },
+                      { label: 'Flat Discount', value: 'flat' },
+                    ]}
+                    placeholder='Select Discount Type'
+                    {...field}
+                  />
+                )}
+              />
+            </YStack>
+
+            <YStack space='$2' flex={1} minWidth={150}>
+              <Text>Discount Value </Text>
+              <Controller
+                name={`quantityRules.discountTiers.${index}.value`}
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    flex={1}
+                    {...field}
+                    placeholder='Enter Discount Value'
                     inputMode='numeric'
                     keyboardType='numeric'
                     value={(field.value || '').toString()}
@@ -200,62 +243,6 @@ const QuantityRules = ({ form }: { form: UseFormReturn<Product> }) => {
                 )}
               />
             </YStack>
-            <YStack space='$2' flex={1} minWidth={150}>
-              <Text>Select Discount Type </Text>
-              <AsyncSelect
-                marginBottom={0}
-                options={[
-                  { label: 'Discount Percentage', value: 'percentage' },
-                  { label: 'Flat Discount', value: 'flat' },
-                ]}
-                onChange={(value) => setDiscountType(value)}
-                value={distcountType ?? undefined}
-                placeholder='Select Discount Type'
-              />
-            </YStack>
-            {distcountType && distcountType === 'percentage' ? (
-              <YStack space='$2' flex={1} minWidth={150}>
-                <Text>Discount Percentage </Text>
-                <Controller
-                  name={`quantityRules.discountTiers.${index}.discountPercentage`}
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      flex={1}
-                      {...field}
-                      placeholder='Enter Discount Percentage'
-                      inputMode='numeric'
-                      keyboardType='numeric'
-                      value={(field.value || '').toString()}
-                      onChangeText={(value) =>
-                        field.onChange(parseInt(value) || 0)
-                      }
-                    />
-                  )}
-                />
-              </YStack>
-            ) : distcountType && distcountType === 'flat' ? (
-              <YStack space='$2' flex={1} minWidth={150}>
-                <Text>Flat Discount </Text>
-                <Controller
-                  name={`quantityRules.discountTiers.${index}.flatDiscount`}
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      flex={1}
-                      {...field}
-                      placeholder='Enter Flat Discount'
-                      inputMode='numeric'
-                      keyboardType='numeric'
-                      value={(field.value || '').toString()}
-                      onChangeText={(value) =>
-                        field.onChange(parseInt(value) || 0)
-                      }
-                    />
-                  )}
-                />
-              </YStack>
-            ) : null}
 
             <Button
               size='$2'
@@ -271,8 +258,8 @@ const QuantityRules = ({ form }: { form: UseFormReturn<Product> }) => {
           onPress={() => {
             appendDiscountTiers({
               quantity: 0,
-              discountPercentage: 0,
-              flatDiscount: 0,
+              discountType: 'percentage',
+              value: 0,
             });
           }}
         >

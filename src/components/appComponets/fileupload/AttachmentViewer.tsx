@@ -86,16 +86,18 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({
         );
       case 'video':
         return (
-          <video
-            {...MediaHTMLAttributes}
-            controls={MediaHTMLAttributes?.controls ?? true}
-            onClick={onClick}
-            className={className}
-            style={style}
-          >
-            <source src={fileUrl} />
-            Your browser does not support the video tag.
-          </video>
+          <>
+            {loading && <Spinner />}
+            <video
+              {...MediaHTMLAttributes}
+              src={fileUrl}
+              controls={MediaHTMLAttributes?.controls ?? true}
+              onClick={onClick}
+              className={className}
+              style={style}
+              onCanPlay={() => setLoading(false)}
+            />
+          </>
         );
       case 'audio':
         return (

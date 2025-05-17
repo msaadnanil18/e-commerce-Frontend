@@ -2,8 +2,8 @@ import { ISeller } from './seller';
 
 export interface IDiscountTiers {
   quantity: number;
-  discountPercentage: number;
-  flatDiscount: number;
+  discountType: string;
+  value: number;
 }
 
 export interface Product {

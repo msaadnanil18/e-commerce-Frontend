@@ -6,14 +6,14 @@ import {
   ProductDetailsService,
 } from '@/services/products';
 import { Product } from '@/types/products';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, use, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { getPreviousMediaFiles, getRealFiles } from '@/helpers/utils';
 import useFileUpload from '@/components/appComponets/fileupload/useFileUpload';
 
 interface ProductManagePageProps {
-  params: { productId: string };
+  params: Promise<{ productId: string }>;
   searchParams: { theme?: string };
 }
 
@@ -22,15 +22,16 @@ const ProductManage: FC<ProductManagePageProps> = ({ params }) => {
   const { getFileUpload } = useFileUpload();
   const [isLoading, setIsLoading] = useState(true);
   const form = useForm<Product>();
+  const unwrappedParams = use(params);
 
   const fetchProductDetails = async () => {
-    if (!params?.productId) return;
+    if (!unwrappedParams?.productId) return;
     setIsLoading(true);
     const [err, response] = await ServiceErrorManager(
       ProductDetailsService({
         data: {
           query: {
-            _id: params?.productId,
+            _id: unwrappedParams?.productId,
           },
         },
       }),
@@ -53,7 +54,7 @@ const ProductManage: FC<ProductManagePageProps> = ({ params }) => {
   }, []);
 
   const onEdit = async (data: Product) => {
-    if (!params?.productId) return;
+    if (!unwrappedParams?.productId) return;
 
     const { thumbnail, variants, ...restField } = data;
 
@@ -79,7 +80,7 @@ const ProductManage: FC<ProductManagePageProps> = ({ params }) => {
     await ServiceErrorManager(
       EditProductDetailsService({
         data: {
-          query: { _id: params?.productId },
+          query: { _id: unwrappedParams?.productId },
           payload: {
             ...restField,
             variants: updatedVariants,

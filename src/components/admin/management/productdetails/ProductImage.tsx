@@ -29,7 +29,7 @@ const ProductImage: FC<{
             onClick={() => {
               handleImageClick?.();
             }}
-            className='max-w-full max-h-96 object-contain'
+            className=' max-w-96 max-h-96 object-contain'
           />
         </YStack>
       </XStack>
