@@ -59,6 +59,12 @@ export const permissions = Object.freeze({
   /* COMMISSION CONFIGURATION */
 
   CAN_SELLER_REGISTERED: 'can_seller_registered',
+
+  /* HOME PAGE */
+  CAN_CREATE_HOME_PAGE_CONFIG: 'can_create_home_page_config',
+  CAN_VIEW_HOME_PAGE_CONFIG: 'can_view_home_page_config',
+  CAN_MANAGE_HOME_PAGE_CONFIG: 'can_manage_home_page_config',
+  /* HOME PAGE */
 });
 
 export const ProtectedRoutes: Record<string, string[]> = Object.freeze({
@@ -87,6 +93,9 @@ export const ProtectedRoutes: Record<string, string[]> = Object.freeze({
   '/admin/config/delivery-zone/create': [permissions.CAN_CREATE_DELIVERY_ZONE],
 
   '/admin/config/delivery-zone/update': [permissions.CAN_MANAGE_DELIVERY_ZONE],
+
+  '/admin/config/home-page': [permissions.CAN_VIEW_HOME_PAGE_CONFIG],
+
   /* CONFIG */
 
   '/admin/role-assign': [permissions.CAN_VIEW_ADMIN_AND_SUPER_ADMIN_LIST],

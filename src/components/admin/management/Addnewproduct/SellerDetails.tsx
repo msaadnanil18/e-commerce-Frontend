@@ -1,15 +1,14 @@
 import { Product } from '@/types/products';
-import React from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import { FaCheck } from 'react-icons/fa';
 import {
+  Checkbox,
+  Input,
   Separator,
   SizableText,
-  YStack,
   Text,
-  Input,
   XStack,
-  Checkbox,
+  YStack,
 } from 'tamagui';
 import Attachments from './Attachments';
 

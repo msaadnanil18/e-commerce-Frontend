@@ -1,28 +1,28 @@
 'use client';
+import Pagination from '@/components/appComponets/Pagination';
+import { Tag } from '@/components/appComponets/tag/Tag';
 import { ServiceErrorManager } from '@/helpers/service';
+import { usePagination } from '@/hook/usePagination';
+import { useScreen } from '@/hook/useScreen';
 import { ListDeliveryZoneService } from '@/services/delivery';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FaPlus, FaSearch } from 'react-icons/fa';
 import { FiBox, FiClock, FiMapPin, FiPackage } from 'react-icons/fi';
 import { RiEdit2Fill } from 'react-icons/ri';
 import {
-  YStack,
-  XStack,
   Button,
   Card,
-  Text,
-  Paragraph,
-  ScrollView,
-  View,
   H6,
   Input,
+  Paragraph,
+  ScrollView,
+  Text,
+  View,
+  XStack,
+  YStack,
 } from 'tamagui';
 import Loader from '../../organism/Loader';
-import { Tag } from '@/components/appComponets/tag/Tag';
-import { usePagination } from '@/hook/usePagination';
-import Pagination from '@/components/appComponets/Pagination';
-import { useScreen } from '@/hook/useScreen';
 
 interface DeliveryZone {
   _id?: string;
@@ -69,7 +69,7 @@ const DeliveryChargesConfig = () => {
     fetchFunction: fetchDeliveryZoneList,
   });
 
-  const isMobile = media.sm || media.xs;
+  const isMobile = media.xs;
   const isTablet = media.md;
 
   return (

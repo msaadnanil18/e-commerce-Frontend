@@ -9,12 +9,12 @@ import {
 } from '@/services/serviceCharges';
 import { ServiceChargeFormData } from '@/types/ServiceCharge';
 import { useRouter } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
+import { FC, use, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ScrollView, Spinner, View, Text } from 'tamagui';
 
 interface ServiceChargeUpdatePageProps {
-  params: { serviceChargeId: string };
+  params: Promise<{ serviceChargeId: string }>;
 }
 
 const ServiceChargeUpdate: FC<ServiceChargeUpdatePageProps> = ({ params }) => {
@@ -22,10 +22,11 @@ const ServiceChargeUpdate: FC<ServiceChargeUpdatePageProps> = ({ params }) => {
   const [isSubmiting, setIsSubmiting] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const form = useForm<ServiceChargeFormData>();
+  const unwrappedParams = use(params);
 
   const fetchServiceCharge = () => {
     setLoading(true);
-    ServiceErrorManager(GetServiceCharge(params.serviceChargeId)(), {})
+    ServiceErrorManager(GetServiceCharge(unwrappedParams.serviceChargeId)(), {})
       .then(([_, response]) => {
         form.reset(response);
       })
@@ -50,7 +51,7 @@ const ServiceChargeUpdate: FC<ServiceChargeUpdatePageProps> = ({ params }) => {
     };
 
     ServiceErrorManager(
-      UpdateServiceChargeService(params.serviceChargeId)({
+      UpdateServiceChargeService(unwrappedParams.serviceChargeId)({
         data: formattedData,
       }),
       {

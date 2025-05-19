@@ -1,22 +1,12 @@
 import FileUpload from '@/components/appComponets/fileupload/FileUpload';
 import { Product } from '@/types/products';
-import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Separator, SizableText, YStack, Text, XStack } from 'tamagui';
+import { Text, XStack, YStack } from 'tamagui';
 
 const Attachments = ({ form }: { form: UseFormReturn<Product> }) => {
   return (
     <YStack space='$4'>
-      {/* <SizableText size='$5' fontWeight='bold' marginTop='$4'>
-        Attachments
-      </SizableText>
-      <Separator /> */}
-      <XStack
-        flex={1}
-        space='$3'
-        flexWrap='wrap'
-        //flexDirection='row' space='$10' paddingLeft='$2'
-      >
+      <XStack flex={1} space='$3' flexWrap='wrap'>
         <YStack space='$2'>
           <Text>Thumbnail</Text>
           <FileUpload

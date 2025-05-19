@@ -13,21 +13,22 @@ import {
 
 import { usePathname } from 'next/navigation';
 
-import { IconType } from 'react-icons';
-import { useRouter } from 'next/navigation';
-import { Button, Card, Paragraph, Text, XStack, YStack } from 'tamagui';
+import { permissions } from '@/constant/permissions';
 import { useDarkMode } from '@/hook/useDarkMode';
-import { IoMenu } from 'react-icons/io5';
+import usePermission from '@/hook/usePermission';
 import { useScreen } from '@/hook/useScreen';
-import { useSelector } from 'react-redux';
 import { RootState } from '@/states/store/store';
+import { useRouter } from 'next/navigation';
+import { IconType } from 'react-icons';
+import { FaBriefcase } from 'react-icons/fa';
+import { IoMenu } from 'react-icons/io5';
 import {
+  MdHome,
   MdManageAccounts,
   MdOutlineMiscellaneousServices,
 } from 'react-icons/md';
-import usePermission from '@/hook/usePermission';
-import { permissions } from '@/constant/permissions';
-import { FaBriefcase } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
+import { Button, Card, Paragraph, Text, XStack, YStack } from 'tamagui';
 
 const AdminSidebar: FC = () => {
   const { user } = useSelector((state: RootState) => state.user);
@@ -161,6 +162,22 @@ const DivOne = ({ location }: { location: string }) => {
             url='/admin/config/commission'
             text='Commission Config'
             Icon={FaBriefcase}
+            location={location}
+          />
+        )}
+
+        {/* <Li
+          url='/admin/config/product-category'
+          text='Category Config'
+          Icon={FaBriefcase}
+          location={location}
+        /> */}
+
+        {hasPermission(permissions.CAN_VIEW_HOME_PAGE_CONFIG) && (
+          <Li
+            url='/admin/config/home-page'
+            text='Home page Config'
+            Icon={MdHome}
             location={location}
           />
         )}

@@ -1,20 +1,36 @@
 'use client';
+
 import Link from 'next/link';
 import React from 'react';
-import { Image, Button, Card, XStack, Text } from 'tamagui';
+import { Button, Card, XStack, Text, View } from 'tamagui';
+import RenderDriveFile from '../appComponets/fileupload/RenderDriveFile';
+import { IProduct } from '@/types/products';
+import PriceFormatter from '../appComponets/PriceFormatter/PriceFormatter';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { truncate } from 'lodash-es';
+import { useRouter } from 'next/navigation';
+const Name = ({
+  product,
+  router,
+}: {
+  product: IProduct;
+  router: AppRouterInstance;
+}) => (
+  <Text
+    onPress={() => router.push(`/product-details/${product._id}`)}
+    hoverStyle={{
+      color: '$linkColor',
+      cursor: 'pointer',
+    }}
+  >
+    {truncate(product.name, { length: 20 })}
+  </Text>
+);
 
-interface ProductCardProps {
-  product: {
-    id: number;
-    name: string;
-    price: number;
-    image: string;
-  };
-}
-
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<{ product: IProduct }> = ({ product }) => {
+  const router = useRouter();
   return (
-    <Link href={`/product-details/${product.id}`} passHref>
+    <Link href={`/product-details/${product._id}`} passHref>
       <Card
         bordered
         padding='$4'
@@ -25,22 +41,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         className='cursor-pointer'
         backgroundColor='$cardBackground'
       >
-        <Image
-          src={product.image}
-          alt={product.name}
-          width={180}
-          height={140}
-          borderRadius='$2'
-          hoverStyle={{
-            scale: 1.1,
-            opacity: 0.9,
-          }}
+        <RenderDriveFile
+          file={product.thumbnail}
+          style={{ width: 180, height: 140, borderRadius: '10px' }}
         />
-        <Text fontSize='$3' fontWeight={500} marginTop='$2'>
-          {product.name}
-        </Text>
+
+        <Name product={product} router={router} />
+
         <Text fontSize='$4' color='$primary' marginTop='$1'>
-          ₹{product.price.toFixed(2)}
+          {product.variants?.[0].discount ? (
+            <View>
+              <PriceFormatter crossed value={product?.variants?.[0]?.price} />
+              <PriceFormatter value={product?.variants?.[0]?.originalPrice} />
+            </View>
+          ) : (
+            <PriceFormatter value={product?.variants?.[0]?.originalPrice} />
+          )}
+          {/* ₹{product.price.toFixed(2)} */}
         </Text>
         <Card.Footer>
           <XStack flex={1} />

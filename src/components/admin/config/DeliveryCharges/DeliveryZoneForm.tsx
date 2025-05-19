@@ -1,30 +1,30 @@
 'use client';
-import React, { FC, useState } from 'react';
+import { DeliveryZone } from '@/types/deliverZone';
+import { FC, useState } from 'react';
+import { Controller, UseFormReturn } from 'react-hook-form';
+import { FaSave } from 'react-icons/fa';
 import {
-  XStack,
-  YStack,
-  Text,
+  FiBox,
+  FiClock,
+  FiMapPin,
+  FiPackage,
+  FiPlusCircle,
+  FiTag,
+  FiTrash2,
+} from 'react-icons/fi';
+import {
   Button,
-  Input,
   Card,
+  H6,
+  Input,
+  Label,
   ScrollView,
   Separator,
-  Label,
-  H6,
   Spinner,
+  Text,
+  XStack,
+  YStack,
 } from 'tamagui';
-import { Controller, UseFormReturn } from 'react-hook-form';
-import {
-  FiTag,
-  FiMapPin,
-  FiPlusCircle,
-  FiTrash2,
-  FiClock,
-  FiPackage,
-  FiBox,
-} from 'react-icons/fi';
-import { DeliveryZone } from '@/types/deliverZone';
-import { FaSave } from 'react-icons/fa';
 
 const DeliveryZoneForm: FC<{
   form: UseFormReturn<DeliveryZone>;
@@ -156,25 +156,6 @@ const DeliveryZoneForm: FC<{
                 <Text>₹ Base Charge</Text>
               </XStack>
             </Label>
-            {/* <Controller
-              control={control}
-              name='baseCharge'
-              rules={{
-                required: 'Base charge is required',
-                min: { value: 0, message: 'Must be 0 or greater' },
-              }}
-              render={({ field }) => (
-                <Input
-                  id='baseCharge'
-                  placeholder='0.00'
-                  value={field.value.toString()}
-                  onChangeText={(text) => field.onChange(parseFloat(text) || 0)}
-                  keyboardType='numeric'
-                  size='$4'
-                  borderColor={errors.baseCharge ? '$red8' : undefined}
-                />
-              )}
-            /> */}
 
             <Controller
               control={control}

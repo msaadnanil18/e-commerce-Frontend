@@ -1,18 +1,21 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import {
   Navbar,
   ProductCategory,
   HeroSection,
   ProductCategoryList,
 } from '@/components/home';
+import { IHomePageConfig } from '@/types/HomePageConfig';
 
-const Home: FC = () => {
+const Home: FC<{ homeScreenData: IHomePageConfig | null }> = ({
+  homeScreenData,
+}) => {
   return (
     <div>
       <Navbar />
       <ProductCategory />
-      <HeroSection />
-      <ProductCategoryList />
+      <HeroSection homeScreenData={homeScreenData} />
+      <ProductCategoryList homeScreenData={homeScreenData} />
     </div>
   );
 };

@@ -1,12 +1,12 @@
 import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
-import React, { memo, useCallback } from 'react';
-import { Controller, UseFormReturn } from 'react-hook-form';
-import { Separator, SizableText, YStack, Text, Input } from 'tamagui';
-import CreateProductCategory from './CreateProductCategory';
-import { startCase } from 'lodash-es';
 import { ServiceErrorManager } from '@/helpers/service';
 import { ListService } from '@/services/crud';
 import { Product } from '@/types/products';
+import { startCase } from 'lodash-es';
+import { memo, useCallback } from 'react';
+import { Controller, UseFormReturn } from 'react-hook-form';
+import { Input, Separator, SizableText, Text, YStack } from 'tamagui';
+import CreateProductCategory from './CreateProductCategory';
 
 const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
   const {

@@ -6,8 +6,8 @@ import { useScreen } from '@/hook/useScreen';
 import { ListService } from '@/services/crud';
 import { startCase } from 'lodash-es';
 import { Dispatch, FC, memo, SetStateAction, useCallback } from 'react';
-import { FaChevronDown, FaChevronUp, FaFilter, FaSearch } from 'react-icons/fa';
-import { Button, ScrollView, XStack, Text } from 'tamagui';
+import { FaChevronDown, FaChevronUp, FaFilter } from 'react-icons/fa';
+import { Button, ScrollView, Text, XStack } from 'tamagui';
 
 const CommissionConfigHeader: FC<{
   sortField: string;

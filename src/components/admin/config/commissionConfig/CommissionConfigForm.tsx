@@ -1,33 +1,34 @@
-import { FC, useCallback, useState } from 'react';
-import { useForm, Controller, UseFormReturn } from 'react-hook-form';
-import {
-  View,
-  Text,
-  Button,
-  XStack,
-  YStack,
-  Form,
-  Input,
-  Separator,
-  Switch,
-  Card,
-  Label,
-  H6,
-  Spinner,
-} from 'tamagui';
+import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
+import { ServiceErrorManager } from '@/helpers/service';
+import { ListService } from '@/services/crud';
+import { ICommissionConfigForm } from '@/types/Commission';
+import { startCase } from 'lodash-es';
+import { FC, useCallback } from 'react';
+import { Controller, UseFormReturn } from 'react-hook-form';
 import {
   FiPercent,
   FiPlus,
-  FiTrash2,
-  FiSave,
   FiRotateCcw,
+  FiSave,
+  FiTrash2,
 } from 'react-icons/fi';
-import { ServiceErrorManager } from '@/helpers/service';
-import { ListService } from '@/services/crud';
-import { startCase } from 'lodash-es';
-import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
+
+import {
+  Button,
+  Card,
+  Form,
+  H6,
+  Input,
+  Label,
+  Separator,
+  Spinner,
+  Switch,
+  Text,
+  View,
+  XStack,
+  YStack,
+} from 'tamagui';
 import CreateProductCategory from '../../management/Addnewproduct/CreateProductCategory';
-import { ICommissionConfigForm } from '@/types/Commission';
 
 const CommissionConfigForm: FC<{
   isEdit?: boolean;

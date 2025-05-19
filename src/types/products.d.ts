@@ -1,4 +1,5 @@
 import { ISeller } from './seller';
+import { IProductCategory } from './productCategory';
 
 export interface IDiscountTiers {
   quantity: number;
@@ -132,7 +133,8 @@ export interface IProduct {
   name: string;
   description?: string;
   reason: string;
-  category: any;
+  subCategory: IProductCategory;
+  category: IProductCategory;
   variants: IVariant[];
   quantityRules: IQuantityRules;
   sellerSpecificDetails: ISellerSpecificDetails;
