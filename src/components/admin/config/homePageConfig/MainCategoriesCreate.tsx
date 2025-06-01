@@ -1,7 +1,6 @@
 import FileUpload from '@/components/appComponets/fileupload/FileUpload';
 import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
 import { ServiceErrorManager } from '@/helpers/service';
-import { ListService } from '@/services/crud';
 import { startCase } from 'lodash-es';
 import { FC, memo, useCallback } from 'react';
 import { Controller, useFieldArray, UseFormReturn } from 'react-hook-form';
@@ -17,6 +16,7 @@ import {
 } from 'tamagui';
 import CreateProductCategory from '../../management/Addnewproduct/CreateProductCategory';
 import { HomePageConfigFormProps } from './HomePageConfigForm';
+import { ListCategoriesService } from '@/services/categories';
 
 const MainCategoriesCreate: FC<{
   form: UseFormReturn<HomePageConfigFormProps>;
@@ -55,19 +55,7 @@ const MainCategoriesCreate: FC<{
   const getProductCategory = useCallback(
     async (search: string, type: string) => {
       const [_, data] = await ServiceErrorManager(
-        ListService({
-          data: {
-            schema: 'Productcategory',
-            options: {
-              limit: 50,
-            },
-            query: {
-              type,
-              ...(search ? { search } : {}),
-              searchFields: ['title'],
-            },
-          },
-        }),
+        ListCategoriesService(1, 50, search, type)(),
         {
           failureMessage: 'Error while getting product category list',
         }

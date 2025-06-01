@@ -19,9 +19,9 @@ import {
 import CreateProductCategory from '../../management/Addnewproduct/CreateProductCategory';
 import { startCase } from 'lodash-es';
 import { ServiceErrorManager } from '@/helpers/service';
-import { ListService } from '@/services/crud';
 import { ServiceChargeFormData } from '@/types/ServiceCharge';
 import { FaSave } from 'react-icons/fa';
+import { ListCategoriesService } from '@/services/categories';
 
 const ServiceChargeForm: FC<{
   isEdit?: boolean;
@@ -37,19 +37,7 @@ const ServiceChargeForm: FC<{
   const getProductCategory = useCallback(
     async (search: string, type: string) => {
       const [_, data] = await ServiceErrorManager(
-        ListService({
-          data: {
-            schema: 'Productcategory',
-            options: {
-              limit: 50,
-            },
-            query: {
-              type,
-              ...(search ? { search } : {}),
-              searchFields: ['title'],
-            },
-          },
-        }),
+        ListCategoriesService(1, 50, search, type)(),
         {
           failureMessage: 'Error while getting product category list',
         }

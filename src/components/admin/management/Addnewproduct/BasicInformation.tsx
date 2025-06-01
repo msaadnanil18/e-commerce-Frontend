@@ -1,12 +1,12 @@
 import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
 import { ServiceErrorManager } from '@/helpers/service';
-import { ListService } from '@/services/crud';
 import { Product } from '@/types/products';
 import { startCase } from 'lodash-es';
 import { memo, useCallback } from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import { Input, Separator, SizableText, Text, YStack } from 'tamagui';
 import CreateProductCategory from './CreateProductCategory';
+import { ListCategoriesService } from '@/services/categories';
 
 const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
   const {
@@ -16,19 +16,7 @@ const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
   const getProductCategory = useCallback(
     async (search: string, type: string) => {
       const [_, data] = await ServiceErrorManager(
-        ListService({
-          data: {
-            schema: 'Productcategory',
-            options: {
-              limit: 50,
-            },
-            query: {
-              type,
-              ...(search ? { search } : {}),
-              searchFields: ['title'],
-            },
-          },
-        }),
+        ListCategoriesService(1, 50, search, type)(),
         {
           failureMessage: 'Error while getting product category list',
         }

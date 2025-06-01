@@ -181,6 +181,12 @@ const DivOne = ({ location }: { location: string }) => {
             location={location}
           />
         )}
+        <Li
+          url='/admin/config/category'
+          text='Products Catengory'
+          Icon={MdHome}
+          location={location}
+        />
       </ul>
     </div>
   );

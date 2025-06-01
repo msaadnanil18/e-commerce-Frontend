@@ -1,5 +1,6 @@
 import { ServiceErrorManager } from '@/helpers/service';
-import { ProductcategoryCreateService } from '@/services/products';
+import { CreateProductCategoryServie } from '@/services/categories';
+
 import React, { FC, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { Button, Input, Spinner, View } from 'tamagui';
@@ -15,7 +16,7 @@ const CreateProductCategory: FC<{
     if (inputValue.trim() === '') return;
     setLoading(true);
     const [_, respone] = await ServiceErrorManager(
-      ProductcategoryCreateService({
+      CreateProductCategoryServie({
         data: {
           payload: {
             type,

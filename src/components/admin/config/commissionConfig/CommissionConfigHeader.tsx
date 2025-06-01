@@ -3,7 +3,7 @@
 import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
 import { ServiceErrorManager } from '@/helpers/service';
 import { useScreen } from '@/hook/useScreen';
-import { ListService } from '@/services/crud';
+import { ListCategoriesService } from '@/services/categories';
 import { startCase } from 'lodash-es';
 import { Dispatch, FC, memo, SetStateAction, useCallback } from 'react';
 import { FaChevronDown, FaChevronUp, FaFilter } from 'react-icons/fa';
@@ -79,19 +79,7 @@ const CommissionConfigHeader: FC<{
   const getProductCategory = useCallback(
     async (search: string, type: string) => {
       const [_, data] = await ServiceErrorManager(
-        ListService({
-          data: {
-            schema: 'Productcategory',
-            options: {
-              limit: 50,
-            },
-            query: {
-              type,
-              ...(search ? { search } : {}),
-              searchFields: ['title'],
-            },
-          },
-        }),
+        ListCategoriesService(1, 50, search, type)(),
         {
           failureMessage: 'Error while getting product category list',
         }
