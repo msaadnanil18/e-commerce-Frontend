@@ -30,7 +30,7 @@ export interface IHomePageConfig {
   _id: string;
   name: string;
   isActive: boolean;
-  featuredProducts: Types.ObjectId[];
+  featuredProducts: [string];
   bannerProducts: IBannerProduct[];
   categoryDisplay: ICategoryDisplay;
   lastModifiedBy?: Types.ObjectId;

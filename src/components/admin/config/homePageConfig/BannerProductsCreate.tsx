@@ -25,7 +25,7 @@ const BannerProductsCreate: FC<{
   } = form;
   const bannerProductsArray = useFieldArray({
     control,
-    name: 'featuredProducts',
+    name: 'bannerProducts',
   });
 
   const moveItem = (
