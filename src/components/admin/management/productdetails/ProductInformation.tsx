@@ -18,6 +18,7 @@ import {
   FaAlignLeft,
   FaCheckCircle,
   FaTimesCircle,
+  FaPercentage,
 } from 'react-icons/fa';
 import { HiReceiptTax } from 'react-icons/hi';
 import { startCase } from 'lodash-es';
@@ -107,6 +108,52 @@ const ProductExtraDetails: FC<{ product: IProduct | null }> = ({ product }) => {
         </YStack>
       </StyledCard>
 
+      {/* <StyledCard>
+        <YStack space='$3'>
+          <XStack alignItems='center'>
+            <FaBalanceScale size={18} color='#5856D6' />
+            <Text fontWeight='bold' width={150} marginLeft='$2'>
+              Min Quantity:
+            </Text>
+            <Text flex={1}>{product?.quantityRules?.min || 'N/A'}</Text>
+          </XStack>
+          <Separator />
+          <XStack alignItems='center'>
+            <FaBalanceScale size={18} color='#5856D6' />
+            <Text fontWeight='bold' width={150} marginLeft='$2'>
+              Max Quantity:
+            </Text>
+            <Text flex={1}>{product?.quantityRules?.max || 'N/A'}</Text>
+          </XStack>
+          <Separator />
+          <XStack alignItems='center'>
+            <FaRulerCombined size={18} color='#FF9500' />
+            <Text fontWeight='bold' width={150} marginLeft='$2'>
+              Step:
+            </Text>
+            <Text flex={1}>{product?.quantityRules?.step || 'N/A'}</Text>
+          </XStack>
+          <Separator />
+          <XStack alignItems='center'>
+            <FaClipboardList size={18} color='#34C759' />
+            <Text fontWeight='bold' width={150} marginLeft='$2'>
+              Predefined Quantities:
+            </Text>
+            <Text flex={1}>
+              {product?.quantityRules?.predefined?.join(', ') || 'N/A'}
+            </Text>
+          </XStack>
+          <Separator />
+          <XStack alignItems='center'>
+            <HiReceiptTax size={18} color='#34C759' />
+            <Text fontWeight='bold' width={150} marginLeft='$2'>
+              HSN Code:
+            </Text>
+            <Text flex={1}>{product?.hsnCode || 'N/A'}</Text>
+          </XStack>
+        </YStack>
+      </StyledCard> */}
+
       <StyledCard>
         <YStack space='$3'>
           <XStack alignItems='center'>
@@ -141,6 +188,28 @@ const ProductExtraDetails: FC<{ product: IProduct | null }> = ({ product }) => {
             <Text flex={1}>
               {product?.quantityRules?.predefined?.join(', ') || 'N/A'}
             </Text>
+          </XStack>
+          <Separator />
+          <XStack alignItems='center'>
+            <FaPercentage size={18} color='#FF3B30' />
+            <Text fontWeight='bold' width={150} marginLeft='$2'>
+              Discount Tiers:
+            </Text>
+            <YStack flex={1}>
+              {(product?.quantityRules?.discountTiers || [])?.length > 0 ? (
+                product?.quantityRules.discountTiers.map((tier, index) => (
+                  <Text key={index} fontSize={14} color='$gray10'>
+                    Qty {tier.quantity}+:{' '}
+                    {tier.discountType === 'percentage'
+                      ? `${tier.value}%`
+                      : `₹${tier.value}`}{' '}
+                    off
+                  </Text>
+                ))
+              ) : (
+                <Text color='$gray10'>N/A</Text>
+              )}
+            </YStack>
           </XStack>
           <Separator />
           <XStack alignItems='center'>

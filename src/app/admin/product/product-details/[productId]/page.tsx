@@ -160,6 +160,7 @@ const ProductDetails: FC<ProductDetailsPageProps> = ({ params }) => {
         <AdminActionButtons
           {...{
             product,
+            fetchProductDetails,
             imageModalOpen,
             setImageModalOpen,
             setCurrentImageIndex,

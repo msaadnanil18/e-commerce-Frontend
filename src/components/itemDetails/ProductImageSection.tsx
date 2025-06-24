@@ -78,7 +78,7 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
       AddProductToWishlistService({
         data: {
           payload: {
-            product: product._id,
+            product: product?._id,
           },
         },
       }),

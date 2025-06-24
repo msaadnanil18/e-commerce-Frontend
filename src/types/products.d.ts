@@ -79,6 +79,7 @@ interface IQuantityRules {
   max: number;
   step?: number;
   predefined?: number[];
+  discountTiers: Array<IDiscountTiers>;
 }
 
 interface ISellerSpecificDetails {

@@ -6,4 +6,6 @@ export interface IProductCategory {
   isFeatured: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  thumbnail?: File;
+  category?: string;
 }

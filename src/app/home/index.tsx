@@ -13,7 +13,7 @@ const Home: FC<{ homeScreenData: IHomePageConfig | null }> = ({
   return (
     <div>
       <Navbar />
-      <ProductCategory />
+      <ProductCategory productcategory={homeScreenData?.productcategory} />
       <HeroSection homeScreenData={homeScreenData} />
       <ProductCategoryList homeScreenData={homeScreenData} />
     </div>

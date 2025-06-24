@@ -27,7 +27,7 @@ const OrderSummary: FC<{
     const variant = item.product.variants.find(
       (v) => v._id.toString() === item.variant.toString()
     );
-    return sum + (variant?.discount || 0) * item.quantity;
+    return sum + (variant?.discount || 0);
   }, 0);
 
   const tax = (subtotal - totalDiscount) * 0;
@@ -69,7 +69,16 @@ const OrderSummary: FC<{
             Discount
           </Text>
           <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
-            -<PriceFormatter value={totalDiscount} />
+            -{totalDiscount}%
+          </Text>
+        </XStack>
+
+        <XStack justifyContent='space-between' marginBottom='$2'>
+          <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
+            Discount Tiers
+          </Text>
+          <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
+            -{totalDiscount}%
           </Text>
         </XStack>
 

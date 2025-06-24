@@ -20,7 +20,7 @@ import { useScreen } from '@/hook/useScreen';
 import { RootState } from '@/states/store/store';
 import { useRouter } from 'next/navigation';
 import { IconType } from 'react-icons';
-import { FaBriefcase } from 'react-icons/fa';
+import { FaBriefcase, FaTags } from 'react-icons/fa';
 import { IoMenu } from 'react-icons/io5';
 import {
   MdHome,
@@ -181,12 +181,15 @@ const DivOne = ({ location }: { location: string }) => {
             location={location}
           />
         )}
-        <Li
-          url='/admin/config/category'
-          text='Products Catengory'
-          Icon={MdHome}
-          location={location}
-        />
+
+        {hasPermission(permissions.CAN_VIEW_PRODUCT_CATEGORY) && (
+          <Li
+            url='/admin/config/category'
+            text='Products Catengory'
+            Icon={FaTags}
+            location={location}
+          />
+        )}
       </ul>
     </div>
   );

@@ -108,7 +108,13 @@ const Modal: FC<ModalProps> = ({
                 onPress={handleConfirm}
                 disabled={isLoading}
                 {...confirmButtonProps}
-                icon={isLoading ? <Spinner /> : null}
+                icon={
+                  isLoading ? (
+                    <Spinner />
+                  ) : confirmButtonProps?.icon ? (
+                    confirmButtonProps.icon
+                  ) : null
+                }
               >
                 {confirmText}
               </Button>

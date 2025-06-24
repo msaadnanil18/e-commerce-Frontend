@@ -221,7 +221,7 @@ const Commission: FC = () => {
               <ScrollView>
                 <YStack padding='$2' space='$3'>
                   {commissionConfig.map((config) => {
-                    const category = startCase(config.category.title);
+                    const category = startCase(config?.category?.title);
 
                     return (
                       <Card

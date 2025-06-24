@@ -36,4 +36,5 @@ export interface IHomePageConfig {
   lastModifiedBy?: Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
+  productcategory: Array<IProductCategory>;
 }

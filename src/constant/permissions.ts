@@ -37,7 +37,6 @@ export const permissions = Object.freeze({
   CAN_VIEW_SALES_REPORT: 'view_sales_report',
   CAN_MANAGE_DISCOUNTS: 'manage_discounts',
   CAN_GENERATE_REPORTS: 'generate_reports',
-  CAN_ADD_PRODUCT_CATEGORY: 'add_product_category',
 
   CAN_VIEW_ADMIN_AND_SUPER_ADMIN_LIST: 'can_view_admin_and_super_admin_list',
   CAN_SEND_INVITATION_LINK_ADMIN_SUPER_ADMIN:
@@ -65,6 +64,13 @@ export const permissions = Object.freeze({
   CAN_VIEW_HOME_PAGE_CONFIG: 'can_view_home_page_config',
   CAN_MANAGE_HOME_PAGE_CONFIG: 'can_manage_home_page_config',
   /* HOME PAGE */
+
+  /*PRODUCT CATEGORY */
+  CAN_VIEW_PRODUCT_CATEGORY: 'can_view_product_category',
+  CAN_ADD_PRODUCT_CATEGORY: 'can_add_product_category',
+  CAN_DELETE_PRODUCT_CATEGORY: 'can_delete_product_category',
+  CAN_MANAGE_PRODUCT_CATEGORY: 'can_manage_product_category',
+  /*PRODUCT CATEGORY */
 });
 
 export const ProtectedRoutes: Record<string, string[]> = Object.freeze({
@@ -95,6 +101,8 @@ export const ProtectedRoutes: Record<string, string[]> = Object.freeze({
   '/admin/config/delivery-zone/update': [permissions.CAN_MANAGE_DELIVERY_ZONE],
 
   '/admin/config/home-page': [permissions.CAN_VIEW_HOME_PAGE_CONFIG],
+
+  '/admin/config/category': [permissions.CAN_VIEW_PRODUCT_CATEGORY],
 
   /* CONFIG */
 

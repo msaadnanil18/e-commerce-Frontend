@@ -15,12 +15,14 @@ const AdminActionButtons: FC<{
   setImageModalOpen: Dispatch<SetStateAction<boolean>>;
   currentImageIndex: number;
   setCurrentImageIndex: Dispatch<SetStateAction<number>>;
+  fetchProductDetails: () => void;
 }> = ({
   product,
   imageModalOpen,
   setImageModalOpen,
   setCurrentImageIndex,
   currentImageIndex,
+  fetchProductDetails,
 }) => {
   const [rejectReason, setRejectReason] = useState('');
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
@@ -32,7 +34,7 @@ const AdminActionButtons: FC<{
   const handleApprove = async () => {
     if (!product?._id) return;
     setIsSubmitting(true);
-    const [, data] = await ServiceErrorManager(
+    await ServiceErrorManager(
       ProductApprovalandRejectionService({
         data: {
           query: {
@@ -50,12 +52,13 @@ const AdminActionButtons: FC<{
       }
     );
     setApproveDialogOpen(false);
+    fetchProductDetails();
   };
 
   const handleReject = async () => {
     if (!product?._id) return;
     setIsSubmitting(true);
-    const [, data] = await ServiceErrorManager(
+    await ServiceErrorManager(
       ProductApprovalandRejectionService({
         data: {
           query: {
@@ -74,6 +77,7 @@ const AdminActionButtons: FC<{
 
     setRejectDialogOpen(false);
     setIsSubmitting(false);
+    fetchProductDetails();
   };
 
   return (

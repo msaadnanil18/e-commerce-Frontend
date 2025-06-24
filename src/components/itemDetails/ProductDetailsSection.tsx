@@ -60,6 +60,25 @@ const ProductDetailsSection: FC<ProductDetailsSectionProps> = ({
           </Text>
         )}
 
+        {(product?.quantityRules?.discountTiers || [])?.length > 0 && (
+          <XStack alignItems='center'>
+            <Text fontWeight='bold' width={150} marginLeft='$2'>
+              Discount Tiers:
+            </Text>
+            <YStack flex={1}>
+              {product?.quantityRules.discountTiers.map((tier, index) => (
+                <Text key={index} fontSize={14} color='$gray10'>
+                  Qty {tier.quantity}+:{' '}
+                  {tier.discountType === 'percentage'
+                    ? `${tier.value}%`
+                    : `₹${tier.value}`}{' '}
+                  off
+                </Text>
+              ))}
+            </YStack>
+          </XStack>
+        )}
+
         <Text fontSize='$3' color='$gray10' marginTop={isMobile ? '$2' : '$0'}>
           SKU: {currentVariant.sku}
         </Text>

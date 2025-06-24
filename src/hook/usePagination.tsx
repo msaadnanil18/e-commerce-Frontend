@@ -1,7 +1,15 @@
 'use client';
 
 import { debounce } from 'lodash-es';
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 
 interface PaginationOptions {
   initialPage?: number;
@@ -34,6 +42,7 @@ interface PaginationHandlers {
   fetchData: (...args: any[]) => Promise<void>;
   refresh: () => Promise<void>;
   handleOnSearch: (searchTerm: string, delay?: number) => void;
+  setItems: Dispatch<SetStateAction<any>>;
 }
 
 interface PaginationResult<T> {
