@@ -31,8 +31,8 @@ const ProductCategory: FC<{
       borderRadius='$2'
     >
       <Categories>
-        {(productcategory || []).map((category) => (
-          <CategoryItem>
+        {(productcategory || []).map((category, index) => (
+          <CategoryItem key={index}>
             {category?.thumbnail ? (
               <RenderDriveFile
                 file={category?.thumbnail as any}

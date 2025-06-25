@@ -41,6 +41,10 @@ const CartPage: FC = () => {
   const [removeLoading, setRemoveLoading] = useState<boolean>(false);
   const [defaultAddres, setDefaulAddress] = useState<IAddress | null>(null);
   const [extraCharges, setExtraCharges] = useState<object | null>(null);
+  const [discountsTiers, setdiscountsTiers] = useState<{
+    totalFlatDiscount: number;
+    totalPercentageDiscount: number;
+  } | null>(null);
 
   const fetchCartDetails = () => {
     setLoading(true);
@@ -49,6 +53,7 @@ const CartPage: FC = () => {
         setDefaulAddress(response?.defaultAddress);
         setCartDetails(response?.cart);
         setExtraCharges(response?.extraCharges);
+        setdiscountsTiers(response?.discountsTiers);
       })
       .catch(console.log)
       .finally(() => setLoading(false));
@@ -276,6 +281,7 @@ const CartPage: FC = () => {
               <OrderSummary
                 cartDetail={cartDetail}
                 extraCharges={extraCharges}
+                discountsTiers={discountsTiers}
               />
             )}
           </XStack>

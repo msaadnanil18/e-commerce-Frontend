@@ -10,7 +10,16 @@ const OrderSummary: FC<{
   cartDetail: ICart | null;
   isVisiableButButton?: boolean;
   extraCharges?: object | null;
-}> = ({ cartDetail, isVisiableButButton = true, extraCharges }) => {
+  discountsTiers?: {
+    totalFlatDiscount: number;
+    totalPercentageDiscount: number;
+  } | null;
+}> = ({
+  cartDetail,
+  isVisiableButButton = true,
+  extraCharges,
+  discountsTiers,
+}) => {
   const router = useRouter();
   const media = useScreen();
 
@@ -72,15 +81,26 @@ const OrderSummary: FC<{
             -{totalDiscount}%
           </Text>
         </XStack>
-
-        <XStack justifyContent='space-between' marginBottom='$2'>
-          <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
-            Discount Tiers
-          </Text>
-          <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
-            -{totalDiscount}%
-          </Text>
-        </XStack>
+        {discountsTiers && discountsTiers.totalPercentageDiscount > 0 && (
+          <XStack justifyContent='space-between' marginBottom='$2'>
+            <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
+              Discount Tiers
+            </Text>
+            <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
+              -{discountsTiers.totalPercentageDiscount}%
+            </Text>
+          </XStack>
+        )}
+        {discountsTiers && discountsTiers.totalFlatDiscount > 0 && (
+          <XStack justifyContent='space-between' marginBottom='$2'>
+            <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
+              Discount Tiers
+            </Text>
+            <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
+              - <PriceFormatter value={discountsTiers.totalFlatDiscount} />
+            </Text>
+          </XStack>
+        )}
 
         <XStack justifyContent='space-between' marginBottom='$2'>
           <Text fontSize={media.sm ? '$3' : '$4'} color='$yellow10'>
