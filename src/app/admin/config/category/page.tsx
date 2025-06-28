@@ -358,7 +358,7 @@ const Category: FC = () => {
             isDark={isDark}
             columns={columns}
             data={rows}
-            title='Admins'
+            title='Product Category'
             pagination={true}
             filtering={true}
             variant={isDark ? 'default' : 'striped'}

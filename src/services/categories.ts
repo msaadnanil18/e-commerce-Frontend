@@ -5,7 +5,8 @@ export const ListCategoriesService = (
   limit: number,
   search?: string,
   type?: string,
-  isFeatured?: boolean
+  isFeatured?: boolean,
+  categoryId?: string
 ) => {
   const params = new URLSearchParams();
   if (search) params.append('search', search);
@@ -14,6 +15,7 @@ export const ListCategoriesService = (
   if (isFeatured !== null && isFeatured !== undefined) {
     params.append('isFeatured', String(isFeatured));
   }
+  if (categoryId) params.append('categoryId', categoryId);
 
   return Service(
     `/product/categories/list/${page}/${limit}?${params.toString()}`,

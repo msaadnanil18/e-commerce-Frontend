@@ -66,6 +66,7 @@ const AdminActionButtons: FC<{
           },
           payload: {
             status: rejectionOption,
+            isApproved: false,
             rejectionReason: rejectReason,
           },
         },

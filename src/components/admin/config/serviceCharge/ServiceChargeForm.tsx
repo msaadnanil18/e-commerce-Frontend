@@ -37,7 +37,7 @@ const ServiceChargeForm: FC<{
   const getProductCategory = useCallback(
     async (search: string, type: string) => {
       const [_, data] = await ServiceErrorManager(
-        ListCategoriesService(1, 50, search, type)(),
+        ListCategoriesService(1, 50, search, type, true)(),
         {
           failureMessage: 'Error while getting product category list',
         }
@@ -66,9 +66,9 @@ const ServiceChargeForm: FC<{
               rules={{ required: 'Category is required' }}
               render={({ field }) => (
                 <AsyncSelect
-                  menuChildren={({ reload }) => (
-                    <CreateProductCategory reload={reload} type='category' />
-                  )}
+                  // menuChildren={({ reload }) => (
+                  //   <CreateProductCategory reload={reload} type='category' />
+                  // )}
                   searchable={true}
                   loadOptions={(searchQuery) =>
                     getProductCategory(searchQuery, 'category')

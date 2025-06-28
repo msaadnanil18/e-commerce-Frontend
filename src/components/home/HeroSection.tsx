@@ -7,6 +7,7 @@ import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
 import { useDarkMode } from '@/hook/useDarkMode';
 import { IHomePageConfig } from '@/types/HomePageConfig';
 import RenderDriveFile from '../appComponets/fileupload/RenderDriveFile';
+import { useRouter } from 'next/navigation';
 
 const NextArrow = (props: any) => {
   const isDark = useDarkMode();
@@ -25,6 +26,7 @@ const PrevArrow = (props: any) => {
 const Carousel: FC<{ homeScreenData: IHomePageConfig | null }> = ({
   homeScreenData,
 }) => {
+  const router = useRouter();
   const settings = {
     className: 'center',
     centerMode: true,
@@ -54,7 +56,12 @@ const Carousel: FC<{ homeScreenData: IHomePageConfig | null }> = ({
     <div className=' ml-6'>
       <Slider {...settings}>
         {homeScreenData?.bannerProducts.map((banner, index) => (
-          <div key={index}>
+          <div
+            key={index}
+            onClick={() => {
+              router.push(`/product-details/${banner.product._id}`);
+            }}
+          >
             <RenderDriveFile
               file={banner.bannerThumbnail || banner.product.thumbnail}
               className='w-full h-80'
@@ -69,6 +76,7 @@ const Carousel: FC<{ homeScreenData: IHomePageConfig | null }> = ({
 const HeroSection: FC<{ homeScreenData: IHomePageConfig | null }> = ({
   homeScreenData,
 }) => {
+  console.log(homeScreenData, '___homeScreenData__');
   return (
     <View
       flexDirection='row'

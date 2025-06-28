@@ -81,6 +81,7 @@ const HomePageConfigForm: FC<{
               query: {
                 searchFields: ['name', 'productID'],
                 search,
+                isApproved: true,
               },
             },
           }),

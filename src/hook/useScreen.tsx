@@ -42,7 +42,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const breakpoints = {
   xs: 480,
@@ -69,26 +69,16 @@ const getScreenSize = (width: number): ScreenSize => ({
 });
 
 export const useScreen = (): ScreenSize => {
-  const [screen, setScreen] = useState<ScreenSize>(() =>
-    // Default fallback for SSR (e.g., desktop size)
-    getScreenSize(1024)
-  );
+  const [screen, setScreen] = useState<ScreenSize>(() => getScreenSize(1024));
 
   useEffect(() => {
-    // Ensure window is defined
     const updateSize = () => {
       if (typeof window !== 'undefined') {
         setScreen(getScreenSize(window.innerWidth));
       }
     };
-
-    // Run on mount
     updateSize();
-
-    // Add listener
     window.addEventListener('resize', updateSize);
-
-    // Clean up
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 

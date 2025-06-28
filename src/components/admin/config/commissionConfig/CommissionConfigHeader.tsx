@@ -79,7 +79,7 @@ const CommissionConfigHeader: FC<{
   const getProductCategory = useCallback(
     async (search: string, type: string) => {
       const [_, data] = await ServiceErrorManager(
-        ListCategoriesService(1, 50, search, type)(),
+        ListCategoriesService(1, 50, search, type, true)(),
         {
           failureMessage: 'Error while getting product category list',
         }

@@ -1,8 +1,9 @@
+'use client';
 import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
 import { ServiceErrorManager } from '@/helpers/service';
 import { Product } from '@/types/products';
 import { startCase } from 'lodash-es';
-import { memo, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import { Input, Separator, SizableText, Text, YStack } from 'tamagui';
 import CreateProductCategory from './CreateProductCategory';
@@ -14,9 +15,9 @@ const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
     formState: { errors },
   } = form;
   const getProductCategory = useCallback(
-    async (search: string, type: string) => {
+    async (search: string, type: string, categoryId?: string) => {
       const [_, data] = await ServiceErrorManager(
-        ListCategoriesService(1, 50, search, type)(),
+        ListCategoriesService(1, 50, search, type, true, categoryId)(),
         {
           failureMessage: 'Error while getting product category list',
         }
@@ -29,6 +30,7 @@ const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
     []
   );
 
+  console.log(form.watch('category'), '___category___');
   return (
     <YStack space='$4'>
       <SizableText size='$5' fontWeight='bold'>
@@ -94,33 +96,39 @@ const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
           <Text color='$red10'>{errors.category.message}</Text>
         )}
       </YStack>
-      <YStack space='$2'>
-        <Text>Sub Category *</Text>
-        <Controller
-          name='subCategory'
-          control={control}
-          rules={{ required: 'Sub category is required' }}
-          render={({ field }) => (
-            <AsyncSelect
-              menuChildren={({ reload }) => (
-                <CreateProductCategory reload={reload} type='subCategory' />
-              )}
-              searchable={true}
-              loadOptions={(searchQuery) =>
-                getProductCategory(searchQuery, 'subCategory')
-              }
-              isAsync={true}
-              {...field}
-            />
-          )}
-        />
+      {form.watch('category') ? (
+        <YStack space='$2'>
+          <Text>Sub Category *</Text>
+          <Controller
+            name='subCategory'
+            control={control}
+            rules={{ required: 'Sub category is required' }}
+            render={({ field }) => (
+              <AsyncSelect
+                // menuChildren={({ reload }) => (
+                //   <CreateProductCategory reload={reload} type='subCategory' />
+                // )}
+                searchable={true}
+                loadOptions={(searchQuery) =>
+                  getProductCategory(
+                    searchQuery,
+                    'subCategory',
+                    form.watch('category')
+                  )
+                }
+                isAsync={true}
+                {...field}
+              />
+            )}
+          />
 
-        {errors.category && (
-          <Text color='$red10'>{errors.category.message}</Text>
-        )}
-      </YStack>
+          {errors.category && (
+            <Text color='$red10'>{errors.category.message}</Text>
+          )}
+        </YStack>
+      ) : null}
     </YStack>
   );
 };
 
-export default memo(BasicInformation);
+export default BasicInformation;

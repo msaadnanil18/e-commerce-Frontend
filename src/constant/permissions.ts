@@ -66,6 +66,7 @@ export const permissions = Object.freeze({
   /* HOME PAGE */
 
   /*PRODUCT CATEGORY */
+  CAN_VIEW_PRODUCT_CATEGORY_LIST: 'can_view_product_category_list',
   CAN_VIEW_PRODUCT_CATEGORY: 'can_view_product_category',
   CAN_ADD_PRODUCT_CATEGORY: 'can_add_product_category',
   CAN_DELETE_PRODUCT_CATEGORY: 'can_delete_product_category',

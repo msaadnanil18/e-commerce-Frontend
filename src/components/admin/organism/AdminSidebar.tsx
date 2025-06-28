@@ -185,7 +185,7 @@ const DivOne = ({ location }: { location: string }) => {
         {hasPermission(permissions.CAN_VIEW_PRODUCT_CATEGORY) && (
           <Li
             url='/admin/config/category'
-            text='Products Catengory'
+            text='Products Category'
             Icon={FaTags}
             location={location}
           />
