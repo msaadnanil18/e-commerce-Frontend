@@ -13,3 +13,8 @@ export const ProductApprovalandRejectionService = Service(
 );
 
 export const AnonymousProductDetailsService = Service('/anonymous/product/get');
+
+export const AnonymousSearchProductService = Service(
+  '/anonymous/product/search',
+  { method: 'GET' }
+);

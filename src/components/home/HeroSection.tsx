@@ -76,7 +76,6 @@ const Carousel: FC<{ homeScreenData: IHomePageConfig | null }> = ({
 const HeroSection: FC<{ homeScreenData: IHomePageConfig | null }> = ({
   homeScreenData,
 }) => {
-  console.log(homeScreenData, '___homeScreenData__');
   return (
     <View
       flexDirection='row'
