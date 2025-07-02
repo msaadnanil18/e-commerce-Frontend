@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { debounce } from 'lodash-es';
+import { debounce, truncate } from 'lodash-es';
 import { FaHistory, FaSearch, FaTimes } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/states/store/store';
@@ -43,21 +43,17 @@ const SearchInput = () => {
     setLoading(true);
     setShowDropdown(true);
 
-    try {
-      const [_, data] = await ServiceErrorManager(
-        AnonymousSearchProductService({
-          params: { keyword: searchTerm, limit: 5 },
-        }),
-        {}
-      );
+    const [err, data] = await ServiceErrorManager(
+      AnonymousSearchProductService({
+        params: { keyword: searchTerm, limit: 5 },
+      }),
+      {}
+    );
 
-      setSuggestions(data?.docs || []);
-    } catch (error) {
-      console.error('Search error:', error);
-      setSuggestions([]);
-    } finally {
-      setLoading(false);
-    }
+    setSuggestions(data?.docs || []);
+    if (err) setSuggestions([]);
+
+    setLoading(false);
   }, 300);
 
   useEffect(() => {
@@ -72,7 +68,6 @@ const SearchInput = () => {
     }
   }, []);
 
-  console.log('Autosuggest History:', autosuggestHistory);
   const updateAutosuggestHistory = (term: IProduct) => {
     setAutosuggestHistory((prev) => {
       const filtered = prev.filter((item) => item._id !== term._id);
@@ -224,7 +219,8 @@ const SearchInput = () => {
                   >
                     <div className='flex items-center space-x-2'>
                       <FaHistory />
-                      <span>{term.name}</span>
+
+                      <span>{truncate(term.name, { length: 70 })}</span>
                     </div>
                     <span
                       className='text-xs text-gray-400 hover:text-red-500'

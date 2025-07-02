@@ -1,10 +1,11 @@
 'use client';
-import React, { FC, Fragment, useEffect, useState } from 'react';
+import React, { FC, Fragment, useEffect, useState, use } from 'react';
 import { XStack, YStack, ScrollView, Card, Spinner } from 'tamagui';
 import { ServiceErrorManager } from '@/helpers/service';
 import {
   CalculateProductExtraChargesService,
   GetCartDetailsService,
+  GetCartPageDetailsService,
 } from '@/services/cart';
 import { ICart } from '@/types/cart';
 import AddressList from '@/components/checkout/AddressList';
@@ -12,24 +13,21 @@ import OrderSummary from '@/components/cart/OrderSummary';
 import PaymentDetails from '@/components/checkout/PaymentDetails';
 
 interface CheckoutPageProps {
-  searchParams: { 'delivery-address'?: string };
+  searchParams: Promise<{ 'delivery-address'?: string }>;
 }
 const Checkout: FC<CheckoutPageProps> = ({ searchParams }) => {
-  const deliveryAddress = searchParams['delivery-address'];
+  const unwarmSearchParams = use(searchParams);
+  const deliveryAddress = unwarmSearchParams['delivery-address'];
   const [cartDetail, setCartDetail] = useState<ICart | null>(null);
   const [extraCharges, setExtraCharges] = useState<object | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const fetchCartDetails = () => {
     setLoading(true);
-    Promise.all([
-      ServiceErrorManager(CalculateProductExtraChargesService(), {}),
-      ServiceErrorManager(GetCartDetailsService(), {}),
-    ])
-      .then(([[, _extraCharges], [, _cartDetail]]) => {
-        setCartDetail(_cartDetail);
-        setExtraCharges(_extraCharges);
+    ServiceErrorManager(GetCartPageDetailsService(), {})
+      .then(([_, response]) => {
+        setExtraCharges(response.extraCharges);
+        setCartDetail(response.cart);
       })
-      .catch(console.log)
       .finally(() => {
         setLoading(false);
       });

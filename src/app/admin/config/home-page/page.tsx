@@ -33,6 +33,8 @@ import {
 import { useDarkMode } from '@/hook/useDarkMode';
 import { NewTableHOC } from '@/components/admin/organism/NewTableHOC';
 import AdminSidebar from '@/components/admin/organism/AdminSidebar';
+import { truncate } from 'lodash-es';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 interface DataType {
   _id: string;
@@ -42,6 +44,24 @@ interface DataType {
   lastModified: ReactElement;
   action: ReactElement;
 }
+
+const Name = ({
+  config,
+  router,
+}: {
+  config: IHomePageConfig;
+  router: AppRouterInstance;
+}) => (
+  <Text
+    onPress={() => router.push(`/admin/config/home-page/details/${config._id}`)}
+    hoverStyle={{
+      color: '$linkColor',
+      cursor: 'pointer',
+    }}
+  >
+    {truncate(config.name, { length: 20 })}
+  </Text>
+);
 
 const HomePageConfig: FC = () => {
   const router = useRouter();
@@ -114,7 +134,7 @@ const HomePageConfig: FC = () => {
 
   const rows: DataType[] = homeConfigList.map((config) => ({
     _id: config._id,
-    name: <Text>{config.name}</Text>,
+    name: <Name config={config} router={router} />,
     isActive: (
       <Switch
         checked={config.isActive as boolean}

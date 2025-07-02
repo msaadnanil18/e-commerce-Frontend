@@ -22,6 +22,7 @@ const ProductCategory: FC<{
     marginTop: 8,
     fontSize: 12,
   });
+
   return (
     <Card
       bordered
@@ -32,7 +33,10 @@ const ProductCategory: FC<{
     >
       <Categories>
         {(productcategory || []).map((category, index) => (
-          <CategoryItem key={index}>
+          <CategoryItem
+            onPress={() => console.log(category?.title)}
+            key={index}
+          >
             {category?.thumbnail ? (
               <RenderDriveFile
                 file={category?.thumbnail as any}

@@ -9,6 +9,16 @@ export interface ICartItem {
   quantity: number;
   price: number;
   total: number;
+  discountType?: 'percentage';
+  discountValue?: number;
+  discountAmount?: number;
+
+  tierDiscountType?: 'flat' | 'percentage';
+  tierDiscountValue?: number;
+  tierDiscountAmount?: number;
+
+  totalDiscount?: number;
+  finalPrice: number;
 }
 
 export interface ICart {
@@ -18,4 +28,6 @@ export interface ICart {
   totalPrice: number;
   createdAt: Date;
   updatedAt: Date;
+  discount: number;
+  finalPrice: number;
 }
