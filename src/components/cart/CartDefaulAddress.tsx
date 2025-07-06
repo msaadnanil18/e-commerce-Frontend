@@ -20,8 +20,8 @@ import { useScreen } from '@/hook/useScreen';
 
 const CartDefaulAddress: FC<{
   defaultAddres: IAddress | null;
-  reload: () => void;
-}> = ({ defaultAddres, reload }) => {
+  setDefaulAddress: Dispatch<SetStateAction<IAddress | null>>;
+}> = ({ defaultAddres, setDefaulAddress }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const media = useScreen();
 
@@ -58,7 +58,9 @@ const CartDefaulAddress: FC<{
             </Text>
           </View>
         </View>
-        {openModal && <AddressPopup {...{ openModal, setOpenModal, reload }} />}
+        {openModal && (
+          <AddressPopup {...{ openModal, setOpenModal, setDefaulAddress }} />
+        )}
 
         <Button
           onPress={() => setOpenModal(true)}
@@ -79,8 +81,8 @@ export default CartDefaulAddress;
 const AddressPopup: FC<{
   openModal: boolean;
   setOpenModal: Dispatch<SetStateAction<boolean>>;
-  reload: () => void;
-}> = ({ openModal, setOpenModal, reload }) => {
+  setDefaulAddress: Dispatch<SetStateAction<IAddress | null>>;
+}> = ({ openModal, setOpenModal, setDefaulAddress }) => {
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
   const { loading, addressList } = useGetAddressList({ setSelectedAddressId });
   const [selectionLoading, setSelectionLoading] = useState<boolean>(false);
@@ -93,17 +95,21 @@ const AddressPopup: FC<{
     ServiceErrorManager(
       SetDefaultAddressService({
         data: {
+          returnDocs: true,
           query: {
             _id: value,
           },
         },
       }),
       {}
-    ).finally(() => {
-      setOpenModal(false);
-      setSelectionLoading(false);
-      reload();
-    });
+    )
+      .then(([_, data]) => {
+        setDefaulAddress(data[0]);
+      })
+      .finally(() => {
+        setOpenModal(false);
+        setSelectionLoading(false);
+      });
   };
 
   return (

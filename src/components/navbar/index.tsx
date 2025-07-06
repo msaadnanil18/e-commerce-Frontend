@@ -320,7 +320,7 @@ const Navbar: FC = () => {
               marginRight='$2'
               icon={<RiShoppingCart2Line size={20} />}
             >
-              {screen.lg ? 'Cart' : null}
+              Cart
             </Button>
 
             {(!isLoggedIn || !userRoles.includes('seller')) && (
@@ -335,7 +335,7 @@ const Navbar: FC = () => {
                   router.push('/login?redirect=seller/seller-registration')
                 }
               >
-                {screen.lg ? 'Become a Seller' : null}
+                Become a Seller
               </Button>
             )}
 

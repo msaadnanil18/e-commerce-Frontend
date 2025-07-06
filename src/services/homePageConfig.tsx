@@ -11,5 +11,6 @@ export const GetHomePageConfigService = (id: string) =>
 export const ListHomePageConfigService = Service('/home-page/config/list');
 
 export const ListAnonymousHomePageConfigService = Service(
-  '/home-page/config/anonymous/list'
+  '/home-page/config/anonymous/list',
+  { method: 'GET' }
 );

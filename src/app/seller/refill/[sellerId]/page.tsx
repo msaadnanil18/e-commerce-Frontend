@@ -18,7 +18,7 @@ import { Spinner, YStack, Text } from 'tamagui';
 const SellerRefillForm: FC = () => {
   const { logOut } = useAuth();
   const searchParams = useSearchParams();
-  console.log(searchParams.get('token'));
+
   const params = useParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState(0);

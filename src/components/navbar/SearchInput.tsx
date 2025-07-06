@@ -81,7 +81,9 @@ const SearchInput = () => {
     setQuery('');
     setShowDropdown(false);
     updateAutosuggestHistory(item);
-    router.push(`/product-details/${item._id}`);
+    router.push(
+      `/product-details/${item._id}?name=${item.name}&description=${item.description}`
+    );
   };
 
   const clearSearch = () => {

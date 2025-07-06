@@ -11,13 +11,12 @@ import { ICart } from '@/types/cart';
 import AddressList from '@/components/checkout/AddressList';
 import OrderSummary from '@/components/cart/OrderSummary';
 import PaymentDetails from '@/components/checkout/PaymentDetails';
+import { useSearchParams } from 'next/navigation';
 
-interface CheckoutPageProps {
-  searchParams: Promise<{ 'delivery-address'?: string }>;
-}
-const Checkout: FC<CheckoutPageProps> = ({ searchParams }) => {
-  const unwarmSearchParams = use(searchParams);
-  const deliveryAddress = unwarmSearchParams['delivery-address'];
+const Checkout: FC = () => {
+  const searchParams = useSearchParams();
+  const deliveryAddress = searchParams.get('delivery-address');
+
   const [cartDetail, setCartDetail] = useState<ICart | null>(null);
   const [extraCharges, setExtraCharges] = useState<object | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,7 +39,7 @@ const Checkout: FC<CheckoutPageProps> = ({ searchParams }) => {
   return (
     <Fragment>
       <XStack flex={1} flexWrap='wrap' padding='$4' justifyContent='center'>
-        <YStack width='65%' padding='$4'>
+        <YStack flex={1} padding='$4'>
           {deliveryAddress ? (
             <PaymentDetails
               cartDetail={cartDetail}

@@ -34,3 +34,8 @@ export const RemoveProductCategoryService = (id: string) =>
 
 export const UpdatateProductCategoryService = (id: string) =>
   Service(`/product/categories/get/${id}`, { method: 'PUT' });
+
+export const ProductByCategoryService = (categoryId: string) =>
+  Service(`/product/categories/${categoryId}/with-subcategories`, {
+    method: 'GET',
+  });

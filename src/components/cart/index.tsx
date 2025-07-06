@@ -129,7 +129,7 @@ const CartPage: FC = () => {
               {defaultAddres && (
                 <CartDefaulAddress
                   defaultAddres={defaultAddres}
-                  reload={fetchCartDetails}
+                  setDefaulAddress={setDefaulAddress}
                 />
               )}
 
@@ -172,7 +172,7 @@ const CartPage: FC = () => {
                               <Text
                                 onPress={() =>
                                   router.push(
-                                    `/product-details/${item.product._id}`
+                                    `/product-details/${item.product._id}?name=${item.product.name}&description=${item.product.description}`
                                   )
                                 }
                                 hoverStyle={{
