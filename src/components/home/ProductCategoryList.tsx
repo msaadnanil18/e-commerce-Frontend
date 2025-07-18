@@ -6,6 +6,8 @@ import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { IHomePageConfig } from '@/types/HomePageConfig';
 import { IProduct } from '@/types/products';
 import { startCase } from 'lodash-es';
+import { useWishlistToggle } from './useWishlistToggle';
+import { useRouter } from 'next/navigation';
 
 interface CategoryGroup {
   categoryId: string;
@@ -16,6 +18,8 @@ interface CategoryGroup {
 const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
   homeScreenData,
 }) => {
+  const router = useRouter();
+  const { toggleWishlist, wishlistLoading } = useWishlistToggle();
   const scrollRefs = useRef<Record<number, any>>({});
 
   const scrollBy = (index: number, offset: number) => {
@@ -38,7 +42,7 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
     const categoryMap: Record<string, CategoryGroup> = {};
 
     homeScreenData.featuredProducts.forEach((_product) => {
-      const product = _product;
+      const product = _product as IProduct;
 
       const categoryId = (product.category.title || '').toString();
 
@@ -63,7 +67,7 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
   return (
     <ScrollView padding='$1'>
       {categoryGroups.map((category, index) => (
-        <View key={category.categoryId} marginBottom='$4'>
+        <View key={category?.categoryId || index} marginBottom='$4'>
           <Text
             fontSize='$5'
             fontWeight='bold'
@@ -88,6 +92,13 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
             >
               {category.products.map((product) => (
                 <ProductCard
+                  wishlistLoading={wishlistLoading}
+                  toggleWishlist={toggleWishlist}
+                  productOnClick={(product) => {
+                    router.push(
+                      `/product-details/${product._id}?name=${product.name}&description=${product.description}`
+                    );
+                  }}
                   key={(product._id || '').toString()}
                   product={product}
                 />

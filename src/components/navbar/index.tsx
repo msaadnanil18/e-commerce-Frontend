@@ -7,7 +7,6 @@ import { FiPackage, FiMenu } from 'react-icons/fi';
 import { LiaGiftsSolid } from 'react-icons/lia';
 import { RiShoppingCart2Line } from 'react-icons/ri';
 import {
-  FaSearch,
   FaMoon,
   FaSun,
   FaHeart,
@@ -27,6 +26,7 @@ import AsyncSelect from '../appComponets/select/AsyncSelect';
 import { startCase } from 'lodash-es';
 import TMGPopover from '../appComponets/popover/Popover';
 import { useScreen } from '@/hook/useScreen';
+import SearchInput from './SearchInput';
 
 const Navbar: FC = () => {
   const screen = useScreen();
@@ -267,18 +267,7 @@ const Navbar: FC = () => {
 
           {!screen.xs && (
             <View flex={1} marginHorizontal='$4'>
-              <div
-                className={`flex items-center space-x-2 w-full ${
-                  theme.mode === 'DARK' ? 'bg-darkBgbutton' : 'bg-ligthBgbutton'
-                } p-1 rounded-md`}
-              >
-                <FaSearch size={20} color='#666' />
-                <input
-                  className='w-full p-1.5'
-                  style={{ outline: 'none', backgroundColor: 'transparent' }}
-                  placeholder='Search for products, brands, and more'
-                />
-              </div>
+              <SearchInput />
             </View>
           )}
         </XStack>
@@ -331,7 +320,7 @@ const Navbar: FC = () => {
               marginRight='$2'
               icon={<RiShoppingCart2Line size={20} />}
             >
-              {screen.lg ? 'Cart' : null}
+              Cart
             </Button>
 
             {(!isLoggedIn || !userRoles.includes('seller')) && (
@@ -346,7 +335,7 @@ const Navbar: FC = () => {
                   router.push('/login?redirect=seller/seller-registration')
                 }
               >
-                {screen.lg ? 'Become a Seller' : null}
+                Become a Seller
               </Button>
             )}
 
@@ -397,20 +386,9 @@ const Navbar: FC = () => {
           shadowRadius={3.84}
           elevation={5}
         >
-          <View marginBottom='$3'>
-            <div
-              className={`flex items-center space-x-2 w-full ${
-                theme.mode === 'DARK' ? 'bg-darkBgbutton' : 'bg-ligthBgbutton'
-              } p-1 rounded-md`}
-            >
-              <FaSearch size={20} color='#666' />
-              <input
-                className='w-full p-1.5'
-                style={{ outline: 'none', backgroundColor: 'transparent' }}
-                placeholder='Search for products, brands, and more'
-              />
-            </div>
-          </View>
+          {/* <View marginBottom='$3'>
+            <SearchInput />
+          </View> */}
 
           <YStack space='$2'>
             <Button

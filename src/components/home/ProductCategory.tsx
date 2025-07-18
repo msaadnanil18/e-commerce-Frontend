@@ -2,12 +2,14 @@ import { FC } from 'react';
 import { Card, Image, Text } from 'tamagui';
 import { View, styled } from '@tamagui/core';
 import { IProductCategory } from '@/types/productCategory';
-import { kebabCase, startCase } from 'lodash-es';
+import { kebabCase, startCase, toLower } from 'lodash-es';
 import RenderDriveFile from '../appComponets/fileupload/RenderDriveFile';
+import { useRouter } from 'next/navigation';
 
 const ProductCategory: FC<{
   productcategory?: Array<IProductCategory | null>;
 }> = ({ productcategory }) => {
+  const router = useRouter();
   const Categories = styled(View, {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -21,7 +23,12 @@ const ProductCategory: FC<{
   const CategoryText = styled(Text, {
     marginTop: 8,
     fontSize: 12,
+    cursor: 'pointer',
+    hoverStyle: {
+      color: '$linkColor',
+    },
   });
+
   return (
     <Card
       bordered
@@ -32,7 +39,14 @@ const ProductCategory: FC<{
     >
       <Categories>
         {(productcategory || []).map((category, index) => (
-          <CategoryItem key={index}>
+          <CategoryItem
+            onPress={() => {
+              router.push(
+                `${category?._id}?category=${toLower(category?.title)}`
+              );
+            }}
+            key={index}
+          >
             {category?.thumbnail ? (
               <RenderDriveFile
                 file={category?.thumbnail as any}

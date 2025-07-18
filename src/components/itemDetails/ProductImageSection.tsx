@@ -9,7 +9,8 @@ import { FaHeart, FaRegHeart, FaSpinner } from 'react-icons/fa';
 import { AddProductToWishlistService } from '@/services/wishList';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/states/store/store';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { RiShoppingCart2Line } from 'react-icons/ri';
 
 interface ProductImageSectionProps {
   product: IProduct;
@@ -30,7 +31,10 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
 }) => {
   const user = useSelector((state: RootState) => state.user);
   const router = useRouter();
-  const pathname = usePathname();
+  const _pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const pathname = `${_pathname}?${searchParams.toString()}`;
   const [cartSuccess, setCartSuccess] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [addWishListLoading, setAddWishListLoading] = useState<boolean>(false);
@@ -52,7 +56,7 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
       return;
     }
     setCartSuccess(true);
-    await ServiceErrorManager(
+    const [err] = await ServiceErrorManager(
       AddProductToCartService({
         data: {
           payload: {
@@ -66,6 +70,9 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
     );
 
     setCartSuccess(false);
+    if (!err) {
+      router.push('/cart');
+    }
   };
 
   const addProductToWishlist = async () => {
@@ -268,18 +275,34 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
       </YStack>
 
       <XStack space='$2' marginTop='$2' marginBottom={isMobile ? '$4' : '$0'}>
-        <Button
-          size={isMobile ? '$3' : '$4'}
-          backgroundColor='$primary'
-          flex={1}
-          onPress={handleAddToCart}
-          disabled={
-            currentVariant.inventory === 0 && !currentVariant.isMadeOnDemand
-          }
-        >
-          {cartSuccess ? '✓ Added to Cart' : 'Add to Cart'}
-        </Button>
-        <Button
+        {(product as any)?.productInCart ? (
+          <Button
+            size={isMobile ? '$3' : '$4'}
+            backgroundColor='$primary'
+            icon={<RiShoppingCart2Line size={20} />}
+            flex={1}
+            onPress={() => {
+              router.push('/cart');
+            }}
+          >
+            GO TO CART
+          </Button>
+        ) : (
+          <Button
+            size={isMobile ? '$3' : '$4'}
+            backgroundColor='$primary'
+            flex={1}
+            icon={<RiShoppingCart2Line size={20} />}
+            onPress={handleAddToCart}
+            disabled={
+              currentVariant.inventory === 0 && !currentVariant.isMadeOnDemand
+            }
+          >
+            {cartSuccess ? '✓ Added to Cart' : 'Add to Cart'}
+          </Button>
+        )}
+
+        {/* <Button
           size={isMobile ? '$3' : '$4'}
           backgroundColor='$green9'
           flex={1}
@@ -289,7 +312,7 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
           }
         >
           Buy Now
-        </Button>
+        </Button> */}
       </XStack>
     </YStack>
   );

@@ -4,6 +4,7 @@ import './globals.css';
 import './app.scss';
 import { Providers } from './providers';
 import { Toaster } from 'react-hot-toast';
+import { EcommarceName } from '@/helpers/utils';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -16,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Tent Bazar',
-  description: 'Rt',
+  title: EcommarceName(),
+  description: `Welcome to ${EcommarceName()}`,
 };
 
 export default function RootLayout({

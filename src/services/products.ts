@@ -12,4 +12,12 @@ export const ProductApprovalandRejectionService = Service(
   '/product/approval-Rejection'
 );
 
-export const AnonymousProductDetailsService = Service('/anonymous/product/get');
+export const AnonymousProductDetailsService = Service(
+  '/anonymous/product/get',
+  { method: 'GET' }
+);
+
+export const AnonymousSearchProductService = Service(
+  '/anonymous/product/search',
+  { method: 'GET' }
+);

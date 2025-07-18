@@ -51,7 +51,11 @@ const WishlistItem: FC<{
 
         <YStack flex={1} padding='$3' space='$2'>
           <Text
-            onPress={() => router.push(`/product-details/${product._id}`)}
+            onPress={() =>
+              router.push(
+                `/product-details/${product._id}?name=${product.name}&description=${product.description}`
+              )
+            }
             hoverStyle={{
               color: '$linkColor',
               cursor: 'pointer',

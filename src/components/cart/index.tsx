@@ -129,7 +129,7 @@ const CartPage: FC = () => {
               {defaultAddres && (
                 <CartDefaulAddress
                   defaultAddres={defaultAddres}
-                  reload={fetchCartDetails}
+                  setDefaulAddress={setDefaulAddress}
                 />
               )}
 
@@ -145,9 +145,6 @@ const CartPage: FC = () => {
                 ) : (
                   <YStack gap='$4'>
                     {(cartDetail?.items || [])?.map((item) => {
-                      const variant = item.product.variants.find(
-                        (v) => v._id.toString() === item.variant.toString()
-                      );
                       return (
                         <Card
                           key={item._id}
@@ -175,7 +172,7 @@ const CartPage: FC = () => {
                               <Text
                                 onPress={() =>
                                   router.push(
-                                    `/product-details/${item.product._id}`
+                                    `/product-details/${item.product._id}?name=${item.product.name}&description=${item.product.description}`
                                   )
                                 }
                                 hoverStyle={{
@@ -193,9 +190,7 @@ const CartPage: FC = () => {
                                 color='$primary'
                                 fontWeight='700'
                               >
-                                <PriceFormatter
-                                  value={item.price * item.quantity}
-                                />
+                                <PriceFormatter value={item.finalPrice} />
                               </Text>
                               <XStack
                                 alignItems='center'

@@ -36,7 +36,7 @@ import { Controller, useForm } from 'react-hook-form';
 import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
 import { NewTableHOC } from '@/components/admin/organism/NewTableHOC';
 import { useDarkMode } from '@/hook/useDarkMode';
-import { startCase } from 'lodash-es';
+import { startCase, toLower } from 'lodash-es';
 import FileUpload from '@/components/appComponets/fileupload/FileUpload';
 import useFileUpload from '@/components/appComponets/fileupload/useFileUpload';
 import { FiSave } from 'react-icons/fi';
@@ -109,7 +109,7 @@ const Category: FC = () => {
   const onSubmit = async (value: IProductCategory) => {
     setIsSaving(true);
     setOpenModal(true);
-    const { thumbnail, _id, ...restValue } = value;
+    const { title, thumbnail, _id, ...restValue } = value;
     const newThumbnailImage = getRealFiles([thumbnail]);
 
     let uploadedThumnail = null;
@@ -125,6 +125,7 @@ const Category: FC = () => {
             ...(_id ? { _id } : {}),
           },
           payload: {
+            title: toLower(title),
             ...restValue,
             ...(thumbnail &&
               (uploadedThumnail
@@ -345,6 +346,10 @@ const Category: FC = () => {
                   multiple={false}
                   name='thumbnail'
                   accept={['.jpg', '.jpeg', '.png', '.svg']}
+                  //@ts-ignore
+                  extraFormFields={{
+                    rules: { required: 'Thumbnail is required' },
+                  }}
                 />
               </YStack>
             </YStack>

@@ -5,7 +5,7 @@ import { FC } from 'react';
 const Loader: FC = () => {
   return (
     <section className='loader'>
-      <div></div>
+      <div />
     </section>
   );
 };

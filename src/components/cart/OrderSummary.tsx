@@ -23,30 +23,30 @@ const OrderSummary: FC<{
   const router = useRouter();
   const media = useScreen();
 
-  const subtotal = (cartDetail?.items || []).reduce(
-    (sum, item) =>
-      sum +
-      (item.product.variants.find((variant) => variant._id === item.variant)
-        ?.price || 0) *
-        item.quantity,
-    0
-  );
+  // const subtotal = (cartDetail?.items || []).reduce(
+  //   (sum, item) =>
+  //     sum +
+  //     (item.product.variants.find((variant) => variant._id === item.variant)
+  //       ?.price || 0) *
+  //       item.quantity,
+  //   0
+  // );
 
-  const totalDiscount = (cartDetail?.items || []).reduce((sum, item) => {
-    const variant = item.product.variants.find(
-      (v) => v._id.toString() === item.variant.toString()
-    );
-    return sum + (variant?.discount || 0);
-  }, 0);
+  // const totalDiscount = (cartDetail?.items || []).reduce((sum, item) => {
+  //   const variant = item.product.variants.find(
+  //     (v) => v._id.toString() === item.variant.toString()
+  //   );
+  //   return sum + (variant?.discount || 0);
+  // }, 0);
 
-  const tax = (subtotal - totalDiscount) * 0;
+  // const tax = (subtotal - totalDiscount) * 0;
 
   const totalPrice =
-    (cartDetail?.totalPrice || 0) +
+    (cartDetail?.finalPrice || 0) +
     ((extraCharges as any)?.total?.delivery || 0) +
     ((extraCharges as any)?.total?.service || 0);
 
-  console.log(totalPrice, 'totalPrice');
+  // console.log(totalPrice, 'totalPrice');
 
   return (
     <YStack
@@ -69,7 +69,7 @@ const OrderSummary: FC<{
         <XStack justifyContent='space-between' marginBottom='$2'>
           <Text fontSize={media.sm ? '$3' : '$4'}>Subtotal</Text>
           <Text fontSize={media.sm ? '$3' : '$4'}>
-            <PriceFormatter value={subtotal} />
+            <PriceFormatter value={cartDetail?.totalPrice || 0} />
           </Text>
         </XStack>
 
@@ -78,10 +78,10 @@ const OrderSummary: FC<{
             Discount
           </Text>
           <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
-            -{totalDiscount}%
+            -<PriceFormatter value={cartDetail?.discount || 0} />
           </Text>
         </XStack>
-        {discountsTiers && discountsTiers.totalPercentageDiscount > 0 && (
+        {/* {discountsTiers && discountsTiers.totalPercentageDiscount > 0 && (
           <XStack justifyContent='space-between' marginBottom='$2'>
             <Text fontSize={media.sm ? '$3' : '$4'} color='$green10'>
               Discount Tiers
@@ -100,7 +100,7 @@ const OrderSummary: FC<{
               - <PriceFormatter value={discountsTiers.totalFlatDiscount} />
             </Text>
           </XStack>
-        )}
+        )} */}
 
         <XStack justifyContent='space-between' marginBottom='$2'>
           <Text fontSize={media.sm ? '$3' : '$4'} color='$yellow10'>
@@ -129,7 +129,7 @@ const OrderSummary: FC<{
         <XStack justifyContent='space-between' marginBottom='$2'>
           <Text fontSize={media.sm ? '$3' : '$4'}>Tax (0%)</Text>
           <Text fontSize={media.sm ? '$3' : '$4'}>
-            <PriceFormatter value={tax} />
+            <PriceFormatter value={0} />
           </Text>
         </XStack>
 

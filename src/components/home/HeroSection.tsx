@@ -9,18 +9,16 @@ import { IHomePageConfig } from '@/types/HomePageConfig';
 import RenderDriveFile from '../appComponets/fileupload/RenderDriveFile';
 import { useRouter } from 'next/navigation';
 
-const NextArrow = (props: any) => {
+const NextArrow = () => {
   const isDark = useDarkMode();
 
-  return (
-    <IoIosArrowForward {...props} color={isDark ? '#F5F3E7' : '#111111'} />
-  );
+  return <IoIosArrowForward color={isDark ? '#F5F3E7' : '#111111'} />;
 };
 
-const PrevArrow = (props: any) => {
+const PrevArrow = () => {
   const isDark = useDarkMode();
 
-  return <IoIosArrowBack {...props} color={isDark ? '#F5F3E7' : '#111111'} />;
+  return <IoIosArrowBack color={isDark ? '#F5F3E7' : '#111111'} />;
 };
 
 const Carousel: FC<{ homeScreenData: IHomePageConfig | null }> = ({
@@ -59,7 +57,9 @@ const Carousel: FC<{ homeScreenData: IHomePageConfig | null }> = ({
           <div
             key={index}
             onClick={() => {
-              router.push(`/product-details/${banner.product._id}`);
+              router.push(
+                `/product-details/${banner.product._id}?name=${banner.product.name}&description=${banner.product.description}`
+              );
             }}
           >
             <RenderDriveFile
@@ -76,7 +76,6 @@ const Carousel: FC<{ homeScreenData: IHomePageConfig | null }> = ({
 const HeroSection: FC<{ homeScreenData: IHomePageConfig | null }> = ({
   homeScreenData,
 }) => {
-  console.log(homeScreenData, '___homeScreenData__');
   return (
     <View
       flexDirection='row'
