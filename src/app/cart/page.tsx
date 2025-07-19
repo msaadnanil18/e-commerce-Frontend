@@ -10,7 +10,11 @@ export async function generateMetadata() {
 }
 
 const Carts: FC = () => {
-  return <Cart />;
+  return (
+    <div className=' h-screen'>
+      <Cart />
+    </div>
+  );
 };
 
 export default Carts;

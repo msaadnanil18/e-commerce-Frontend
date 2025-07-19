@@ -1,74 +1,53 @@
 'use client';
-import { useState, useEffect } from 'react';
-import {
-  YStack,
-  XStack,
-  Button,
-  H1,
-  H3,
-  Paragraph,
-  Card,
-  AnimatePresence,
-  useTheme,
-  H4,
-} from 'tamagui';
-import { FiLock, FiAlertTriangle, FiArrowLeft, FiHome } from 'react-icons/fi';
+
+import { YStack, Paragraph, AnimatePresence, H4, View } from 'tamagui';
+import { FiLock } from 'react-icons/fi';
 
 const Unauthorized = () => {
-  const [showHelpTips, setShowHelpTips] = useState(false);
-  const [animation, setAnimation] = useState(false);
-
-  // Trigger animation on component mount
-  useEffect(() => {
-    setAnimation(true);
-  }, []);
-
   return (
-    <YStack
-      flex={1}
-      alignItems='center'
-      justifyContent='center'
-      paddingVertical='$8'
-      paddingHorizontal='$4'
-      space='$6'
-      backgroundColor='$background'
-    >
-      {/* Animated lock icon with pulse effect */}
+    <View flex={1} height='100vh'>
       <YStack
-        scale={animation ? 1 : 0.5}
-        opacity={animation ? 1 : 0}
-        width={100}
-        height={100}
-        backgroundColor='$backgroundHover'
+        flex={1}
         alignItems='center'
         justifyContent='center'
-        enterStyle={{
-          scale: 0.5,
-          opacity: 0,
-          y: -20,
-        }}
+        paddingVertical='$8'
+        paddingHorizontal='$4'
+        space='$6'
+        backgroundColor='$background'
       >
-        <FiLock size={48} />
-      </YStack>
-
-      <YStack space='$4' alignItems='center'>
-        <H4 textAlign='center' fontWeight='bold' color='$color'>
-          Access Denied
-        </H4>
-
-        <Paragraph
-          size='$5'
-          textAlign='center'
-          color='$colorHover'
-          marginTop='$2'
+        <YStack
+          width={100}
+          height={100}
+          backgroundColor='$backgroundHover'
+          alignItems='center'
+          justifyContent='center'
+          enterStyle={{
+            scale: 0.5,
+            opacity: 0,
+            y: -20,
+          }}
         >
-          You don't have permission to access this page. Please sign in with the
-          appropriate credentials or contact your administrator.
-        </Paragraph>
-      </YStack>
+          <FiLock size={48} />
+        </YStack>
 
-      <AnimatePresence>
-        {showHelpTips && (
+        <YStack space='$4' alignItems='center'>
+          <H4 textAlign='center' fontWeight='bold' color='$color'>
+            Access Denied
+          </H4>
+
+          <Paragraph
+            size='$5'
+            textAlign='center'
+            color='$colorHover'
+            marginTop='$2'
+          >
+            You don't have permission to access this page. Please sign in with
+            the appropriate credentials or contact your administrator.
+          </Paragraph>
+        </YStack>
+
+        <AnimatePresence>
+          {/* {true && (
           <Card
             enterStyle={{
               opacity: 0,
@@ -103,9 +82,10 @@ const Unauthorized = () => {
               </XStack>
             </YStack>
           </Card>
-        )}
-      </AnimatePresence>
-    </YStack>
+        )} */}
+        </AnimatePresence>
+      </YStack>
+    </View>
   );
 };
 

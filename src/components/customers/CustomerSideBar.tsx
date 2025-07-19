@@ -44,7 +44,7 @@ const CustomerSideBar: FC = () => {
             : {}
         }
       >
-        <Card borderRadius={0} padding='$2' width='full'>
+        <Card borderRadius={0} marginTop={0} padding='$2' width='full'>
           <XStack gap='$2'>
             <img
               height={50}

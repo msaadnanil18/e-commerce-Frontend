@@ -13,6 +13,7 @@ import { IProduct } from '@/types/products';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/states/store/store';
 import { Spinner, XStack, Text } from 'tamagui';
+import { useSearchParams } from 'next/navigation';
 import { decryptData } from '@/helpers/ cryptoUtils';
 
 const ItemDetails: FC<{
@@ -20,8 +21,17 @@ const ItemDetails: FC<{
   setProduct: Dispatch<SetStateAction<IProduct | null>>;
 }> = (props) => {
   const { product, setProduct } = props;
+  const searchParams = useSearchParams();
   const screen = useScreen();
-  const [selectedVariant, setSelectedVariant] = useState(0);
+
+  const index = product.variants.findIndex(
+    (variant) => variant._id === searchParams.get('variant')
+  );
+
+  const [selectedVariant, setSelectedVariant] = useState(
+    index === -1 ? 0 : index
+  );
+
   const [quantity, setQuantity] = useState(
     product?.quantityRules?.step ||
       product?.quantityRules?.predefined?.[0] ||

@@ -20,7 +20,7 @@ import { useScreen } from '@/hook/useScreen';
 import { RootState } from '@/states/store/store';
 import { useRouter } from 'next/navigation';
 import { IconType } from 'react-icons';
-import { FaBriefcase, FaTags } from 'react-icons/fa';
+import { FaBriefcase, FaHome, FaTags } from 'react-icons/fa';
 import { IoMenu } from 'react-icons/io5';
 import {
   MdHome,
@@ -28,11 +28,12 @@ import {
   MdOutlineMiscellaneousServices,
 } from 'react-icons/md';
 import { useSelector } from 'react-redux';
-import { Button, Card, Paragraph, Text, XStack, YStack } from 'tamagui';
+import { Button, Card, Paragraph, Text, View, XStack, YStack } from 'tamagui';
 
 const AdminSidebar: FC = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const isDark = useDarkMode();
+  const router = useRouter();
   const pathname = usePathname();
   const [showModal, setShowModal] = useState<boolean>(false);
   const screen = useScreen();
@@ -61,7 +62,21 @@ const AdminSidebar: FC = () => {
             : {}
         }
       >
-        <Card borderRadius={0} padding='$2' width='full'>
+        <View
+          onPress={() => {
+            router.push('/');
+          }}
+          hoverStyle={{
+            //@ts-ignore
+            color: '$linkColor',
+            cursor: 'pointer',
+          }}
+          marginBottom='$3'
+          marginTop='$3'
+        >
+          <FaHome size={20} />
+        </View>
+        <Card borderRadius={0} padding='$2' marginVertical={0} width='full'>
           <XStack gap='$2'>
             <img
               height={50}

@@ -76,6 +76,10 @@ export const permissions = Object.freeze({
 
 export const ProtectedRoutes: Record<string, string[]> = Object.freeze({
   '/cart': [permissions.CAN_VIEW_CART],
+
+  /* Account */
+  '/account/wishlist': [],
+  /* Account */
   '/seller/seller-registration': [permissions.CAN_SELLER_REGISTERED],
   // '/seller/refill': [],
 

@@ -22,6 +22,7 @@ export interface ICartItem {
 }
 
 export interface ICart {
+  _id: string;
   user: Types.ObjectId;
   items: ICartItem[];
   totalQuantity: number;

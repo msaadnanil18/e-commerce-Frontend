@@ -11,8 +11,10 @@ import { AnimatePresence, Card, ScrollView, YStack } from 'tamagui';
 import Loader from '@/components/admin/organism/Loader';
 import EmptyState from '@/components/appComponets/Empty/EmptyState';
 import { FaHeartBroken } from 'react-icons/fa';
+import { useScreen } from '@/hook/useScreen';
 
 const Wishlist: FC = () => {
+  const screen = useScreen();
   const [wishList, setWishList] = useState<IWishlist | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -30,10 +32,10 @@ const Wishlist: FC = () => {
   }, []);
 
   return (
-    <div className='admin-container'>
+    <div className={screen.xs ? 'admin-container' : 'customer-container'}>
       <CustomerSideBar />
 
-      <YStack flex={1} backgroundColor='$background'>
+      <YStack flex={1}>
         <WishlistHeader wishList={wishList} />
         {loading ? (
           <Loader />
@@ -75,7 +77,6 @@ const WishlistHeader: FC<{ wishList: IWishlist | null }> = ({ wishList }) => {
       paddingHorizontal='$5'
       alignItems='center'
       space='$4'
-      backgroundColor='$backgroundStrong'
       borderBottomWidth={1}
       borderBottomColor='$borderColor'
     >

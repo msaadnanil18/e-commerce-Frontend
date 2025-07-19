@@ -38,21 +38,6 @@ const ShippingAddressForm = ({
     formState: { errors },
   } = form;
 
-  // useForm<AddressFormValues>({
-  //   defaultValues: {
-  //     name: '', // Added
-  //     street: '',
-  //     city: '',
-  //     state: '',
-  //     postalCode: '',
-  //     country: '',
-  //     phoneNumber: '',
-  //     landmark: '', // Added
-  //     alternativePhone: '', // Added
-  //     isDefault: false, // Added
-  //   },
-  // });
-
   const handleSubmitOrder = async (data: AddressFormValues) => {
     await onSave(data);
   };
@@ -235,7 +220,7 @@ const ShippingAddressForm = ({
                 />
               )}
             />
-            <XStack spaceDirection='vertical' gap='$4'>
+            <XStack marginTop='$3' gap='$4'>
               <Button
                 size='$3'
                 icon={isLoading ? <Spinner /> : <FiSave />}

@@ -72,7 +72,10 @@ const SearchInput = () => {
     setAutosuggestHistory((prev) => {
       const filtered = prev.filter((item) => item._id !== term._id);
       const updated = [term, ...filtered].slice(0, 15);
-      localStorage.setItem('autosuggestHistory', JSON.stringify(updated));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('autosuggestHistory', JSON.stringify(updated));
+      }
+
       return updated;
     });
   };

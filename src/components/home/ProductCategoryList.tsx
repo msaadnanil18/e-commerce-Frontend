@@ -65,7 +65,7 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
   const categoryGroups = groupProductsByCategory();
 
   return (
-    <ScrollView padding='$1'>
+    <>
       {categoryGroups.map((category, index) => (
         <View key={category?.categoryId || index} marginBottom='$4'>
           <Text
@@ -81,6 +81,8 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
               onPress={() => scrollBy(index, -200)}
               chromeless
               icon={<FaArrowLeft />}
+              padding='$2'
+              margin='$2'
             />
 
             <ScrollView
@@ -109,11 +111,13 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
               onPress={() => scrollBy(index, 200)}
               chromeless
               icon={<FaArrowRight />}
+              padding='$2'
+              margin='$2'
             />
           </View>
         </View>
       ))}
-    </ScrollView>
+    </>
   );
 };
 

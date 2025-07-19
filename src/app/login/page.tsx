@@ -14,6 +14,7 @@ import {
   Card,
   View,
 } from 'tamagui';
+import Navbar from '@/components/navbar';
 
 const AuthenticationUI = () => {
   const searchParams = useSearchParams();
@@ -245,22 +246,34 @@ const AuthenticationUI = () => {
   );
 
   return (
-    <View
-      className='grid place-content-center h-screen '
-      flex={1}
-      height='100vh'
-      alignItems='center'
-    >
-      <Card
-        backgroundColor='$cardBackground'
-        className='w-96 p-8 rounded-xl border-white/20'
+    <div>
+      <Navbar showRoleChange={false} />
+      <View
+        flex={1}
+        justifyContent='center'
+        alignItems='center'
+        paddingHorizontal='$4'
+        minHeight='calc(100vh - 74px)'
       >
-        {authMethod === 'initial' && renderInitialScreen()}
-        {authMethod === 'email' && !verifying && renderEmailInput()}
-        {authMethod === 'phone' && !verifying && renderPhoneInput()}
-        {verifying && renderOtpVerification()}
-      </Card>
-    </View>
+        <Card
+          backgroundColor='$cardBackground'
+          padding='$6'
+          maxWidth={400}
+          width='100%'
+          borderRadius='$4'
+          shadowColor='$shadowColor'
+          shadowOffset={{ width: 0, height: 2 }}
+          shadowOpacity={0.1}
+          shadowRadius={8}
+          elevation={3}
+        >
+          {authMethod === 'initial' && renderInitialScreen()}
+          {authMethod === 'email' && !verifying && renderEmailInput()}
+          {authMethod === 'phone' && !verifying && renderPhoneInput()}
+          {verifying && renderOtpVerification()}
+        </Card>
+      </View>
+    </div>
   );
 };
 

@@ -4,7 +4,7 @@ import HeroSection from './HeroSection';
 import ProductCategoryList from './ProductCategoryList';
 import { FC } from 'react';
 import { useScreen } from '@/hook/useScreen';
-import { View } from 'tamagui';
+import { ScrollView, View, YStack } from 'tamagui';
 import SearchInput from '@/components/navbar/SearchInput';
 import Loading from '../loading/Loading';
 import { useHomePageContextContext } from './HomePageContext';
@@ -16,34 +16,54 @@ const Home: FC = () => {
   const screen = useScreen();
 
   if (loading) return <Loading />;
+
   return (
     <div>
       <Navbar />
+
       {screen.xs && (
         <View
-          flex={1}
           padding='$3'
+          backgroundColor='$background'
           //@ts-ignore
           position='sticky'
           zIndex={1000}
           top={0}
-          marginBottom='$3'
+          borderBottomWidth={1}
+          borderBottomColor='$borderColor'
         >
           <SearchInput />
         </View>
       )}
-      {homeScreenData ? (
-        <>
-          <ProductCategory productcategory={homeScreenData?.productcategory} />
-          <HeroSection homeScreenData={homeScreenData} />
-          <ProductCategoryList homeScreenData={homeScreenData} />
-        </>
+
+      {!homeScreenData || !homeScreenData.productcategory.length ? (
+        <View flex={2} minHeight='calc(100vh - 74px)'>
+          <EmptyState
+            icon={<MdInventory2 size={60} />}
+            title='No products available'
+            description='There are currently no products in this page'
+          />
+        </View>
       ) : (
-        <EmptyState
-          icon={<MdInventory2 size={60} />}
-          title='No products available'
-          description='There are currently no products in this page'
-        />
+        <ScrollView
+          flex={1}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: 20,
+          }}
+        >
+          <YStack space='$4'>
+            <ProductCategory
+              productcategory={homeScreenData?.productcategory}
+            />
+
+            <View paddingHorizontal='$3'>
+              <HeroSection homeScreenData={homeScreenData} />
+            </View>
+
+            <ProductCategoryList homeScreenData={homeScreenData} />
+          </YStack>
+        </ScrollView>
       )}
     </div>
   );

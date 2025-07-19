@@ -15,6 +15,7 @@ import {
   H2,
   Paragraph,
   H6,
+  View,
 } from 'tamagui';
 import { setUser } from '@/states/slices/authSlice';
 import { useAuth as cognitoUseAuth } from 'react-oidc-context';
@@ -22,6 +23,7 @@ import { MdMail, MdCheckCircle, MdWarning } from 'react-icons/md';
 import { FaGoogle } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
+import Navbar from '@/components/navbar';
 
 const Regitrations: FC<{ token?: string | null }> = ({ token }) => {
   const auth = cognitoUseAuth();
@@ -77,7 +79,17 @@ const Regitrations: FC<{ token?: string | null }> = ({ token }) => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('sessionToken', data.sessionToken);
     }
-    router.push('/');
+    setIsLoggingIn(false);
+
+    if (data?.user?.activeRole === 'seller') {
+      router.push('/admin/product');
+    }
+    if (
+      data?.user?.activeRole === 'admin' ||
+      data?.user?.activeRole === 'superAdmin'
+    ) {
+      router.push('/admin/dashboard');
+    }
   };
 
   useEffect(() => {
@@ -118,66 +130,67 @@ const Regitrations: FC<{ token?: string | null }> = ({ token }) => {
   }
 
   return (
-    <YStack
-      width='100%'
-      height='100vh'
-      alignItems='center'
-      justifyContent='center'
-      padding='$4'
-      space='$4'
-      backgroundColor='$background'
-    >
-      <Card
-        //  elevate
-        size='$4'
-        //  bordered
-        animation='bouncy'
-        scale={0.9}
-        hoverStyle={{ scale: 1 }}
-        pressStyle={{ scale: 0.9 }}
-        width={400}
-        padding='$4'
+    <div>
+      <Navbar showRoleChange={false} showSearchInput={false} />
+      <View
+        flex={1}
+        justifyContent='center'
+        alignItems='center'
+        paddingHorizontal='$4'
+        minHeight='calc(100vh - 66px)'
       >
-        <YStack space='$4' alignItems='center'>
-          <H6>Account Verification</H6>
+        <Card
+          backgroundColor='$cardBackground'
+          padding='$6'
+          maxWidth={400}
+          width='100%'
+          borderRadius='$4'
+          shadowColor='$shadowColor'
+          shadowOffset={{ width: 0, height: 2 }}
+          shadowOpacity={0.1}
+          shadowRadius={8}
+          elevation={3}
+        >
+          <YStack space='$4' alignItems='center'>
+            <H6>Account Verification</H6>
 
-          {isVerifying ? (
-            <XStack
-              space='$2'
-              alignItems='center'
-              justifyContent='center'
-              padding='$4'
-            >
-              <Spinner size='large' color='$blue10' />
-              <Text fontSize='$5'>Verifying token...</Text>
-            </XStack>
-          ) : isVerified ? (
-            <YStack space='$4' alignItems='center'>
-              <XStack space='$2' alignItems='center'>
-                <MdCheckCircle size={24} color='#10b981' />
-                <Text color='$green10' fontSize='$5'>
-                  Token verified successfully!
-                </Text>
-              </XStack>
-
-              <Paragraph textAlign='center'>{message}</Paragraph>
-
-              <Button
-                size='$4'
-                onPress={handleGoogleLogin}
-                disabled={isLoggingIn}
-                width='80%'
+            {isVerifying ? (
+              <XStack
+                space='$2'
+                alignItems='center'
+                justifyContent='center'
+                padding='$4'
               >
-                {isLoggingIn ? (
-                  <XStack space='$2' alignItems='center'>
-                    <Spinner size='small' color='white' />
-                    <Text color='white'>Logging in...</Text>
-                  </XStack>
-                ) : (
-                  <XStack space='$2' alignItems='center'>
-                    <FaGoogle className='text-xl' />
-                    <Text>Continue with Google</Text>
-                    {/* <Image
+                <Spinner size='large' color='$blue10' />
+                <Text fontSize='$5'>Verifying token...</Text>
+              </XStack>
+            ) : isVerified ? (
+              <YStack space='$4' alignItems='center'>
+                <XStack space='$2' alignItems='center'>
+                  <MdCheckCircle size={24} color='#10b981' />
+                  <Text color='$green10' fontSize='$5'>
+                    Email verified successfully!
+                  </Text>
+                </XStack>
+
+                <Paragraph textAlign='center'>{message}</Paragraph>
+
+                <Button
+                  size='$4'
+                  onPress={handleGoogleLogin}
+                  disabled={isLoggingIn}
+                  width='80%'
+                >
+                  {isLoggingIn ? (
+                    <XStack space='$2' alignItems='center'>
+                      <Spinner size='small' color='white' />
+                      <Text color='white'>Logging in...</Text>
+                    </XStack>
+                  ) : (
+                    <XStack space='$2' alignItems='center'>
+                      <FaGoogle className='text-xl' />
+                      <Text>Continue with Google</Text>
+                      {/* <Image
                       source={{
                         uri: 'https://developers.google.com/identity/images/g-logo.png',
                       }}
@@ -187,37 +200,38 @@ const Regitrations: FC<{ token?: string | null }> = ({ token }) => {
                     />
                     <Text color='white'>Continue with Google</Text>
                     <MdLogin size={20} color='white' /> */}
-                  </XStack>
-                )}
-              </Button>
-            </YStack>
-          ) : (
-            <YStack space='$4' alignItems='center'>
-              <XStack space='$2' alignItems='center'>
-                <MdWarning size={24} color='#f43f5e' />
-                <Text color='$red10' fontSize='$5'>
-                  Verification failed
-                </Text>
-              </XStack>
-
-              <Paragraph textAlign='center'>{message}</Paragraph>
-
-              <Button
-                size='$4'
-                // theme="blue"
-                onPress={verifyToken}
-                width='80%'
-              >
+                    </XStack>
+                  )}
+                </Button>
+              </YStack>
+            ) : (
+              <YStack space='$4' alignItems='center'>
                 <XStack space='$2' alignItems='center'>
-                  <Text color='white'>Try Again</Text>
-                  <MdMail size={20} color='white' />
+                  <MdWarning size={24} color='#f43f5e' />
+                  <Text color='$red10' fontSize='$5'>
+                    Verification failed
+                  </Text>
                 </XStack>
-              </Button>
-            </YStack>
-          )}
-        </YStack>
-      </Card>
-    </YStack>
+
+                <Paragraph textAlign='center'>{message}</Paragraph>
+
+                <Button
+                  size='$4'
+                  // theme="blue"
+                  onPress={verifyToken}
+                  width='80%'
+                >
+                  <XStack space='$2' alignItems='center'>
+                    <Text color='white'>Try Again</Text>
+                    <MdMail size={20} color='white' />
+                  </XStack>
+                </Button>
+              </YStack>
+            )}
+          </YStack>
+        </Card>
+      </View>
+    </div>
   );
 };
 

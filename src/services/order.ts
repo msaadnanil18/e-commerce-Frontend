@@ -1,10 +1,19 @@
 import Service from '@/helpers/service';
 
-export const CreateNewOrderService = Service('/order/create');
+export const CreateNewOrderService = Service<
+  any,
+  {
+    cartId: string;
+    shippingAddressId: string;
+    paymentMethod: string;
+    billingAddressId?: string;
+    notes?: string;
+  }
+>('/order/create');
 
-export const GetOrdersBySellerService = Service('/order/seller/list');
+export const ListOrdersBySellerService = Service('/order/seller/list');
 
-export const GetOrdersByCustomerService = Service('/order/customer/list');
+export const ListOrdersByCustomerService = Service('/order/customer/list');
 
 export const UpdateOrderItemStatusService = Service(
   '/order/seller/update-status'
@@ -13,3 +22,6 @@ export const UpdateOrderItemStatusService = Service(
 export const GenerateCustomerOrderBillService = Service(
   '/order/customer/generate-bill'
 );
+
+export const GetOrderDetailsService = (orderId: string) =>
+  Service(`/order/get/${orderId}`, { method: 'GET' });

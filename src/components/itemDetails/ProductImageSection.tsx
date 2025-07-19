@@ -33,7 +33,6 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
   const router = useRouter();
   const _pathname = usePathname();
   const searchParams = useSearchParams();
-
   const pathname = `${_pathname}?${searchParams.toString()}`;
   const [cartSuccess, setCartSuccess] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
@@ -46,9 +45,7 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
     setShowImageModal(true);
   };
 
-  const handleBuyNow = () => {
-    console.log('Buy now clicked');
-  };
+  const handleBuyNow = () => {};
 
   const handleAddToCart = async () => {
     if (!user.isAuthenticated) {
@@ -275,7 +272,7 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
       </YStack>
 
       <XStack space='$2' marginTop='$2' marginBottom={isMobile ? '$4' : '$0'}>
-        {(product as any)?.productInCart ? (
+        {(currentVariant as any)?.productInCart ? (
           <Button
             size={isMobile ? '$3' : '$4'}
             backgroundColor='$primary'

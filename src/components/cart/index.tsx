@@ -94,7 +94,10 @@ const CartPage: FC = () => {
       }),
       {}
     )
-      .then(([_, response]) => setCartDetails(response?.cart))
+      .then(([_, response]) => {
+        setCartDetails(response?.cart);
+        setExtraCharges(response?.extraCharges);
+      })
       .finally(() => setRemoveLoading(false));
   };
 
@@ -172,7 +175,7 @@ const CartPage: FC = () => {
                               <Text
                                 onPress={() =>
                                   router.push(
-                                    `/product-details/${item.product._id}?name=${item.product.name}&description=${item.product.description}`
+                                    `/product-details/${item.product._id}?name=${item.product.name}&description=${item.product.description}&variant=${item.variant}`
                                   )
                                 }
                                 hoverStyle={{

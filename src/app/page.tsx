@@ -13,7 +13,7 @@ const HomeScreen = dynamic(() => import('../components/home'), {
 const Home: FC = () => {
   return (
     <HomePageConfigProvider>
-      <HomeScreen />;
+      <HomeScreen />
     </HomePageConfigProvider>
   );
 };

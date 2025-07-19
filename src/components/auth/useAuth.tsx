@@ -13,10 +13,11 @@ export const useAuth = () => {
   const auth = cognitoUseAuth();
   const dispatch = useDispatch();
   const router = useRouter();
+  const searchParam = useSearchParams();
   const [loading, setLoading] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.user);
 
-  const redirect = '/';
+  const redirect = searchParam.get('redirect') || '/';
 
   const saveUserData = useCallback(
     async (token: string, role?: string) => {
@@ -32,7 +33,7 @@ export const useAuth = () => {
       );
       setLoading(false);
       if (err || !result) {
-        router.push(redirect);
+        router.push('/');
         return;
       }
 
@@ -73,7 +74,7 @@ export const useAuth = () => {
   const login = async (role?: string) => {
     const result = await handleLogin(role);
     if (!result) {
-      await signOutRedirect();
+      //   await signOutRedirect();
       router.replace(redirect);
     }
   };

@@ -1,4 +1,5 @@
 import Wishlist from '@/components/customers/wishList/WishlistHeader';
+import Navbar from '@/components/navbar';
 import { EcommarceName } from '@/helpers/utils';
 
 export async function generateMetadata() {
@@ -9,7 +10,15 @@ export async function generateMetadata() {
 }
 
 const MYWishlistPage = () => {
-  return <Wishlist />;
+  return (
+    <div className='page-container'>
+      <div className='navbar'>
+        <Navbar />
+      </div>
+
+      <Wishlist />
+    </div>
+  );
 };
 
 export default MYWishlistPage;

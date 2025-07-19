@@ -27,7 +27,7 @@ import {
 } from 'react-icons/fi';
 import dayjs from 'dayjs';
 import { ServiceErrorManager } from '@/helpers/service';
-import { GetOrdersByCustomerService } from '@/services/order';
+import { ListOrdersByCustomerService } from '@/services/order';
 import { IOrder } from '@/types/order';
 import RenderDriveFile from '@/components/appComponets/fileupload/RenderDriveFile';
 import PriceFormatter from '@/components/appComponets/PriceFormatter/PriceFormatter';
@@ -477,7 +477,7 @@ const OrdersList: FC = () => {
   const fetchOrderList = () => {
     setLoading(true);
     ServiceErrorManager(
-      GetOrdersByCustomerService({
+      ListOrdersByCustomerService({
         data: {
           quary: {
             search: searchQuery,

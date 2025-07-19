@@ -32,7 +32,7 @@ a {
 @import './chart';
 @import './dashboardapp';
 @import './mediaquery';
-
+@import './customerSidebar.scss';
 .admin-container {
   @include grid(1fr 4fr, 2rem);
   height: 100vh;

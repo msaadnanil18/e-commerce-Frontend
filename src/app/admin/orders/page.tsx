@@ -25,7 +25,7 @@ import { NewTableHOC } from '@/components/admin/organism/TableHOC';
 import AdminSidebar from '@/components/admin/organism/AdminSidebar';
 import { ServiceErrorManager } from '@/helpers/service';
 import {
-  GetOrdersBySellerService,
+  ListOrdersBySellerService,
   UpdateOrderItemStatusService,
 } from '@/services/order';
 import { IOrder, IOrderItem } from '@/types/order';
@@ -73,7 +73,7 @@ const Orders: FC = () => {
   const fetchOrderList = async () => {
     setLoading(true);
     await ServiceErrorManager(
-      GetOrdersBySellerService({
+      ListOrdersBySellerService({
         data: {
           payload: {
             search: searchQuery,
