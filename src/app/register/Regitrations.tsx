@@ -102,23 +102,19 @@ const Regitrations: FC<{ token?: string | null }> = ({ token }) => {
         elevate
         size='$4'
         bordered
-        animation='bouncy'
-        scale={0.9}
-        hoverStyle={{ scale: 1 }}
-        pressStyle={{ scale: 0.9 }}
         width={400}
         height={250}
         margin='auto'
         marginTop={100}
       >
         <Card.Header padded>
-          <H2>Token Error</H2>
+          <H2>Email Error</H2>
         </Card.Header>
         <Card.Footer padded>
           <XStack alignItems='center' space='$2'>
             <MdWarning size={24} color='#f43f5e' />
             <Text color='$red10' fontSize='$5'>
-              Token not found
+              Email not found
             </Text>
           </XStack>
           <Paragraph marginTop='$2'>
@@ -222,8 +218,8 @@ const Regitrations: FC<{ token?: string | null }> = ({ token }) => {
                   width='80%'
                 >
                   <XStack space='$2' alignItems='center'>
-                    <Text color='white'>Try Again</Text>
-                    <MdMail size={20} color='white' />
+                    <Text>Try Again</Text>
+                    <MdMail size={20} />
                   </XStack>
                 </Button>
               </YStack>

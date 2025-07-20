@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
 
 const MenuItem = styled(XStack, {
   padding: '$2',
-  paddingHorizontal: '$4',
+  paddingHorizontal: '$2',
   marginHorizontal: '$6',
   marginVertical: '$2',
   borderRadius: '$4',
@@ -130,11 +130,7 @@ const SideMenuBar: FC<ISideMenuBarProps> = ({
         </MenuImage>
         {!screen.xs && (
           <AnimatePresence>
-            <YStack
-              flex={1}
-              enterStyle={{ opacity: 0, x: -20 }}
-              exitStyle={{ opacity: 0, x: -20 }}
-            >
+            <YStack flex={1}>
               <Text
                 fontSize='$3'
                 fontWeight={isActive ? '600' : '500'}
@@ -208,7 +204,7 @@ const SideMenuBar: FC<ISideMenuBarProps> = ({
       )}
       <ScrollView
         flex={1}
-        maxHeight={500}
+        maxHeight='calc(100vh - 74px)'
         maxWidth={300}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 30 }}

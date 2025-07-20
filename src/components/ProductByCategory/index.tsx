@@ -101,23 +101,30 @@ const ProductByCategory: FC<ListSubCategoryAndCategoryByProductProps> = ({
         params={unwrappedParams}
         searchParams={unwrappedSearchParams}
       />
-      <YStack flex={1} paddingLeft='$4'>
-        <YStack padding='$4'>
-          <Text
-            fontSize='$5'
-            fontWeight='bold'
-            marginLeft='$10'
-            marginBottom='$2'
-          >
-            {startCase(unwrappedSearchParams.category)}
-          </Text>
-          <View flex={1} flexDirection='column'>
+
+      <YStack flex={1} width='100%'>
+        <ScrollView
+          maxHeight='calc(100vh - 74px)'
+          contentContainerStyle={{ paddingBottom: 30 }}
+          width='100%'
+          scrollbarWidth='thin'
+        >
+          <YStack padding='$4' width='100%'>
+            <Text
+              fontSize='$5'
+              fontWeight='bold'
+              marginLeft='$12'
+              marginBottom='$2'
+            >
+              {startCase(unwrappedSearchParams.category)}
+            </Text>
             {loading ? (
               <YStack
                 flex={1}
                 justifyContent='center'
                 alignItems='center'
                 padding='$4'
+                minHeight='$20'
               >
                 <Spinner size='large' color='$blue10' />
                 <Text marginTop='$4'>Loading products...</Text>
@@ -129,18 +136,15 @@ const ProductByCategory: FC<ListSubCategoryAndCategoryByProductProps> = ({
                 description='There are currently no products in this category. Check back later or browse other categories to discover amazing items.'
               />
             ) : (
-              <ScrollView
-                contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}
+              <XStack
+                flexWrap='wrap'
+                justifyContent='center'
+                alignItems='flex-start'
+                gap='$3'
+                width='100%'
               >
-                <XStack
-                  flexWrap='wrap'
-                  justifyContent='center'
-                  alignItems='flex-start'
-                  gap='$4'
-                  padding='$4'
-                  width='100%'
-                >
-                  {productByCategory?.map((item) => (
+                {productByCategory?.map((item, index) => (
+                  <View key={item._id || index} width='100%' maxWidth='300px'>
                     <ProductCard
                       product={item}
                       wishlistLoading={wishlistLoading}
@@ -151,12 +155,12 @@ const ProductByCategory: FC<ListSubCategoryAndCategoryByProductProps> = ({
                         );
                       }}
                     />
-                  ))}
-                </XStack>
-              </ScrollView>
+                  </View>
+                ))}
+              </XStack>
             )}
-          </View>
-        </YStack>
+          </YStack>
+        </ScrollView>
       </YStack>
     </XStack>
   );

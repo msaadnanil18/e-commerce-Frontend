@@ -21,7 +21,7 @@ const ListSubCategoryAndCategoryByProduct: FC<
   ListSubCategoryAndCategoryByProductProps
 > = (props) => {
   return (
-    <div>
+    <div className='h-screen'>
       <Navbar />
       <ProductByCategory {...props} />
     </div>
