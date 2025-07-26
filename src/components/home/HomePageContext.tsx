@@ -1,3 +1,4 @@
+'use client';
 import { ServiceErrorManager } from '@/helpers/service';
 import { ListAnonymousHomePageConfigService } from '@/services/homePageConfig';
 import { RootState } from '@/states/store/store';

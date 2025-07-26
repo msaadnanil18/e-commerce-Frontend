@@ -1,3 +1,4 @@
+'use client';
 import Navbar from '../navbar';
 import ProductCategory from './ProductCategory';
 import HeroSection from './HeroSection';

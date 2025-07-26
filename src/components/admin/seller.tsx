@@ -112,8 +112,8 @@ const Sellers = () => {
     _id: seller._id,
     businessName: <BusinessName seller={seller} router={router} />,
     avatar: <FaRegUserCircle size={25} />,
-    email: seller.user.email || '',
-    name: seller.user.name,
+    email: seller?.user?.email || '',
+    name: seller?.user?.name,
     gender: 'Male',
     phone: seller.contactPhone,
   }));

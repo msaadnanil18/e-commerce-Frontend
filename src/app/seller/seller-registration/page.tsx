@@ -1,99 +1,38 @@
-'use client';
+import SellerRegistration from '@/components/auth/SellerRegistration';
+import Navbar from '@/components/navbar';
+import { EcommarceName } from '@/helpers/utils';
+import React, { FC } from 'react';
 
-import useFileUpload from '@/components/appComponets/fileupload/useFileUpload';
-import SellerRegistrationSteps, {
-  SellerFormData,
-} from '@/components/auth/SellerRegistration';
-import useAuth from '@/components/auth/useAuth';
-import { ServiceErrorManager } from '@/helpers/service';
-import { SellerRegistrationService } from '@/services/seller';
-import { RootState } from '@/states/store/store';
-import { debounce } from 'lodash-es';
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
-
-const SellerRegistration: FC = () => {
-  const { logOut } = useAuth();
-  const user = useSelector((state: RootState) => state.user);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formValue, setFormValue] = useState<Partial<SellerFormData>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const businessInformationForm = useForm<SellerFormData>();
-  const addressInformationForm = useForm<SellerFormData>();
-  const bankDetailsFrom = useForm<SellerFormData>();
-  const documentsUploadFrom = useForm({});
-  const { getFileUpload } = useFileUpload();
-
-  const delayedLogOut = useCallback(
-    debounce(() => {
-      logOut();
-    }, 6000),
-    [logOut]
-  );
-
-  useEffect(() => {
-    const handleUnload = () => {
-      logOut();
-    };
-
-    window.addEventListener('beforeunload', handleUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload);
-    };
-  }, [logOut]);
-
-  const onSubmit = async (selectedDocuments: File[]) => {
-    try {
-      setIsSubmitting(true);
-      const uploadFile = await getFileUpload(selectedDocuments);
-
-      const [err] = await ServiceErrorManager(
-        SellerRegistrationService({
-          data: {
-            payload: {
-              documents: uploadFile,
-              ...formValue,
-            },
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${(user?.user as any).sessionToken}`,
-          },
-        }),
-        {
-          failureMessage: 'Error while registration Please try sometime later',
-          successMessage: 'Registration successful',
-        }
-      );
-
-      if (err) return;
-
-      setCurrentStep((prev) => prev + 1);
-      setIsSubmitting(false);
-
-      delayedLogOut();
-    } finally {
-      setIsSubmitting(false);
-    }
+export async function generateMetadata() {
+  return {
+    title: `Register as a Seller | ${EcommarceName()}`,
+    description:
+      'Join our marketplace as a seller and start growing your business today. Register easily and access millions of potential customers through our trusted e-commerce platform.',
+    keywords: [
+      'Seller Registration',
+      'Become a Seller',
+      'E-commerce Seller Account',
+      'Marketplace Registration',
+      'Start Selling Online',
+      'Vendor Signup',
+    ],
+    openGraph: {
+      title: `Register as a Seller | ${EcommarceName()}`,
+      description:
+        'Join our trusted marketplace and grow your business by registering as a seller. Access tools, analytics, and millions of potential buyers.',
+      url: '/seller/seller-registration',
+      type: 'website',
+    },
   };
+}
 
+const SellerRegistrationPage: FC = () => {
   return (
-    <SellerRegistrationSteps
-      {...{
-        currentStep,
-        setCurrentStep,
-        onSubmit,
-        isSubmitting,
-        setFormValue,
-        businessInformationForm,
-        addressInformationForm,
-        bankDetailsFrom,
-        documentsUploadFrom,
-      }}
-    />
+    <div>
+      <Navbar showSearchInput={false} showRoleChange={false} />
+      <SellerRegistration />
+    </div>
   );
 };
 
-export default SellerRegistration;
+export default SellerRegistrationPage;

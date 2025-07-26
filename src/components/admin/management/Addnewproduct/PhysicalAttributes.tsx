@@ -33,7 +33,7 @@ const PhysicalAttributes = ({ form }: { form: UseFormReturn<Product> }) => {
                 inputMode='decimal'
                 keyboardType='numeric'
                 value={(field.value || '').toString()}
-                onChangeText={(value) => field.onChange(parseFloat(value) || 0)}
+                onChangeText={(value) => field.onChange(value || 0)}
                 borderColor={
                   errors.physicalAttributes?.weight ? '$red10' : undefined
                 }
@@ -97,7 +97,7 @@ const PhysicalAttributes = ({ form }: { form: UseFormReturn<Product> }) => {
                 inputMode='decimal'
                 keyboardType='numeric'
                 value={(field.value || '').toString()}
-                onChangeText={(value) => field.onChange(parseFloat(value) || 0)}
+                onChangeText={(value) => field.onChange(value || 0)}
                 borderColor={
                   errors.physicalAttributes?.dimensions?.length
                     ? '$red10'
@@ -129,7 +129,7 @@ const PhysicalAttributes = ({ form }: { form: UseFormReturn<Product> }) => {
                 inputMode='decimal'
                 keyboardType='numeric'
                 value={(field.value || '').toString()}
-                onChangeText={(value) => field.onChange(parseFloat(value) || 0)}
+                onChangeText={(value) => field.onChange(value || 0)}
                 borderColor={
                   errors.physicalAttributes?.dimensions?.width
                     ? '$red10'
@@ -161,7 +161,7 @@ const PhysicalAttributes = ({ form }: { form: UseFormReturn<Product> }) => {
                 inputMode='decimal'
                 keyboardType='numeric'
                 value={(field.value || '').toString()}
-                onChangeText={(value) => field.onChange(parseFloat(value) || 0)}
+                onChangeText={(value) => field.onChange(value || 0)}
                 borderColor={
                   errors.physicalAttributes?.dimensions?.height
                     ? '$red10'
@@ -190,7 +190,8 @@ const PhysicalAttributes = ({ form }: { form: UseFormReturn<Product> }) => {
                 options={[
                   { value: 'centimeter', label: 'Centimeter' },
                   { label: 'Meter', value: 'meter' },
-                  { label: 'Inch', value: 'Inch' },
+                  { label: 'Inch', value: 'inch' },
+                  { label: 'Feet', value: 'feet' },
                 ]}
                 {...field}
               />

@@ -30,7 +30,9 @@ const RenderDriveFile = ({
 }) => {
   if (!file?.key) return <Spinner />;
   const [selectedFile, setSelectedFile] = useState<fileProps | null>(null);
-  const uri = `${process.env.NEXT_PUBLIC_API_URL}/file/${file?.key}`;
+  const uri =
+    `${window.location.origin}/api/file/getfile/${file?.key}` ||
+    `${process.env.NEXT_PUBLIC_API_URL}/file/${file?.key}`;
 
   if (inline) {
     // const _uri = `${process.env.NEXT_PUBLIC_API_URL}/file/${selectedFile?.key}`;
