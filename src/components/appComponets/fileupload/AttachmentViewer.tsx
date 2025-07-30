@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import {
   AiOutlineFilePdf,
   AiOutlineFileImage,
@@ -8,7 +8,18 @@ import {
   AiOutlineFileWord,
   AiOutlineFileText,
 } from 'react-icons/ai';
-import { Spinner } from 'tamagui';
+
+const Spinner: FC<{ className?: string; style?: React.CSSProperties }> = ({
+  className,
+  style,
+}) => (
+  <img
+    src={'./placeholder.png'}
+    alt='Attachment'
+    className={className}
+    style={style}
+  />
+);
 
 interface AttachmentViewerProps {
   file: File | string;
@@ -72,7 +83,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({
       case 'image':
         return (
           <>
-            {loading && <Spinner />}
+            {loading && <Spinner className={className} style={style} />}
             <img
               src={fileUrl}
               alt='Attachment'
@@ -87,7 +98,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({
       case 'video':
         return (
           <>
-            {loading && <Spinner />}
+            {loading && <Spinner className={className} style={style} />}
             <video
               {...MediaHTMLAttributes}
               src={fileUrl}
@@ -109,7 +120,7 @@ const AttachmentViewer: React.FC<AttachmentViewerProps> = ({
       case 'document':
         return (
           <>
-            {loading && <Spinner />}
+            {loading && <Spinner className={className} style={style} />}
             <iframe
               onClick={onClick}
               src={fileUrl}

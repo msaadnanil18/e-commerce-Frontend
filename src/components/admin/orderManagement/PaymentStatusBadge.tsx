@@ -2,7 +2,12 @@
 
 import { Tag } from '@/components/appComponets/tag/Tag';
 
-export type PaymentStatus = 'pending' | 'paid' | 'partial';
+export type PaymentStatus =
+  | 'pending'
+  | 'paid'
+  | 'partial'
+  | 'failed'
+  | 'refunded';
 
 const PaymentStatusBadge = ({ status }: { status: PaymentStatus }) => {
   let color:

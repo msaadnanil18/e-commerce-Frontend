@@ -125,11 +125,11 @@ const OrderDetails: FC<{
 
   const generatePdf = async () => {
     setIsLoading(true);
-    await ServiceErrorManager(GenerateCustomerOrderBillService(), {
-      failureMessage: 'PDF is corrupted. Please try again',
-    })
-      .then(([, data]) => downloadPDF(data))
-      .finally(() => setIsLoading(false));
+    // await ServiceErrorManager(GenerateCustomerOrderBillService(), {
+    //   failureMessage: 'PDF is corrupted. Please try again',
+    // })
+    //   .then(([, data]) => downloadPDF(data))
+    //   .finally(() => setIsLoading(false));
   };
 
   const isItemDisabled = (item: ExpandedOrderItem) =>
@@ -217,7 +217,8 @@ const OrderDetails: FC<{
                               {item.variant && (
                                 <Text fontSize='$3' color='$gray10'>
                                   Variant:{' '}
-                                  {item.variant.variantName || 'Default'}
+                                  {(item.variant as any).variantName ||
+                                    'Default'}
                                 </Text>
                               )}
                             </XStack>
@@ -225,7 +226,7 @@ const OrderDetails: FC<{
                         </XStack>
                         <YStack alignItems='flex-end'>
                           <Text fontSize='$4' fontWeight='bold'>
-                            <PriceFormatter value={item.price} />
+                            <PriceFormatter value={item.finalUnitPrice} />
                           </Text>
                           <StatusBadge status={item.status} />
                         </YStack>
@@ -253,9 +254,11 @@ const OrderDetails: FC<{
                                 options={[
                                   { value: 'pending', label: 'Pending' },
                                   { value: 'accepted', label: 'Accepted' },
+                                  { value: 'rejected', label: 'Rejected' },
                                   { value: 'shipped', label: 'Shipped' },
                                   { value: 'delivered', label: 'Delivered' },
                                   { value: 'canceled', label: 'Canceled' },
+                                  { value: 'returned', label: 'Returned' },
                                 ]}
                                 value={item.newStatus}
                                 onChange={(value) =>
@@ -332,7 +335,13 @@ const OrderDetails: FC<{
                   <XStack justifyContent='space-between'>
                     <Text>Subtotal:</Text>
                     <Text>
-                      <PriceFormatter value={order.totalAmount} />
+                      <PriceFormatter value={order.subtotal} />
+                    </Text>
+                  </XStack>
+                  <XStack justifyContent='space-between'>
+                    <Text>Discounts:</Text>
+                    <Text>
+                      <PriceFormatter value={order.totalDiscount} />
                     </Text>
                   </XStack>
                   <XStack justifyContent='space-between'>
@@ -353,6 +362,7 @@ const OrderDetails: FC<{
                       <PriceFormatter value={order.serviceCharge} />
                     </Text>
                   </XStack>
+
                   {order.commissionDue && (
                     <XStack justifyContent='space-between'>
                       <Text>Commission Due:</Text>
@@ -367,14 +377,7 @@ const OrderDetails: FC<{
                       Total
                     </Text>
                     <Text fontSize='$4' fontWeight='bold'>
-                      <PriceFormatter
-                        value={
-                          order.totalAmount +
-                          order.taxAmount +
-                          order.deliveryCharge +
-                          order.serviceCharge
-                        }
-                      />
+                      <PriceFormatter value={order.totalAmount} />
                     </Text>
                   </XStack>
                 </YStack>

@@ -222,7 +222,7 @@ const Orders: FC = () => {
     customer: order.customer.name,
     items: order.items,
     totalAmount:
-      order.items.reduce((acc, data) => acc + data.price, 0) +
+      order.items.reduce((acc, data) => acc + data.finalUnitPrice, 0) +
       order.taxAmount +
       order.deliveryCharge +
       order.serviceCharge,

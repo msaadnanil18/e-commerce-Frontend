@@ -16,6 +16,7 @@ export interface DrawerProps extends Omit<SheetProps, 'position'> {
   children: React.ReactNode;
   footer?: React.ReactNode;
   snapPoints?: (number | string)[];
+  showOverlay?: boolean;
 }
 
 const TmgDrawer: FC<DrawerProps> = ({
@@ -28,6 +29,8 @@ const TmgDrawer: FC<DrawerProps> = ({
   modal = true,
   snapPointsMode = 'percent',
   snapPoints = [75],
+  overlayOpacity = 0.5,
+  showOverlay = true,
   ...props
 }) => {
   const [position, setPosition] = useState(0);
@@ -44,11 +47,14 @@ const TmgDrawer: FC<DrawerProps> = ({
       snapPoints={snapPoints}
       snapPointsMode={snapPointsMode}
     >
-      <Sheet.Overlay
-        backgroundColor='$cardBackground'
-        enterStyle={{ opacity: 0 }}
-        exitStyle={{ opacity: 0 }}
-      />
+      {showOverlay && (
+        <Sheet.Overlay
+          backgroundColor='rgba(0, 0, 0, 0.3)'
+          enterStyle={{ opacity: 0 }}
+          exitStyle={{ opacity: 0 }}
+          opacity={overlayOpacity}
+        />
+      )}
       <Sheet.Handle />
       <Sheet.Frame>
         <YStack width='100%'>

@@ -7,8 +7,9 @@ export type OrderStatus =
   | 'accepted'
   | 'rejected'
   | 'shipped'
+  | 'delivered'
   | 'canceled'
-  | 'delivered';
+  | 'returned';
 
 const StatusBadge = ({ status }: { status: OrderStatus }) => {
   let color:

@@ -263,7 +263,7 @@ const HomePageConfigDetails: FC<HomePageConfigDetailsProps> = ({ params }) => {
               <XStack alignItems='center' space='$2'>
                 <Image size={16} color='$gray11' />
                 <Text fontSize='$3' color='$gray11'>
-                  {configDetails?.bannerProducts.length} Banner Items
+                  {configDetails?.bannerProducts?.length} Banner Items
                 </Text>
               </XStack>
             </XStack>
@@ -370,7 +370,7 @@ const HomePageConfigDetails: FC<HomePageConfigDetailsProps> = ({ params }) => {
                       <YStack alignItems='center' space='$2'>
                         <Image size={24} color='$green10' />
                         <Text fontSize='$6' fontWeight='700' color='$green11'>
-                          {configDetails?.bannerProducts.length}
+                          {configDetails?.bannerProducts?.length}
                         </Text>
                         <Text fontSize='$3' color='$green11'>
                           Banner Products
@@ -508,57 +508,59 @@ const HomePageConfigDetails: FC<HomePageConfigDetailsProps> = ({ params }) => {
                 </XStack>
 
                 <YStack space='$3'>
-                  {configDetails?.bannerProducts.map((banner, index) => {
-                    return banner.product ? (
-                      <Card
-                        key={index}
-                        bordered
-                        padding='$3'
-                        backgroundColor='$gray1'
-                      >
-                        <XStack alignItems='center' space='$3'>
-                          <TmgTag
-                            backgroundColor='$blue8'
-                            //color='white'
-                            //size='sm'
-                          >
-                            #{banner.displayOrder}
-                          </TmgTag>
+                  {(configDetails?.bannerProducts || [])?.map(
+                    (banner, index) => {
+                      return banner.product ? (
+                        <Card
+                          key={index}
+                          bordered
+                          padding='$3'
+                          backgroundColor='$gray1'
+                        >
+                          <XStack alignItems='center' space='$3'>
+                            <TmgTag
+                              backgroundColor='$blue8'
+                              //color='white'
+                              //size='sm'
+                            >
+                              #{banner.displayOrder}
+                            </TmgTag>
 
-                          <Square
-                            size={60}
-                            backgroundColor='$gray3'
-                            borderRadius='$3'
-                          >
-                            <Package size={20} color='$gray10' />
-                          </Square>
+                            <Square
+                              size={60}
+                              backgroundColor='$gray3'
+                              borderRadius='$3'
+                            >
+                              <Package size={20} color='$gray10' />
+                            </Square>
 
-                          <YStack flex={1}>
-                            <Text fontSize='$4' fontWeight='600'>
-                              {banner?.product?.name}
-                            </Text>
-                            <Text fontSize='$3' color='$gray11'>
-                              <PriceFormatter
-                                value={banner?.product?.variants[0]?.price}
+                            <YStack flex={1}>
+                              <Text fontSize='$4' fontWeight='600'>
+                                {banner?.product?.name}
+                              </Text>
+                              <Text fontSize='$3' color='$gray11'>
+                                <PriceFormatter
+                                  value={banner?.product?.variants[0]?.price}
+                                />
+                              </Text>
+                            </YStack>
+
+                            <XStack space='$2'>
+                              <Button size='$3' circular icon={Upload} />
+                              <Button size='$3' circular icon={Edit3} />
+                              <Button
+                                size='$3'
+                                circular
+                                icon={Trash2}
+
+                                //  onPress={() => removeBannerProduct(index)}
                               />
-                            </Text>
-                          </YStack>
-
-                          <XStack space='$2'>
-                            <Button size='$3' circular icon={Upload} />
-                            <Button size='$3' circular icon={Edit3} />
-                            <Button
-                              size='$3'
-                              circular
-                              icon={Trash2}
-
-                              //  onPress={() => removeBannerProduct(index)}
-                            />
+                            </XStack>
                           </XStack>
-                        </XStack>
-                      </Card>
-                    ) : null;
-                  })}
+                        </Card>
+                      ) : null;
+                    }
+                  )}
                 </YStack>
               </Card>
             </YStack>
