@@ -126,10 +126,13 @@ const ProductDetails: FC<ProductDetailsPageProps> = ({
 
   if (isLoading)
     return (
-      <XStack justifyContent='center' alignItems='center' height='100vh'>
-        <Spinner size='large' />
-        <Text marginLeft='$2'>Loading product details...</Text>
-      </XStack>
+      <YStack>
+        <Navbar />
+        <XStack justifyContent='center' alignItems='center' height='100vh'>
+          <Spinner size='large' />
+          <Text marginLeft='$2'>Loading product details...</Text>
+        </XStack>
+      </YStack>
     );
 
   if (!product) return <Text>Product not found</Text>;

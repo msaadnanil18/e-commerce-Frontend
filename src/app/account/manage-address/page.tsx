@@ -16,7 +16,7 @@ const ManageAddress: FC = () => {
       </div>
       <div className={screen.xs ? 'admin-container' : 'customer-container'}>
         <CustomerSideBar />
-        <ScrollView>
+        <ScrollView scrollbarWidth='thin'>
           <YStack
             padding='$5'
             {...(screen.xs

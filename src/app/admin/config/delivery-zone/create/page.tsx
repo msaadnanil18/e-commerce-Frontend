@@ -39,7 +39,7 @@ const DeliveryCreate = () => {
   return (
     <div className='admin-container'>
       <AdminSidebar />
-      <ScrollView>
+      <ScrollView scrollbarWidth='thin'>
         <DeliveryZoneForm {...{ form, onSubmit }} isLoading={isSubmitting} />
       </ScrollView>
     </div>

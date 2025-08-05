@@ -9,8 +9,11 @@ import OIDCProvider from '@/components/auth/AuthProvider';
 import ProtectedRoute from '@/components/middleware/ProtectedRoute';
 import dynamic from 'next/dynamic';
 import { useDispatch } from 'react-redux';
-import { validateSession } from '@/states/slices/authSlice';
+
 import { usePathname } from 'next/navigation';
+import { validationSession } from '@/states/authThunks';
+import { AppDispatch } from '@/states/store/store';
+import { useSessionRefresher } from '@/hook/useSessionRefresher';
 
 const FallbackLoading = dynamic(
   () =>
@@ -39,18 +42,50 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
 
 const Bootstrap = ({ children }: { children: React.ReactNode }) => {
   const isDark = useDarkMode();
-  const dispatch = useDispatch();
+  useSessionRefresher();
+  const dispatch = useDispatch<AppDispatch>();
   const pathname = usePathname();
 
   useEffect(() => {
     if (pathname === '/') {
-      dispatch(validateSession());
+      dispatch(validationSession());
     }
-  }, [dispatch, pathname]);
+  }, [pathname]);
 
   return (
     <Theme name={isDark ? 'dark' : 'light'}>
-      <Stack backgroundColor='$background'>{children}</Stack>
+      <Stack
+        backgroundColor='$background'
+        role='application'
+        aria-label='Main application content'
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div
+          id='app-root'
+          style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+        >
+          {children}
+        </div>
+
+        <div
+          id='announcements'
+          aria-live='polite'
+          aria-atomic='true'
+          style={{
+            position: 'absolute',
+            left: '-10000px',
+            width: '1px',
+            height: '1px',
+            overflow: 'hidden',
+          }}
+        />
+
+        <div id='skip-links' />
+      </Stack>
     </Theme>
   );
 };

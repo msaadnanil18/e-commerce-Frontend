@@ -66,7 +66,7 @@ const DeliveryUpdate: FC<ProductManagePagePropsPageProps> = ({ params }) => {
           <Text marginTop='$4'>Loading Delivery details...</Text>
         </View>
       ) : (
-        <ScrollView>
+        <ScrollView scrollbarWidth='thin'>
           <DeliveryZoneForm
             form={form}
             onSubmit={onSubmit}

@@ -19,54 +19,66 @@ const Home: FC = () => {
   if (loading) return <Loading />;
 
   return (
-    <div>
+    <>
       <Navbar />
 
       {screen.xs && (
-        <View
-          padding='$3'
-          backgroundColor='$background'
-          //@ts-ignore
-          position='sticky'
-          zIndex={1000}
-          top={0}
-          borderBottomWidth={1}
-          borderBottomColor='$borderColor'
-        >
-          <SearchInput />
-        </View>
+        <header>
+          <View
+            padding='$3'
+            backgroundColor='$background'
+            //@ts-ignore
+            position='sticky'
+            zIndex={1000}
+            top={0}
+            borderBottomWidth={1}
+            borderBottomColor='$borderColor'
+          >
+            <SearchInput />
+          </View>
+        </header>
       )}
 
-      {!homeScreenData || !homeScreenData.productcategory.length ? (
-        <View flex={2} minHeight='calc(100vh - 74px)'>
-          <EmptyState
-            icon={<MdInventory2 size={60} />}
-            title='No products available'
-            description='There are currently no products in this page'
-          />
-        </View>
-      ) : (
-        <ScrollView
-          flex={1}
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: 20,
-          }}
-        >
-          <YStack space='$4'>
-            <ProductCategory
-              productcategory={homeScreenData?.productcategory}
-            />
-
-            <View paddingHorizontal='$3'>
-              <HeroSection homeScreenData={homeScreenData} />
+      <main>
+        {!homeScreenData || !homeScreenData.productcategory.length ? (
+          <section>
+            <View flex={2} minHeight='calc(100vh - 74px)'>
+              <EmptyState
+                icon={<MdInventory2 size={60} />}
+                title='No products available'
+                description='There are currently no products in this page'
+              />
             </View>
+          </section>
+        ) : (
+          <ScrollView
+            flex={1}
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingBottom: 20,
+            }}
+          >
+            <YStack space='$4'>
+              <section aria-label='Product Categories'>
+                <ProductCategory
+                  productcategory={homeScreenData?.productcategory}
+                />
+              </section>
 
-            <ProductCategoryList homeScreenData={homeScreenData} />
-          </YStack>
-        </ScrollView>
-      )}
-    </div>
+              <section aria-label='Featured Content'>
+                <View paddingHorizontal='$3'>
+                  <HeroSection homeScreenData={homeScreenData} />
+                </View>
+              </section>
+
+              <section aria-label='Product Listings'>
+                <ProductCategoryList homeScreenData={homeScreenData} />
+              </section>
+            </YStack>
+          </ScrollView>
+        )}
+      </main>
+    </>
   );
 };
 

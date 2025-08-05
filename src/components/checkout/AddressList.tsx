@@ -155,7 +155,7 @@ const AddressList: FC<{ disableDiliveryAddressButton?: boolean }> = ({
       <Separator />
 
       {loading ? (
-        <ScrollView>
+        <ScrollView scrollbarWidth='thin'>
           <AddressSkeleton />
         </ScrollView>
       ) : addressList.length === 0 ? (
@@ -163,7 +163,7 @@ const AddressList: FC<{ disableDiliveryAddressButton?: boolean }> = ({
           <Text>No addresses found. Please add a new address.</Text>
         </YStack>
       ) : (
-        <ScrollView>
+        <ScrollView scrollbarWidth='thin'>
           <YStack opacity={selectionLoading ? 0.3 : 1}>
             <RadioGroup
               value={selectedAddressId}

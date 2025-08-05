@@ -121,7 +121,7 @@ const Sellers = () => {
   return (
     <YStack>
       <XStack padding='$4' justifyContent='flex-end' />
-      <ScrollView>
+      <ScrollView scrollbarWidth='thin'>
         <NewTableHOC
           onSearch={(e) => action.handleOnSearch(e, 600)}
           pageSize={paginationProps.pageSize}

@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 const MenuItem = styled(XStack, {
   padding: '$2',
   paddingHorizontal: '$2',
-  marginHorizontal: '$6',
+  // marginHorizontal: '$4',
   marginVertical: '$2',
   borderRadius: '$4',
   alignItems: 'center',
@@ -61,7 +61,7 @@ const MenuItem = styled(XStack, {
 });
 
 const MenuImage = styled(Stack, {
-  width: 48,
+  // width: 48,
   height: 48,
   borderRadius: '$4',
   overflow: 'hidden',
@@ -112,9 +112,10 @@ const SideMenuBar: FC<ISideMenuBarProps> = ({
       <MenuItem
         key={item._id}
         active={isActive}
+        marginHorizontal={screen.xs ? '$4' : '$6'}
         onPress={() => handleClick(item)}
       >
-        <MenuImage active={isActive}>
+        <MenuImage active={isActive} width={screen.xs ? 30 : 48}>
           {item.thumbnail ? (
             <RenderDriveFile
               file={item.thumbnail as File}
@@ -153,7 +154,7 @@ const SideMenuBar: FC<ISideMenuBarProps> = ({
         active={isActive}
         onPress={() => handleClick(item)}
       >
-        <MenuImage active={isActive}>
+        <MenuImage active={isActive} width={48}>
           {item.thumbnail ? (
             <RenderDriveFile
               file={item.thumbnail as File}

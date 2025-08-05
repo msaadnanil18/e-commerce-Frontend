@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   Button,
   Card,
@@ -28,6 +28,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/states/store/store';
 import { ServiceErrorManager } from '@/helpers/service';
 import { AddProductToCartService } from '@/services/cart';
+import { useScreen } from '@/hook/useScreen';
 
 const AnimatedCard = styled(Card, {
   cursor: 'pointer',
@@ -58,8 +59,6 @@ const ImageContainer = styled(View, {
 
 const ActionButton = styled(Button, {
   position: 'absolute',
-  width: 40,
-  height: 40,
   borderRadius: 20,
   padding: 0,
   backgroundColor: '$background',
@@ -88,41 +87,29 @@ const ActionButton = styled(Button, {
   },
 });
 
-const WishlistButton = styled(ActionButton, {
-  top: 12,
-  right: 12,
-});
+const WishlistButton = styled(ActionButton);
 
 const DiscountBadge = styled(View, {
   position: 'absolute',
-  top: 12,
-  left: 12,
   backgroundColor: '$red9',
-  paddingHorizontal: 8,
-  paddingVertical: 4,
   borderRadius: 12,
   zIndex: 10,
 });
 
-const RatingContainer = styled(XStack, {
-  alignItems: 'center',
-  marginTop: 4,
-  gap: 4,
-});
-
-const Name = ({
-  product,
-  productOnClick,
-}: {
+// Memoized Name component to prevent unnecessary re-renders
+const Name = React.memo<{
   product: IProduct;
   productOnClick: (r: IProduct) => void;
-}) => {
+  isSmallScreen: boolean;
+}>(({ product, productOnClick, isSmallScreen }) => {
+  const handleClick = useCallback(() => {
+    productOnClick(product);
+  }, [product, productOnClick]);
+
   return (
     <Text
-      onPress={async () => {
-        productOnClick(product);
-      }}
-      fontSize='$4'
+      onPress={handleClick}
+      fontSize={isSmallScreen ? '$3' : '$4'}
       fontWeight='500'
       color='$color'
       textAlign='center'
@@ -135,76 +122,150 @@ const Name = ({
       {truncate(product.name, { length: 25 })}
     </Text>
   );
-};
+});
 
-const ProductCard: React.FC<{
+Name.displayName = 'ProductName';
+
+interface ProductCardProps {
   product: IProduct;
   wishlistLoading: boolean;
-  toggleWishlist: (r: string) => void;
-  productOnClick: (r: IProduct) => void;
-}> = ({ product, toggleWishlist, wishlistLoading, productOnClick }) => {
+  toggleWishlist: (id: string) => void;
+  productOnClick: (product: IProduct) => void;
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  toggleWishlist,
+  wishlistLoading,
+  productOnClick,
+}) => {
+  const screen = useScreen();
   const router = useRouter();
   const pathname = usePathname();
   const user = useSelector((state: RootState) => state.user);
+
   const [cartSuccess, setCartSuccess] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [activeWishList, setActiveWishList] = useState<string>();
 
-  const handleAddToCart = async (product: IProduct) => {
+  // Memoize computed values to prevent unnecessary recalculations
+  const computedValues = useMemo(() => {
+    const isInWishList = (product as any)?.isInWishList;
+    const productInCart = (product as any).productInCart;
+    const discount = product.variants?.[0]?.discount;
+    const hasDiscount = discount && discount > 0;
     const quantity =
       product?.quantityRules?.step ||
       product?.quantityRules?.predefined?.[0] ||
       product?.quantityRules?.min ||
       1;
 
-    if (!user.isAuthenticated) {
-      router.push(`/login?redirect=${pathname}`);
-      return;
-    }
+    return {
+      isInWishList,
+      productInCart,
+      discount,
+      hasDiscount,
+      quantity,
+      isSmallScreen: screen.xs,
+    };
+  }, [product, screen.xs]);
 
-    setCartSuccess(true);
-    const [err] = await ServiceErrorManager(
-      AddProductToCartService({
-        data: {
-          payload: {
-            product: product?._id,
-            variantId: product.variants[0]?._id,
-            quantity: quantity,
-          },
-        },
-      }),
-      { successMessage: 'Product added to cart' }
-    );
+  const handleAddToCart = useCallback(
+    async (product: IProduct) => {
+      if (!user.isAuthenticated) {
+        router.push(`/login?redirect=${pathname}`);
+        return;
+      }
 
-    setCartSuccess(false);
-    if (!err) {
-      router.push('/cart');
-    }
+      setCartSuccess(true);
+
+      try {
+        const [err] = await ServiceErrorManager(
+          AddProductToCartService({
+            data: {
+              payload: {
+                product: product?._id,
+                variantId: product.variants[0]?._id,
+                quantity: computedValues.quantity,
+              },
+            },
+          }),
+          { successMessage: 'Product added to cart' }
+        );
+
+        if (!err) {
+          router.push('/cart');
+        }
+      } catch (error) {
+        console.error('Failed to add product to cart:', error);
+      } finally {
+        setCartSuccess(false);
+      }
+    },
+    [user.isAuthenticated, router, pathname, computedValues.quantity]
+  );
+
+  const handleWishlistToggle = useCallback(() => {
+    toggleWishlist(product._id);
+    setActiveWishList(product._id);
+  }, [toggleWishlist, product._id]);
+
+  const handleCartClick = useCallback(
+    (e: any) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (computedValues.productInCart) {
+        router.push('/cart');
+      } else {
+        handleAddToCart(product);
+      }
+    },
+    [computedValues.productInCart, router, handleAddToCart, product]
+  );
+
+  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
+
+  const { isInWishList, productInCart, discount, hasDiscount, isSmallScreen } =
+    computedValues;
+
+  const cardDimensions = {
+    width: isSmallScreen ? 120 : 240,
+    height: isSmallScreen ? 180 : 360,
+    padding: isSmallScreen ? '$2' : '$4',
   };
 
-  const isInWishList = (product as any)?.isInWishList;
-  const productInCart = (product as any).productInCart;
-  const discount = product.variants?.[0]?.discount;
-  const hasDiscount = discount && discount > 0;
+  const buttonSize = isSmallScreen ? 30 : 40;
+  const iconSize = isSmallScreen ? 15 : 20;
 
   return (
     <AnimatedCard
       bordered
-      padding='$4'
+      padding={cardDimensions.padding}
       margin='$2'
-      width={240}
-      height={360}
+      width={cardDimensions.width}
+      height={cardDimensions.height}
       backgroundColor='$background'
       borderColor='$borderColor'
       borderRadius='$6'
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <ImageContainer>
         {hasDiscount && (
-          <DiscountBadge>
+          <DiscountBadge
+            top={isSmallScreen ? 3 : 12}
+            left={isSmallScreen ? 3 : 12}
+            paddingHorizontal={isSmallScreen ? 3 : 8}
+          >
             <XStack alignItems='center' gap={2}>
-              <Tag size={12} color='white' />
-              <Text fontSize='$3' color='white' fontWeight='bold'>
+              <Tag size={isSmallScreen ? 8 : 12} color='white' />
+              <Text
+                fontSize={isSmallScreen ? '$2' : '$3'}
+                color='white'
+                fontWeight='bold'
+              >
                 {discount}% OFF
               </Text>
             </XStack>
@@ -212,59 +273,60 @@ const ProductCard: React.FC<{
         )}
 
         <WishlistButton
-          visible={isHovered}
-          onPress={() => {
-            toggleWishlist(product._id);
-          }}
-          // backgroundColor={isInWishList ? '$red9' : '$background'}
+          width={buttonSize}
+          height={buttonSize}
+          top={isSmallScreen ? 5 : 12}
+          right={isSmallScreen ? 5 : 12}
+          visible={isHovered || isSmallScreen}
+          onPress={handleWishlistToggle}
           borderColor={isInWishList ? '$red9' : '$borderColor'}
+          aria-label={isInWishList ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          {wishlistLoading ? (
+          {wishlistLoading && activeWishList === product._id ? (
             <Spinner size='small' />
           ) : isInWishList ? (
-            <Heart size={20} color='red' cursor='pointer' />
+            <Heart size={iconSize} color='red' cursor='pointer' />
           ) : (
-            <FaRegHeart size={20} cursor='pointer' />
+            <FaRegHeart size={iconSize} cursor='pointer' />
           )}
         </WishlistButton>
 
         <RenderDriveFile
-          onClick={() => {
-            productOnClick(product);
-          }}
+          onClick={() => productOnClick(product)}
           file={product.thumbnail}
           style={{
             width: '100%',
-            height: 180,
+            height: isSmallScreen ? 80 : 180,
             borderRadius: 12,
             objectFit: 'cover',
           }}
         />
       </ImageContainer>
 
-      <YStack flex={1} paddingTop='$3' gap='$2'>
-        <Name product={product} productOnClick={productOnClick} />
-
-        {/* <RatingContainer>
-          <XStack>
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                size={14}
-                color={i < 4 ? '#ffd700' : '#ddd'}
-                fill={i < 4 ? '#ffd700' : 'none'}
-              />
-            ))}
-          </XStack>
-          <Text fontSize='$2' color='$gray10'>
-            (4.0)
-          </Text>
-        </RatingContainer> */}
+      <YStack
+        flex={1}
+        paddingTop={isSmallScreen ? '$1' : '$3'}
+        gap={isSmallScreen ? '$1' : '$2'}
+      >
+        <Name
+          product={product}
+          productOnClick={productOnClick}
+          isSmallScreen={isSmallScreen}
+        />
 
         <YStack gap='$1'>
           {hasDiscount ? (
-            <XStack alignItems='center' gap='$2'>
-              <Text fontSize='$5' fontWeight='bold' color='$primary'>
+            <XStack
+              alignItems='center'
+              flex={1}
+              flexDirection={isSmallScreen ? 'column' : 'row'}
+              gap={isSmallScreen ? '$-0.25' : '$2'}
+            >
+              <Text
+                fontSize={isSmallScreen ? '$3' : '$5'}
+                fontWeight='bold'
+                color='$primary'
+              >
                 <PriceFormatter value={product?.variants?.[0]?.originalPrice} />
               </Text>
               <Text fontSize='$3' color='$gray10'>
@@ -278,66 +340,38 @@ const ProductCard: React.FC<{
           )}
         </YStack>
 
-        {productInCart ? (
-          <Button
-            size='$3'
-            backgroundColor={productInCart ? '$green9' : '$primary'}
-            color='white'
-            fontSize='$3'
-            fontWeight='600'
-            marginTop='$2'
-            borderRadius='$4'
-            onPress={() => {
-              router.push('/cart');
-            }}
-            icon={<ShoppingCart size={16} color='white' />}
-            disabled={cartSuccess}
-            hoverStyle={{
-              backgroundColor: productInCart ? '$green10' : '$primaryHover',
-              transform: 'translateY(-2px)',
-            }}
-            pressStyle={{
-              transform: 'translateY(0)',
-            }}
-          >
-            IN CART
-          </Button>
-        ) : (
-          <Button
-            size='$3'
-            backgroundColor={productInCart ? '$green9' : '$primary'}
-            color='white'
-            fontSize='$3'
-            fontWeight='600'
-            marginTop='$2'
-            borderRadius='$4'
-            icon={
-              cartSuccess ? (
-                <Spinner color='white' size='small' />
-              ) : (
-                <ShoppingCart size={16} color='white' />
-              )
-            }
-            disabled={cartSuccess}
-            onPress={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleAddToCart(product);
-            }}
-            hoverStyle={{
-              backgroundColor: productInCart ? '$green10' : '$primaryHover',
-              transform: 'translateY(-2px)',
-            }}
-            pressStyle={{
-              transform: 'translateY(0)',
-            }}
-          >
-            {productInCart ? 'IN CART' : 'ADD TO CART'}
-          </Button>
-        )}
+        <Button
+          size={isSmallScreen ? '$1.5' : '$3'}
+          backgroundColor={productInCart ? '$green9' : '$primary'}
+          color='white'
+          fontSize={isSmallScreen ? '$2' : '$3'}
+          fontWeight='600'
+          padding={isSmallScreen ? '$1' : 'auto'}
+          marginTop={isSmallScreen ? '$1' : '$2'}
+          borderRadius={isSmallScreen ? '$2' : '$4'}
+          icon={
+            cartSuccess ? (
+              <Spinner color='white' size='small' />
+            ) : (
+              <ShoppingCart size={isSmallScreen ? 12 : 16} color='white' />
+            )
+          }
+          disabled={cartSuccess}
+          onPress={handleCartClick}
+          aria-label={productInCart ? 'View cart' : 'Add to cart'}
+          hoverStyle={{
+            backgroundColor: productInCart ? '$green10' : '$primaryHover',
+            transform: 'translateY(-2px)',
+          }}
+          pressStyle={{
+            transform: 'translateY(0)',
+          }}
+        >
+          {productInCart ? 'IN CART' : 'ADD TO CART'}
+        </Button>
       </YStack>
     </AnimatedCard>
   );
 };
 
-export default ProductCard;
+export default React.memo(ProductCard);

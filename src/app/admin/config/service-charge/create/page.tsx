@@ -14,16 +14,10 @@ const ServiceChargeCreate: FC = () => {
   const form = useForm<ServiceChargeFormData>();
 
   const onSubmit = (data: ServiceChargeFormData) => {
-    const formattedData = {
-      ...data,
-      applicableStates: data.applicableStates
-        ? data.applicableStates.split(',').map((s) => s.trim())
-        : [],
-    };
     setIsisSubmiting(true);
     ServiceErrorManager(
       CreateServiceChargeService({
-        data: formattedData,
+        data,
       }),
       { successMessage: 'Service charge created Successfully' }
     ).finally(() => {

@@ -50,7 +50,7 @@ const getStatusColor = (status: IStatusLog['status']) => {
 const StatusLog: React.FC<{ product: IProduct | null }> = ({ product }) => {
   return (
     <YStack space='$4' padding='$4' width='100%'>
-      <ScrollView maxHeight={300}>
+      <ScrollView maxHeight={300} scrollbarWidth='thin'>
         <YStack space='$3'>
           {(product?.statusLogs || []).length === 0 ? (
             <Card padding='$4'>

@@ -278,7 +278,7 @@ const RoleAssign: FC = () => {
         </YStack>
       </Modal>
 
-      <ScrollView>
+      <ScrollView scrollbarWidth='thin'>
         <NewTableHOC
           isLoading={loading}
           onSearch={(e) => action.handleOnSearch(e, 600)}

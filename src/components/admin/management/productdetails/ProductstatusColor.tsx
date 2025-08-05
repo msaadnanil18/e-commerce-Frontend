@@ -1,11 +1,9 @@
 import { Tag, TagColorScheme } from '@/components/appComponets/tag/Tag';
 import { IProduct } from '@/types/products';
-
 import React, { FC, useState } from 'react';
 import { MdHistory } from 'react-icons/md';
 import TmgDrawer from '@/components/appComponets/Drawer/TmgDrawer';
 import StatusLog from './StatusLog';
-import { Button } from 'tamagui';
 
 interface ProductStatusTagProps {
   product: IProduct;

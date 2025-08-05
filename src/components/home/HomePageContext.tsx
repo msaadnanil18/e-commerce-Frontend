@@ -1,5 +1,5 @@
 'use client';
-import { ServiceErrorManager } from '@/helpers/service';
+
 import { ListAnonymousHomePageConfigService } from '@/services/homePageConfig';
 import { RootState } from '@/states/store/store';
 import { IHomePageConfig } from '@/types/HomePageConfig';
@@ -34,24 +34,18 @@ export const HomePageConfigProvider = ({
   const [loading, setLoading] = useState(true);
 
   const fetchHomePageData = async () => {
-    setLoading(true);
-    const [err, data] = await ServiceErrorManager(
-      ListAnonymousHomePageConfigService({
-        params: { user: user.user?._id || undefined },
-      }),
-      {}
-    );
-    if (!err && data) {
+    const { data } = await ListAnonymousHomePageConfigService({
+      params: { user: user.user?._id || undefined },
+    });
+
+    if (data) {
       setHomeScreenData(data);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchHomePageData().catch((err) => {
-      console.error(err);
-      setLoading(false);
-    });
+    fetchHomePageData();
   }, []);
 
   return (

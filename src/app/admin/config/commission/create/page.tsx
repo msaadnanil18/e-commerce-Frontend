@@ -46,7 +46,7 @@ const CommissionConfigCreate: FC = () => {
   return (
     <div className='admin-container'>
       <AdminSidebar />
-      <ScrollView>
+      <ScrollView scrollbarWidth='thin'>
         <CommissionConfigForm {...{ form, isSubmitting, onSubmit }} />
       </ScrollView>
     </div>

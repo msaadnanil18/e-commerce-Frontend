@@ -189,7 +189,7 @@ const Products: FC = () => {
           )}
         </XStack>
 
-        <ScrollView>
+        <ScrollView scrollbarWidth='thin'>
           <NewTableHOC
             isDark={isDark}
             columns={columns}

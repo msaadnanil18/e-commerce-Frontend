@@ -150,7 +150,7 @@ const ServiceChargeConfig: FC = () => {
         </Button>
       </XStack>
 
-      <ScrollView>
+      <ScrollView scrollbarWidth='thin'>
         <NewTableHOC
           isLoading={loading}
           onSearch={(e) => action.handleOnSearch(e, 600)}

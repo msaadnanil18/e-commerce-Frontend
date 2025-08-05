@@ -162,6 +162,7 @@ const CommissionConfigHeader: FC<{
             Sort:
           </Text>
           <ScrollView
+            scrollbarWidth='thin'
             space='$3'
             horizontal
             {...(screen.xs

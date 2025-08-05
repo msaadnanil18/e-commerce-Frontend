@@ -137,6 +137,7 @@ const CartPage: FC = () => {
               )}
 
               <ScrollView
+                scrollbarWidth='thin'
                 maxHeight={media.xs ? 250 : 360}
                 showsVerticalScrollIndicator
               >

@@ -158,6 +158,7 @@ const PaymentDetails: FC<{
     <ScrollView
       flex={1}
       maxHeight={500}
+      scrollbarWidth='thin'
       contentContainerStyle={{ paddingBottom: 30 }}
     >
       <YStack space='$4'>

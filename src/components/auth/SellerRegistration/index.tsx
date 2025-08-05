@@ -49,7 +49,7 @@ export const validateRequired = (value: string) => {
   return value ? true : 'This field is required';
 };
 
-const SellerRegistrationSteps: FC<{
+export const SellerRegistrationSteps: FC<{
   currentStep: number;
   setCurrentStep: Dispatch<SetStateAction<number>>;
   isSubmitting: boolean;

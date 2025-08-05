@@ -26,6 +26,7 @@ import { head, startCase, truncate } from 'lodash-es';
 import { ServiceErrorManager } from '@/helpers/service';
 import { GenerateCustomerOrderBillService } from '@/services/order';
 import { downloadPDF } from '@/helpers/PdfDownload';
+import { useScreen } from '@/hook/useScreen';
 
 export type OnStatusUpdateProps = {
   order: string;
@@ -46,6 +47,7 @@ const OrderDetails: FC<{
   onClose: () => void;
   onStatusUpdate: (r: OnStatusUpdateProps) => Promise<void>;
 }> = ({ order, onClose, onStatusUpdate }) => {
+  const screen = useScreen();
   const [isLoading, setIsLoading] = useState(false);
   const [orderItems, setOrderItems] = useState<ExpandedOrderItem[]>([]);
 
@@ -136,8 +138,8 @@ const OrderDetails: FC<{
     item.status === 'canceled' || item.status === 'delivered';
 
   return (
-    <YStack padding='$4' space='$4'>
-      <ScrollView maxHeight={380}>
+    <ScrollView maxHeight={screen.xs ? 650 : 400} scrollbarWidth='thin'>
+      <YStack padding='$4' space='$4'>
         <XStack justifyContent='space-between' alignItems='center'>
           <H6>Order #{order.orderNumber}</H6>
         </XStack>
@@ -400,8 +402,8 @@ const OrderDetails: FC<{
             Close
           </Button>
         </XStack>
-      </ScrollView>
-    </YStack>
+      </YStack>
+    </ScrollView>
   );
 };
 

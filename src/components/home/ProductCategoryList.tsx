@@ -8,6 +8,7 @@ import { IProduct } from '@/types/products';
 import { startCase } from 'lodash-es';
 import { useWishlistToggle } from './useWishlistToggle';
 import { useRouter } from 'next/navigation';
+import { useScreen } from '@/hook/useScreen';
 
 interface CategoryGroup {
   categoryId: string;
@@ -18,6 +19,7 @@ interface CategoryGroup {
 const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
   homeScreenData,
 }) => {
+  const screen = useScreen();
   const router = useRouter();
   const { toggleWishlist, wishlistLoading } = useWishlistToggle();
   const scrollRefs = useRef<Record<number, any>>({});
@@ -69,10 +71,10 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
       {categoryGroups.map((category, index) => (
         <View key={category?.categoryId || index} marginBottom='$4'>
           <Text
-            fontSize='$5'
+            fontSize={screen.xs ? '$3' : '$5'}
             fontWeight='bold'
-            marginLeft='$10'
-            marginBottom='$2'
+            marginLeft={screen.xs ? '$5' : '$10'}
+            marginBottom={screen.xs ? '$1' : '$2'}
           >
             {category.categoryName}
           </Text>
@@ -81,8 +83,8 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
               onPress={() => scrollBy(index, -200)}
               chromeless
               icon={<FaArrowLeft />}
-              padding='$2'
-              margin='$2'
+              padding='$1.5'
+              // margin='$2'
             />
 
             <ScrollView
@@ -111,8 +113,8 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
               onPress={() => scrollBy(index, 200)}
               chromeless
               icon={<FaArrowRight />}
-              padding='$2'
-              margin='$2'
+              padding='$1.5'
+              // margin='$2'
             />
           </View>
         </View>

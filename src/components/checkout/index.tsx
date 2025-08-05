@@ -67,6 +67,7 @@ const Checkout: FC = () => {
           />
         ) : (
           <ScrollView
+            scrollbarWidth='thin'
             flex={1}
             maxHeight={500}
             paddingHorizontal='$6'

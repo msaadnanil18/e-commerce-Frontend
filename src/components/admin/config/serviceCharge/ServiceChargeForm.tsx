@@ -1,7 +1,7 @@
 'use client';
 
 import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 
 import {
@@ -15,13 +15,16 @@ import {
   H6,
   Separator,
   Spinner,
+  Card,
+  ScrollView,
 } from 'tamagui';
-import CreateProductCategory from '../../management/Addnewproduct/CreateProductCategory';
+
 import { startCase } from 'lodash-es';
 import { ServiceErrorManager } from '@/helpers/service';
 import { ServiceChargeFormData } from '@/types/ServiceCharge';
 import { FaSave } from 'react-icons/fa';
 import { ListCategoriesService } from '@/services/categories';
+import { FiPlusCircle, FiTrash2 } from 'react-icons/fi';
 
 const ServiceChargeForm: FC<{
   isEdit?: boolean;
@@ -29,11 +32,29 @@ const ServiceChargeForm: FC<{
   isSubmiting: boolean;
   onSubmit: (r: ServiceChargeFormData) => void;
 }> = ({ isEdit = false, form, isSubmiting, onSubmit }) => {
+  const [newApplicableStates, setNewApplicableStates] = useState('');
   const {
     control,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = form;
+
+  const applicableStates = watch('applicableStates');
+  const addApplicableState = () => {
+    if (
+      (newApplicableStates || '')?.trim() &&
+      !applicableStates?.includes(newApplicableStates?.trim())
+    ) {
+      setValue('applicableStates', [
+        ...(applicableStates || []),
+        newApplicableStates.trim(),
+      ]);
+      setNewApplicableStates('');
+    }
+  };
+
   const getProductCategory = useCallback(
     async (search: string, type: string) => {
       const [_, data] = await ServiceErrorManager(
@@ -177,20 +198,56 @@ const ServiceChargeForm: FC<{
             />
           </YStack>
 
-          <YStack>
+          <YStack space='$2'>
             <Label htmlFor='applicableStates'>Applicable States</Label>
-            <Controller
-              control={control}
-              name='applicableStates'
-              render={({ field }) => (
-                <Input
-                  id='applicableStates'
-                  value={field.value || ''}
-                  onChangeText={field.onChange}
-                  placeholder='Enter comma-separated states (e.g. NY, CA, TX)'
-                />
-              )}
-            />
+
+            <XStack space='$2'>
+              <Input
+                flex={1}
+                id='applicableStates'
+                value={newApplicableStates}
+                onChangeText={setNewApplicableStates}
+                placeholder='Enter states'
+              />
+              <Button
+                size='$4'
+                icon={<FiPlusCircle size={18} />}
+                onPress={addApplicableState}
+              >
+                Add
+              </Button>
+            </XStack>
+
+            <Card padding='$2' bordered>
+              <ScrollView maxHeight={120} showsVerticalScrollIndicator={false}>
+                <YStack space='$1' padding='$1'>
+                  {(applicableStates || [])?.length === 0 ? (
+                    <Text padding='$2'>No added applicable states</Text>
+                  ) : (
+                    (applicableStates || []).map((states, index) => (
+                      <XStack
+                        key={index}
+                        justifyContent='space-between'
+                        alignItems='center'
+                        padding='$2'
+                      >
+                        <Text>{states}</Text>
+                        <Button
+                          size='$2'
+                          circular
+                          onPress={() => {
+                            const updatedStates = [...(applicableStates || [])];
+                            updatedStates.splice(index, 1);
+                            setValue('applicableStates', updatedStates);
+                          }}
+                          icon={<FiTrash2 size={14} />}
+                        />
+                      </XStack>
+                    ))
+                  )}
+                </YStack>
+              </ScrollView>
+            </Card>
             <Text fontSize='$3' opacity={0.7} marginTop='$1'>
               Leave empty to apply to all states
             </Text>

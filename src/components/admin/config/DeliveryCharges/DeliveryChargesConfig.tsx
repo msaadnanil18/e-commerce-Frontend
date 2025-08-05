@@ -134,7 +134,7 @@ const DeliveryChargesConfig = () => {
       {loading ? (
         <Loader />
       ) : (
-        <ScrollView>
+        <ScrollView scrollbarWidth='thin'>
           <YStack space='$2'>
             {deliveryZones.length === 0 ? (
               <Card padding='$4'>

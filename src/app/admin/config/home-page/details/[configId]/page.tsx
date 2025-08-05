@@ -198,7 +198,7 @@ const HomePageConfigDetails: FC<HomePageConfigDetailsProps> = ({ params }) => {
   );
 
   return (
-    <ScrollView flex={1}>
+    <ScrollView flex={1} scrollbarWidth='thin'>
       <YStack padding='$4' space='$4'>
         {/* Header */}
         <Card bordered elevate padding='$4' backgroundColor='$background'>

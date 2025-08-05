@@ -96,7 +96,7 @@ const Carousel: FC<{ homeScreenData: IHomePageConfig | null }> = ({
         breakpoint: 768,
         settings: {
           centerPadding: '20px',
-          arrows: false, // Hide arrows on mobile for better UX
+          arrows: false,
         },
       },
     ],

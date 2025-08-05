@@ -45,6 +45,8 @@ import StatusBadge, {
 import OrderDetails, {
   OnStatusUpdateProps,
 } from '@/components/admin/orderManagement/OrderDetails';
+import { FaFilter, FaPlus } from 'react-icons/fa';
+import { useScreen } from '@/hook/useScreen';
 
 interface DataType {
   _id: string;
@@ -59,6 +61,7 @@ interface DataType {
 
 const Orders: FC = () => {
   const isDark = useDarkMode();
+
   const [showDetails, setShowDetails] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedOrder, setSelectedOrder] = useState<IOrder | null>(null);
@@ -234,8 +237,30 @@ const Orders: FC = () => {
     <div className={`admin-container`}>
       <AdminSidebar />
 
-      <YStack flex={1} padding='$3'>
-        <Card marginBottom='$2'>
+      <YStack>
+        <XStack padding='$4' gap='$2' justifyContent='flex-end'>
+          <Button
+            //    onPress={() => router.push('/admin/product/create')}
+            icon={<FaFilter />}
+            color='$text'
+            size='$3'
+            fontSize='$3'
+            marginRight='$2'
+            backgroundColor='$primary'
+            hoverStyle={{ backgroundColor: '$primaryHover' }}
+          >
+            Filters
+          </Button>
+          <Button
+            size='$3'
+            icon={isRefreshing ? Spinner : FiRefreshCw}
+            onPress={handleRefresh}
+            disabled={isRefreshing}
+          >
+            {isRefreshing ? 'Refreshing...' : 'Refresh'}
+          </Button>
+        </XStack>
+        {/* <Card marginBottom='$2'>
           <XStack
             justifyContent='space-between'
             alignItems='center'
@@ -306,51 +331,47 @@ const Orders: FC = () => {
               />
             </XStack>
           </XStack>
-        </Card>
+        </Card> */}
 
-        {loading ? (
-          <Loader />
-        ) : (
-          <ScrollView>
-            {rows.length > 0 ? (
-              <NewTableHOC
-                columns={columns}
-                data={rows}
-                title=''
-                pagination={true}
-                filtering={false}
-                pageSize={10}
-                variant='striped'
-                size='md'
-                emptyMessage='No orders found'
-                onRowClick={handleRowClick}
-                onSearch={undefined}
-                isDark={isDark}
-              />
-            ) : (
-              <Card padding='$8' alignItems='center'>
-                <EmptyState
-                  icon={<FiPackage size={48} color='#999' />}
-                  title='No Orders Found'
-                  description='There are no orders matching your current filters'
-                  actionButton={
-                    <Button
-                      icon={FiRefreshCw}
-                      onPress={() => {
-                        setStatusFilter('all');
-                        setPaymentFilter('all');
-                        setSearchQuery('');
-                        fetchOrderList();
-                      }}
-                    >
-                      Reset Filters
-                    </Button>
-                  }
-                />
-              </Card>
-            )}
-          </ScrollView>
-        )}
+        <ScrollView scrollbarWidth='thin'>
+          <NewTableHOC
+            columns={columns}
+            data={rows}
+            isLoading={loading}
+            title='Order Management'
+            pagination={true}
+            filtering={true}
+            pageSize={10}
+            variant='striped'
+            size='md'
+            emptyMessage='No orders found'
+            onRowClick={handleRowClick}
+            onSearch={() => {}}
+            isDark={isDark}
+          />
+
+          {/* <Card padding='$8' alignItems='center'>
+            <EmptyState
+              icon={<FiPackage size={48} color='#999' />}
+              title='No Orders Found'
+              description='There are no orders matching your current filters'
+              actionButton={
+                <Button
+                  icon={FiRefreshCw}
+                  onPress={() => {
+                    setStatusFilter('all');
+                    setPaymentFilter('all');
+                    setSearchQuery('');
+                    fetchOrderList();
+                  }}
+                >
+                  Reset Filters
+                </Button>
+              }
+            />
+          </Card> */}
+        </ScrollView>
+
         <TmgDrawer
           snapPoints={[90]}
           forceRemoveScrollEnabled

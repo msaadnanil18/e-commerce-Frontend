@@ -55,6 +55,9 @@ const authSlice = createSlice({
         localStorage.removeItem('sessionToken');
       }
     },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
     validateSession: (state) => {
       const user = getUserFromToken();
 
@@ -72,5 +75,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, logout, validateSession } = authSlice.actions;
+export const { setUser, logout, validateSession, setLoading } =
+  authSlice.actions;
 export default authSlice.reducer;

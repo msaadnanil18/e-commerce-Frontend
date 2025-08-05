@@ -1,6 +1,7 @@
 'use client';
 import useFileUpload from '@/components/appComponets/fileupload/useFileUpload';
-import SellerRegistrationSteps, {
+import {
+  SellerRegistrationSteps,
   SellerFormData,
 } from '@/components/auth/SellerRegistration';
 import useAuth from '@/components/auth/useAuth';

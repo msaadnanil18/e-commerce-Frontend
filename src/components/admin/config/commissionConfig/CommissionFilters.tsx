@@ -35,7 +35,7 @@ const CommissionFilters: FC<{
       dismissOnSnapToBottom
       title='Filters'
     >
-      <ScrollView maxHeight={400}>
+      <ScrollView maxHeight={400} scrollbarWidth='thin'>
         <YStack padding='$3' space='$4'>
           <YStack space='$2'>
             <Text fontWeight='bold' color='$gray11'>

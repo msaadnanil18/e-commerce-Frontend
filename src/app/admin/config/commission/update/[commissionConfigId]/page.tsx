@@ -79,7 +79,7 @@ const UpdateCommisionConfig: FC<CommissionConfigUpdatePageProps> = ({
           <Text>Loading Commission Configuration Details...</Text>
         </View>
       ) : (
-        <ScrollView>
+        <ScrollView scrollbarWidth='thin'>
           <CommissionConfigForm
             {...{ form, isSubmitting, onSubmit }}
             isEdit={true}

@@ -55,56 +55,69 @@ const Navbar: FC<NavbarProps> = ({
   };
 
   return (
-    <Card
-      flex={1}
-      flexDirection='row'
-      padding='$3'
-      //@ts-ignore
-      position='sticky'
-      zIndex={1000}
-      width='100%'
-      top={0}
-      borderRadius={0}
-      backgroundColor='$cardBackground'
+    <nav
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+      }}
     >
-      <XStack flex={1} alignItems='center' justifyContent='space-between'>
-        <XStack flex={1} alignItems='center'>
-          <Logo />
-          {showSearchInput && !screen.xs && (
-            <View flex={1} marginHorizontal='$4'>
-              <SearchInput />
-            </View>
+      <Card
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1000,
+        }}
+        flex={1}
+        flexDirection='row'
+        padding='$3'
+        //@ts-ignore
+        position='sticky'
+        zIndex={1000}
+        width='100%'
+        top={0}
+        borderRadius={0}
+        backgroundColor='$cardBackground'
+      >
+        <XStack flex={1} alignItems='center' justifyContent='space-between'>
+          <XStack flex={1} alignItems='center'>
+            <Logo />
+            {showSearchInput && !screen.xs && (
+              <View flex={1} marginHorizontal='$4'>
+                <SearchInput />
+              </View>
+            )}
+          </XStack>
+
+          {!screen.xs ? (
+            <>
+              {showRoleChange && (
+                <DesktopActions
+                  onRoleChange={handleRoleChange}
+                  roleChangeLoading={roleChangeLoading}
+                />
+              )}
+              {showThemeToggle && <ThemeToggle />}
+            </>
+          ) : showMobileMenu ? (
+            mobileMenuOpen ? (
+              <FaTimes onClick={() => setMobileMenuOpen(false)} size={24} />
+            ) : (
+              <FiMenu size={24} onClick={() => setMobileMenuOpen(true)} />
+            )
+          ) : (
+            <ThemeToggle />
           )}
         </XStack>
 
-        {!screen.xs ? (
-          <>
-            {showRoleChange && (
-              <DesktopActions
-                onRoleChange={handleRoleChange}
-                roleChangeLoading={roleChangeLoading}
-              />
-            )}
-            {showThemeToggle && <ThemeToggle />}
-          </>
-        ) : showMobileMenu ? (
-          mobileMenuOpen ? (
-            <FaTimes onClick={() => setMobileMenuOpen(false)} size={24} />
-          ) : (
-            <FiMenu size={24} onClick={() => setMobileMenuOpen(true)} />
-          )
-        ) : (
-          <ThemeToggle />
+        {showMobileMenu && !screen.md && mobileMenuOpen && (
+          <MobileMenu
+            onRoleChange={handleRoleChange}
+            roleChangeLoading={roleChangeLoading}
+          />
         )}
-      </XStack>
-
-      {showMobileMenu && !screen.md && mobileMenuOpen && (
-        <MobileMenu
-          onRoleChange={handleRoleChange}
-          roleChangeLoading={roleChangeLoading}
-        />
-      )}
-    </Card>
+      </Card>
+    </nav>
   );
 };
 

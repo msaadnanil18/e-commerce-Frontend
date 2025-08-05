@@ -15,5 +15,5 @@ export interface ServiceChargeFormData {
   chargeType: 'percentage' | 'flat';
   value: number;
   minOrderValue?: number;
-  applicableStates?: string;
+  applicableStates?: string[];
 }

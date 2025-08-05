@@ -47,7 +47,7 @@ const Addnewproduct: FC<AddnewproductProps> = ({
           <Text marginTop='$4'>Loading product details...</Text>
         </View>
       ) : (
-        <ScrollView>
+        <ScrollView scrollbarWidth='thin'>
           <Card padding='$4' backgroundColor='$background'>
             <AddProduct {...props} />
           </Card>

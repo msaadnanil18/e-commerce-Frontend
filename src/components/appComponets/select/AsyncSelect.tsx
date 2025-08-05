@@ -250,7 +250,7 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
                   />
                 </XStack>
               )}
-              <Sheet.ScrollView>
+              <Sheet.ScrollView scrollbarWidth='thin'>
                 <Adapt.Contents />
               </Sheet.ScrollView>
             </Sheet.Frame>

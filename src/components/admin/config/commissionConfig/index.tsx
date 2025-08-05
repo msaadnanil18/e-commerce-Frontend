@@ -218,7 +218,7 @@ const Commission: FC = () => {
                 )}
               </YStack>
             ) : (
-              <ScrollView>
+              <ScrollView scrollbarWidth='thin'>
                 <YStack padding='$2' space='$3'>
                   {commissionConfig.map((config) => {
                     const category = startCase(config?.category?.title);

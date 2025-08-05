@@ -3,24 +3,12 @@ import { permissions } from '@/constant/permissions';
 import usePermission from '@/hook/usePermission';
 import { FC, useEffect, useState, ReactElement } from 'react';
 import { FaPlus, FaEnvelope, FaTimes } from 'react-icons/fa';
-import {
-  YStack,
-  Text,
-  XStack,
-  Button,
-  Input,
-  ScrollView,
-  View,
-  Separator,
-} from 'tamagui';
+import { YStack, Text, XStack, Button, Input } from 'tamagui';
 import Modal from '../../appComponets/modal/PopupModal';
 import { ServiceErrorManager } from '@/helpers/service';
 import { SendNotificaationsToCreateAdminService } from '@/services/notifications';
 import AsyncSelect from '../../appComponets/select/AsyncSelect';
 import { useForm, Controller } from 'react-hook-form';
-import { MdOutlineCancel } from 'react-icons/md';
-import { TbTrash } from 'react-icons/tb';
-import { IoMdAdd } from 'react-icons/io';
 
 type InvitationFormData = {
   email: string;

@@ -40,19 +40,9 @@ const ServiceChargeUpdate: FC<ServiceChargeUpdatePageProps> = ({ params }) => {
   const onSubmit = (data: ServiceChargeFormData) => {
     setIsSubmiting(true);
 
-    const formattedData = {
-      ...data,
-      applicableStates:
-        typeof data.applicableStates === 'string'
-          ? data.applicableStates.split(',').map((s) => s.trim())
-          : Array.isArray(data.applicableStates)
-          ? data.applicableStates
-          : [],
-    };
-
     ServiceErrorManager(
       UpdateServiceChargeService(unwrappedParams.serviceChargeId)({
-        data: formattedData,
+        data: data,
       }),
       {
         successMessage: 'Service charge updated successfully',

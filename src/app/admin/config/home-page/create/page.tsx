@@ -88,7 +88,7 @@ const HomePageConfigCreateForm: FC = () => {
   return (
     <div className='admin-container'>
       <AdminSidebar />
-      <ScrollView>
+      <ScrollView scrollbarWidth='thin'>
         <HomePageConfigForm
           form={form}
           onSubmit={onSubmit}
