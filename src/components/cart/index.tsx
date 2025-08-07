@@ -28,6 +28,7 @@ import OrderSummary from './OrderSummary';
 import { useRouter } from 'next/navigation';
 import { useScreen } from '@/hook/useScreen';
 import EmptyState from '../appComponets/Empty/EmptyState';
+import QuantityRulesIndicator from '../itemDetails/QuantityRulesIndicator';
 
 const CartPage: FC = () => {
   const media = useScreen();
@@ -243,6 +244,7 @@ const CartPage: FC = () => {
                                   }
                                 />
                               </XStack>
+                              <QuantityRulesIndicator product={item.product} />
                             </YStack>
                             <Button
                               unstyled

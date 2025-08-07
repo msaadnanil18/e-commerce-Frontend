@@ -98,6 +98,7 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
                 <ProductCard
                   wishlistLoading={wishlistLoading}
                   toggleWishlist={toggleWishlist}
+                  isResponsive={screen.xs}
                   productOnClick={(product) => {
                     router.push(
                       `/product-details/${product._id}?name=${product.name}&description=${product.description}`

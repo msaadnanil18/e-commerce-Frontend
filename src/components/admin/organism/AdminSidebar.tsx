@@ -28,7 +28,17 @@ import {
   MdOutlineMiscellaneousServices,
 } from 'react-icons/md';
 import { useSelector } from 'react-redux';
-import { Button, Card, Paragraph, Text, View, XStack, YStack } from 'tamagui';
+import {
+  Avatar,
+  Button,
+  Card,
+  Paragraph,
+  Text,
+  View,
+  XStack,
+  YStack,
+} from 'tamagui';
+import RenderDriveFile from '@/components/appComponets/fileupload/RenderDriveFile';
 
 const AdminSidebar: FC = () => {
   const { user } = useSelector((state: RootState) => state.user);
@@ -78,11 +88,22 @@ const AdminSidebar: FC = () => {
         </View>
         <Card borderRadius={0} padding='$2' marginVertical={0} width='full'>
           <XStack gap='$2'>
-            <img
-              height={50}
-              width={50}
-              src='https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/profile-pic-male_4811a1.svg'
-            />
+            {user?.avatar ? (
+              <Avatar
+                circular
+                size='$4.5'
+                backgroundColor='$blue5'
+                pressStyle={{ scale: 0.95 }}
+              >
+                <RenderDriveFile file={user?.avatar} />
+              </Avatar>
+            ) : (
+              <img
+                height={50}
+                width={50}
+                src='https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/profile-pic-male_4811a1.svg'
+              />
+            )}
             <YStack marginTop='$2'>
               <Text fontSize='$3'>Hello</Text>
               <Text>{user?.name}</Text>

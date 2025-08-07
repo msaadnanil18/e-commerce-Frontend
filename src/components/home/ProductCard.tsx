@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   Button,
   Card,
@@ -59,6 +59,8 @@ const ImageContainer = styled(View, {
 
 const ActionButton = styled(Button, {
   position: 'absolute',
+  width: 40,
+  height: 40,
   borderRadius: 20,
   padding: 0,
   backgroundColor: '$background',
@@ -87,20 +89,32 @@ const ActionButton = styled(Button, {
   },
 });
 
-const WishlistButton = styled(ActionButton);
+const WishlistButton = styled(ActionButton, {
+  top: 12,
+  right: 12,
+});
 
 const DiscountBadge = styled(View, {
   position: 'absolute',
+  top: 12,
+  left: 12,
   backgroundColor: '$red9',
+  paddingHorizontal: 8,
+  paddingVertical: 4,
   borderRadius: 12,
   zIndex: 10,
 });
 
-// Memoized Name component to prevent unnecessary re-renders
+const RatingContainer = styled(XStack, {
+  alignItems: 'center',
+  marginTop: 4,
+  gap: 4,
+});
+
 const Name = React.memo<{
   product: IProduct;
   productOnClick: (r: IProduct) => void;
-  isSmallScreen: boolean;
+  isSmallScreen?: boolean;
 }>(({ product, productOnClick, isSmallScreen }) => {
   const handleClick = useCallback(() => {
     productOnClick(product);
@@ -124,22 +138,23 @@ const Name = React.memo<{
   );
 });
 
-Name.displayName = 'ProductName';
-
-interface ProductCardProps {
+interface IProductCardProps {
   product: IProduct;
   wishlistLoading: boolean;
-  toggleWishlist: (id: string) => void;
-  productOnClick: (product: IProduct) => void;
+  toggleWishlist: (r: string) => void;
+  productOnClick: (r: IProduct) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({
+const ResponsiveProductCard: React.FC<
+  IProductCardProps & { isCategoryLayout?: boolean }
+> = ({
   product,
   toggleWishlist,
   wishlistLoading,
   productOnClick,
+  isCategoryLayout,
 }) => {
-  const screen = useScreen();
+  const { width: screenWidth } = useScreen();
   const router = useRouter();
   const pathname = usePathname();
   const user = useSelector((state: RootState) => state.user);
@@ -148,7 +163,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [activeWishList, setActiveWishList] = useState<string>();
 
-  // Memoize computed values to prevent unnecessary recalculations
   const computedValues = useMemo(() => {
     const isInWishList = (product as any)?.isInWishList;
     const productInCart = (product as any).productInCart;
@@ -166,9 +180,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
       discount,
       hasDiscount,
       quantity,
-      isSmallScreen: screen.xs,
     };
-  }, [product, screen.xs]);
+  }, [product]);
 
   const handleAddToCart = useCallback(
     async (product: IProduct) => {
@@ -227,45 +240,43 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleMouseEnter = useCallback(() => setIsHovered(true), []);
   const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
-  const { isInWishList, productInCart, discount, hasDiscount, isSmallScreen } =
-    computedValues;
+  const { isInWishList, productInCart, discount, hasDiscount } = computedValues;
 
-  const cardDimensions = {
-    width: isSmallScreen ? 120 : 240,
-    height: isSmallScreen ? 180 : 360,
-    padding: isSmallScreen ? '$2' : '$4',
-  };
+  const cardWidth = useMemo(() => {
+    if (screenWidth < 360) return 120;
+    if (screenWidth < 400) return 120;
+    if (screenWidth < 410) return 125;
+    if (screenWidth < 420) return 140;
+    // if (screenWidth < 430) return 140;
+    // if (screenWidth < 440) return 132;
 
-  const buttonSize = isSmallScreen ? 30 : 40;
-  const iconSize = isSmallScreen ? 15 : 20;
+    // if (screenWidth < 450) return 134;
+    // if (screenWidth < 460) return 136;
+    // if (screenWidth < 470) return 138;
+    // if (screenWidth < 480) return 140;
+
+    return 140;
+  }, [screenWidth]);
 
   return (
     <AnimatedCard
       bordered
-      padding={cardDimensions.padding}
+      padding='$2'
       margin='$2'
-      width={cardDimensions.width}
-      height={cardDimensions.height}
+      width={isCategoryLayout ? cardWidth : 120}
+      height={isCategoryLayout ? 184 : 180}
       backgroundColor='$background'
       borderColor='$borderColor'
-      borderRadius='$6'
+      borderRadius='$4'
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <ImageContainer>
         {hasDiscount && (
-          <DiscountBadge
-            top={isSmallScreen ? 3 : 12}
-            left={isSmallScreen ? 3 : 12}
-            paddingHorizontal={isSmallScreen ? 3 : 8}
-          >
+          <DiscountBadge top={3} left={3} paddingHorizontal={3}>
             <XStack alignItems='center' gap={2}>
-              <Tag size={isSmallScreen ? 8 : 12} color='white' />
-              <Text
-                fontSize={isSmallScreen ? '$2' : '$3'}
-                color='white'
-                fontWeight='bold'
-              >
+              <Tag size={8} color='white' />
+              <Text fontSize='$2' color='white' fontWeight='bold'>
                 {discount}% OFF
               </Text>
             </XStack>
@@ -273,11 +284,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
         )}
 
         <WishlistButton
-          width={buttonSize}
-          height={buttonSize}
-          top={isSmallScreen ? 5 : 12}
-          right={isSmallScreen ? 5 : 12}
-          visible={isHovered || isSmallScreen}
+          width={30}
+          height={30}
+          top={5}
+          right={5}
+          visible={isHovered || true}
           onPress={handleWishlistToggle}
           borderColor={isInWishList ? '$red9' : '$borderColor'}
           aria-label={isInWishList ? 'Remove from wishlist' : 'Add to wishlist'}
@@ -285,9 +296,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {wishlistLoading && activeWishList === product._id ? (
             <Spinner size='small' />
           ) : isInWishList ? (
-            <Heart size={iconSize} color='red' cursor='pointer' />
+            <Heart size={15} color='red' cursor='pointer' />
           ) : (
-            <FaRegHeart size={iconSize} cursor='pointer' />
+            <FaRegHeart size={15} cursor='pointer' />
           )}
         </WishlistButton>
 
@@ -296,22 +307,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
           file={product.thumbnail}
           style={{
             width: '100%',
-            height: isSmallScreen ? 80 : 180,
-            borderRadius: 12,
+            height: 80,
+            borderRadius: 8,
             objectFit: 'cover',
           }}
         />
       </ImageContainer>
 
-      <YStack
-        flex={1}
-        paddingTop={isSmallScreen ? '$1' : '$3'}
-        gap={isSmallScreen ? '$1' : '$2'}
-      >
+      <YStack flex={1} paddingTop='$1' gap='$1'>
         <Name
           product={product}
           productOnClick={productOnClick}
-          isSmallScreen={isSmallScreen}
+          isSmallScreen={true}
         />
 
         <YStack gap='$1'>
@@ -319,14 +326,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <XStack
               alignItems='center'
               flex={1}
-              flexDirection={isSmallScreen ? 'column' : 'row'}
-              gap={isSmallScreen ? '$-0.25' : '$2'}
+              flexDirection='column'
+              gap='$-0.25'
             >
-              <Text
-                fontSize={isSmallScreen ? '$3' : '$5'}
-                fontWeight='bold'
-                color='$primary'
-              >
+              <Text fontSize='$3' fontWeight='bold' color='$primary'>
                 <PriceFormatter value={product?.variants?.[0]?.originalPrice} />
               </Text>
               <Text fontSize='$3' color='$gray10'>
@@ -341,19 +344,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </YStack>
 
         <Button
-          size={isSmallScreen ? '$1.5' : '$3'}
+          size='$1.5'
           backgroundColor={productInCart ? '$green9' : '$primary'}
           color='white'
-          fontSize={isSmallScreen ? '$2' : '$3'}
+          fontSize='$2'
           fontWeight='600'
-          padding={isSmallScreen ? '$1' : 'auto'}
-          marginTop={isSmallScreen ? '$1' : '$2'}
-          borderRadius={isSmallScreen ? '$2' : '$4'}
+          padding='$1'
+          marginTop='$1'
+          borderRadius='$2'
           icon={
             cartSuccess ? (
               <Spinner color='white' size='small' />
             ) : (
-              <ShoppingCart size={isSmallScreen ? 12 : 16} color='white' />
+              <ShoppingCart size={12} color='white' />
             )
           }
           disabled={cartSuccess}
@@ -374,4 +377,217 @@ const ProductCard: React.FC<ProductCardProps> = ({
   );
 };
 
-export default React.memo(ProductCard);
+const DefaultProductCard: React.FC<IProductCardProps> = ({
+  product,
+  toggleWishlist,
+  wishlistLoading,
+  productOnClick,
+}) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const user = useSelector((state: RootState) => state.user);
+  const [cartSuccess, setCartSuccess] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleAddToCart = async (product: IProduct) => {
+    const quantity =
+      product?.quantityRules?.step ||
+      product?.quantityRules?.predefined?.[0] ||
+      product?.quantityRules?.min ||
+      1;
+
+    if (!user.isAuthenticated) {
+      router.push(`/login?redirect=${pathname}`);
+      return;
+    }
+
+    setCartSuccess(true);
+    const [err] = await ServiceErrorManager(
+      AddProductToCartService({
+        data: {
+          payload: {
+            product: product?._id,
+            variantId: product.variants[0]?._id,
+            quantity: quantity,
+          },
+        },
+      }),
+      { successMessage: 'Product added to cart' }
+    );
+
+    setCartSuccess(false);
+    if (!err) {
+      router.push('/cart');
+    }
+  };
+
+  const isInWishList = (product as any)?.isInWishList;
+  const productInCart = (product as any).productInCart;
+  const discount = product.variants?.[0]?.discount;
+  const hasDiscount = discount && discount > 0;
+
+  return (
+    <AnimatedCard
+      bordered
+      padding='$4'
+      margin='$2'
+      width={240}
+      height={360}
+      backgroundColor='$background'
+      borderColor='$borderColor'
+      borderRadius='$6'
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <ImageContainer>
+        {hasDiscount && (
+          <DiscountBadge>
+            <XStack alignItems='center' gap={2}>
+              <Tag size={12} color='white' />
+              <Text fontSize='$3' color='white' fontWeight='bold'>
+                {discount}% OFF
+              </Text>
+            </XStack>
+          </DiscountBadge>
+        )}
+
+        <WishlistButton
+          visible={isHovered}
+          onPress={() => {
+            toggleWishlist(product._id);
+          }}
+          // backgroundColor={isInWishList ? '$red9' : '$background'}
+          borderColor={isInWishList ? '$red9' : '$borderColor'}
+        >
+          {wishlistLoading ? (
+            <Spinner size='small' />
+          ) : isInWishList ? (
+            <Heart size={20} color='red' cursor='pointer' />
+          ) : (
+            <FaRegHeart size={20} cursor='pointer' />
+          )}
+        </WishlistButton>
+
+        <RenderDriveFile
+          onClick={() => {
+            productOnClick(product);
+          }}
+          file={product.thumbnail}
+          style={{
+            width: '100%',
+            height: 180,
+            borderRadius: 12,
+            objectFit: 'cover',
+          }}
+        />
+      </ImageContainer>
+
+      <YStack flex={1} paddingTop='$3' gap='$2'>
+        <Name product={product} productOnClick={productOnClick} />
+
+        {/* <RatingContainer>
+          <XStack>
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                size={14}
+                color={i < 4 ? '#ffd700' : '#ddd'}
+                fill={i < 4 ? '#ffd700' : 'none'}
+              />
+            ))}
+          </XStack>
+          <Text fontSize='$2' color='$gray10'>
+            (4.0)
+          </Text>
+        </RatingContainer> */}
+
+        <YStack gap='$1'>
+          {hasDiscount ? (
+            <XStack alignItems='center' gap='$2'>
+              <Text fontSize='$5' fontWeight='bold' color='$primary'>
+                <PriceFormatter value={product?.variants?.[0]?.originalPrice} />
+              </Text>
+              <Text fontSize='$3' color='$gray10'>
+                <PriceFormatter crossed value={product?.variants?.[0]?.price} />
+              </Text>
+            </XStack>
+          ) : (
+            <Text fontSize='$5' fontWeight='bold' color='$primary'>
+              <PriceFormatter value={product?.variants?.[0]?.originalPrice} />
+            </Text>
+          )}
+        </YStack>
+
+        {productInCart ? (
+          <Button
+            size='$3'
+            backgroundColor={productInCart ? '$green9' : '$primary'}
+            color='white'
+            fontSize='$3'
+            fontWeight='600'
+            marginTop='$2'
+            borderRadius='$4'
+            onPress={() => {
+              router.push('/cart');
+            }}
+            icon={<ShoppingCart size={16} color='white' />}
+            disabled={cartSuccess}
+            hoverStyle={{
+              backgroundColor: productInCart ? '$green10' : '$primaryHover',
+              transform: 'translateY(-2px)',
+            }}
+            pressStyle={{
+              transform: 'translateY(0)',
+            }}
+          >
+            IN CART
+          </Button>
+        ) : (
+          <Button
+            size='$3'
+            backgroundColor={productInCart ? '$green9' : '$primary'}
+            color='white'
+            fontSize='$3'
+            fontWeight='600'
+            marginTop='$2'
+            borderRadius='$4'
+            icon={
+              cartSuccess ? (
+                <Spinner color='white' size='small' />
+              ) : (
+                <ShoppingCart size={16} color='white' />
+              )
+            }
+            disabled={cartSuccess}
+            onPress={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleAddToCart(product);
+            }}
+            hoverStyle={{
+              backgroundColor: productInCart ? '$green10' : '$primaryHover',
+              transform: 'translateY(-2px)',
+            }}
+            pressStyle={{
+              transform: 'translateY(0)',
+            }}
+          >
+            {productInCart ? 'IN CART' : 'ADD TO CART'}
+          </Button>
+        )}
+      </YStack>
+    </AnimatedCard>
+  );
+};
+
+const ProductCard: React.FC<
+  IProductCardProps & { isResponsive?: boolean; isCategoryLayout?: boolean }
+> = (props) => {
+  return props.isResponsive ? (
+    <ResponsiveProductCard {...props} />
+  ) : (
+    <DefaultProductCard {...props} />
+  );
+};
+
+export default ProductCard;

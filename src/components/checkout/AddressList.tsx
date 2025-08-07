@@ -84,9 +84,10 @@ const AddressSkeleton = ({ count = 3 }) => {
   );
 };
 
-const AddressList: FC<{ disableDiliveryAddressButton?: boolean }> = ({
-  disableDiliveryAddressButton = false,
-}) => {
+const AddressList: FC<{
+  disableDiliveryAddressButton?: boolean;
+  smallscreen?: boolean;
+}> = ({ disableDiliveryAddressButton = false, smallscreen }) => {
   const router = useRouter();
   const form = useForm<AddressFormValues>();
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
@@ -148,11 +149,23 @@ const AddressList: FC<{ disableDiliveryAddressButton?: boolean }> = ({
   }, 230);
 
   return (
-    <YStack space='$4'>
-      <Text fontSize='$4' fontWeight='bold'>
-        Select Delivery Address
-      </Text>
-      <Separator />
+    <YStack paddingHorizontal='$3' space='$4'>
+      <XStack
+        paddingVertical='$4'
+        paddingHorizontal='$5'
+        alignItems='center'
+        space='$4'
+        borderBottomWidth={1}
+        borderBottomColor='$borderColor'
+      >
+        <Text
+          fontSize='$4'
+          marginLeft={smallscreen ? '$10' : ''}
+          fontWeight='bold'
+        >
+          Select Delivery Address
+        </Text>
+      </XStack>
 
       {loading ? (
         <ScrollView scrollbarWidth='thin'>

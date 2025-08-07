@@ -10,6 +10,7 @@ import {
   SetStateAction,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
@@ -48,14 +49,17 @@ export const HomePageConfigProvider = ({
     fetchHomePageData();
   }, []);
 
+  const contextValue = useMemo(
+    () => ({
+      homeScreenData,
+      setHomeScreenData,
+      loading,
+    }),
+    [homeScreenData, loading]
+  );
+
   return (
-    <HomePageContext.Provider
-      value={{
-        homeScreenData,
-        setHomeScreenData,
-        loading,
-      }}
-    >
+    <HomePageContext.Provider value={contextValue}>
       {children}
     </HomePageContext.Provider>
   );

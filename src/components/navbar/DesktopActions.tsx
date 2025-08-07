@@ -1,5 +1,5 @@
 'use client';
-import { Button, XStack } from 'tamagui';
+import { Avatar, Button, XStack } from 'tamagui';
 import { RiShoppingCart2Line } from 'react-icons/ri';
 import { LiaGiftsSolid } from 'react-icons/lia';
 import { FaUserCircle, FaRegUser } from 'react-icons/fa';
@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/states/store/store';
 import TMGPopover from '../appComponets/popover/Popover';
 import AccountMenu from './AccountMenu';
+import RenderDriveFile from '../appComponets/fileupload/RenderDriveFile';
 
 interface Props {
   onRoleChange: (role: string) => void;
@@ -38,7 +39,20 @@ const DesktopActions: React.FC<Props> = ({
             padding='$2'
             marginRight='$2'
             icon={
-              isLoggedIn ? <FaUserCircle size={18} /> : <FaRegUser size={18} />
+              isLoggedIn && user?.avatar ? (
+                <Avatar
+                  circular
+                  size='$2'
+                  backgroundColor='$blue5'
+                  pressStyle={{ scale: 0.95 }}
+                >
+                  <RenderDriveFile file={user.avatar} />
+                </Avatar>
+              ) : isLoggedIn ? (
+                <FaUserCircle size={18} />
+              ) : (
+                <FaRegUser size={18} />
+              )
             }
           >
             {isLoggedIn ? userName : 'Login'}

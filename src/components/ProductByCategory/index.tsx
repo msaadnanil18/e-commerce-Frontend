@@ -15,6 +15,7 @@ import { RootState } from '@/states/store/store';
 import { AddProductToWishlistService } from '@/services/wishList';
 import EmptyState from '../appComponets/Empty/EmptyState';
 import { MdInventory2 } from 'react-icons/md';
+import { useScreen } from '@/hook/useScreen';
 
 export interface ListSubCategoryAndCategoryByProductProps {
   params: Promise<{ categoryId: string }>;
@@ -25,6 +26,7 @@ const ProductByCategory: FC<ListSubCategoryAndCategoryByProductProps> = ({
   params,
   searchParams,
 }) => {
+  const screen = useScreen();
   const pathname = usePathname();
   const user = useSelector((state: RootState) => state.user);
   const [wishlistLoading, setWishlistLoading] = useState(false);
@@ -109,11 +111,15 @@ const ProductByCategory: FC<ListSubCategoryAndCategoryByProductProps> = ({
           width='100%'
           scrollbarWidth='thin'
         >
-          <YStack padding='$4' width='100%'>
+          <YStack
+            marginTop={screen.xs ? '$5' : undefined}
+            padding={screen.xs ? '$1' : '$4'}
+            width='100%'
+          >
             <Text
-              fontSize='$5'
+              fontSize={screen.xs ? '$3' : '$5'}
               fontWeight='bold'
-              marginLeft='$12'
+              marginLeft='$3'
               marginBottom='$2'
             >
               {startCase(unwrappedSearchParams.category)}
@@ -138,24 +144,25 @@ const ProductByCategory: FC<ListSubCategoryAndCategoryByProductProps> = ({
             ) : (
               <XStack
                 flexWrap='wrap'
-                justifyContent='center'
+                //  justifyContent='center'
                 alignItems='flex-start'
-                gap='$3'
+                // gap='$3'
                 width='100%'
               >
                 {productByCategory?.map((item, index) => (
-                  <View key={item._id || index} width='100%' maxWidth='300px'>
-                    <ProductCard
-                      product={item}
-                      wishlistLoading={wishlistLoading}
-                      toggleWishlist={toggleWishlist}
-                      productOnClick={(product) => {
-                        router.push(
-                          `/product-details/${product._id}?name=${product.name}&description=${product.description}`
-                        );
-                      }}
-                    />
-                  </View>
+                  <ProductCard
+                    key={item._id || index}
+                    isResponsive={screen.xs}
+                    isCategoryLayout={true}
+                    product={item}
+                    wishlistLoading={wishlistLoading}
+                    toggleWishlist={toggleWishlist}
+                    productOnClick={(product) => {
+                      router.push(
+                        `/product-details/${product._id}?name=${product.name}&description=${product.description}`
+                      );
+                    }}
+                  />
                 ))}
               </XStack>
             )}

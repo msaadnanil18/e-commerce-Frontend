@@ -18,8 +18,8 @@ import { useScreen } from '@/hook/useScreen';
 import { useRouter } from 'next/navigation';
 
 const MenuItem = styled(XStack, {
-  padding: '$2',
-  paddingHorizontal: '$2',
+  // padding: '$2',
+  // paddingHorizontal: '$2',
   // marginHorizontal: '$4',
   marginVertical: '$2',
   borderRadius: '$4',
@@ -112,7 +112,9 @@ const SideMenuBar: FC<ISideMenuBarProps> = ({
       <MenuItem
         key={item._id}
         active={isActive}
-        marginHorizontal={screen.xs ? '$4' : '$6'}
+        padding={screen.xs ? '$1' : '$2'}
+        paddingHorizontal={screen.xs ? '$1' : '$2'}
+        marginHorizontal={screen.xs ? '$2' : '$6'}
         onPress={() => handleClick(item)}
       >
         <MenuImage active={isActive} width={screen.xs ? 30 : 48}>
@@ -192,13 +194,13 @@ const SideMenuBar: FC<ISideMenuBarProps> = ({
   const SidebarBody = (
     <YStack>
       {screen.xs && (
-        <XStack padding='$4' borderBottomWidth={1}>
+        <XStack padding={'$3'} borderBottomWidth={1} width='$5'>
           <Button
-            size='$3'
+            size='$2'
             circular
             backgroundColor='$color5'
             borderColor='$color6'
-            icon={!isCollapsed ? <Menu size={20} /> : <X size={20} />}
+            icon={!isCollapsed ? <Menu size={17} /> : <X size={17} />}
             onPress={() => setIsCollapsed(!isCollapsed)}
           />
         </XStack>

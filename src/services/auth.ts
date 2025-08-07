@@ -11,3 +11,5 @@ export const MakeAdminAndSuperAdmin = Service('/auth/users/roles/update');
 export const UserAdminsListService = Service('/auth/users/admins/list');
 
 export const UpdateUserRolesService = Service('/auth/users/roles/remove');
+
+export const UserProfileUpdate = Service('/auth/user/profile-update');

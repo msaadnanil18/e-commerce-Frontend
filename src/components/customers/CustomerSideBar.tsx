@@ -6,11 +6,12 @@ import { RootState } from '@/states/store/store';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
 import { IconType } from 'react-icons';
-import { FaHeart, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaHeart, FaMapMarkerAlt, FaUser } from 'react-icons/fa';
 import { GiShoppingBag } from 'react-icons/gi';
 import { IoMenu } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
-import { Card, XStack, YStack, Text, Button } from 'tamagui';
+import { Card, XStack, YStack, Text, Button, Avatar } from 'tamagui';
+import RenderDriveFile from '../appComponets/fileupload/RenderDriveFile';
 
 const CustomerSideBar: FC = () => {
   const {
@@ -37,7 +38,7 @@ const CustomerSideBar: FC = () => {
                 width: '20rem',
                 height: '100vh',
                 position: 'fixed',
-                top: 0,
+                top: 45,
                 left: showModal ? '0' : '-20rem',
                 transition: 'all 0.5s',
               }
@@ -46,11 +47,23 @@ const CustomerSideBar: FC = () => {
       >
         <Card borderRadius={0} marginTop={0} padding='$2' width='full'>
           <XStack gap='$2'>
-            <img
-              height={50}
-              width={50}
-              src='https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/profile-pic-male_4811a1.svg'
-            />
+            {user?.avatar ? (
+              <Avatar
+                circular
+                size='$4.5'
+                backgroundColor='$blue5'
+                pressStyle={{ scale: 0.95 }}
+              >
+                <RenderDriveFile file={user?.avatar} />
+              </Avatar>
+            ) : (
+              <img
+                height={50}
+                width={50}
+                src='https://static-assets-web.flixcart.com/fk-p-linchpin-web/fk-cp-zion/img/profile-pic-male_4811a1.svg'
+              />
+            )}
+
             <YStack marginTop='$2'>
               <Text fontSize='$3'>Hello</Text>
               <Text>{user?.name}</Text>
@@ -74,6 +87,12 @@ const DivOne = ({ location }: { location: string }) => {
   return (
     <div>
       <ul>
+        <Li
+          url='/account/profile'
+          text='Profile Information'
+          Icon={() => <FaUser size={16} />}
+          location={location}
+        />
         <Li
           url='/account/orders'
           text='My Orders'

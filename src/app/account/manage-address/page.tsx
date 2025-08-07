@@ -16,16 +16,9 @@ const ManageAddress: FC = () => {
       </div>
       <div className={screen.xs ? 'admin-container' : 'customer-container'}>
         <CustomerSideBar />
-        <ScrollView scrollbarWidth='thin'>
-          <YStack
-            padding='$5'
-            {...(screen.xs
-              ? {
-                  marginTop: '$4',
-                }
-              : {})}
-          >
-            <AddressList disableDiliveryAddressButton />
+        <ScrollView flex={1} scrollbarWidth='thin'>
+          <YStack flex={1}>
+            <AddressList disableDiliveryAddressButton smallscreen={screen.xs} />
           </YStack>
         </ScrollView>
       </div>

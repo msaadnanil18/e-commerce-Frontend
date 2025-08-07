@@ -23,14 +23,31 @@ const Home: FC = () => {
       <Navbar />
 
       {screen.xs && (
-        <header>
+        <header
+          style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 10000,
+            WebkitBackfaceVisibility: 'hidden',
+            backfaceVisibility: 'hidden',
+            WebkitTransform: 'translateZ(0)',
+            transform: 'translateZ(0)',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
           <View
             padding='$3'
             backgroundColor='$background'
-            //@ts-ignore
-            position='sticky'
-            zIndex={1000}
-            top={0}
+            style={{
+              position: 'sticky',
+              top: 0,
+              zIndex: 10000,
+              WebkitBackfaceVisibility: 'hidden',
+              backfaceVisibility: 'hidden',
+              WebkitTransform: 'translateZ(0)',
+              transform: 'translateZ(0)',
+              WebkitOverflowScrolling: 'touch',
+            }}
             borderBottomWidth={1}
             borderBottomColor='$borderColor'
           >
@@ -53,6 +70,10 @@ const Home: FC = () => {
         ) : (
           <ScrollView
             flex={1}
+            style={{
+              //@ts-ignore
+              WebkitOverflowScrolling: 'touch',
+            }}
             contentContainerStyle={{
               flexGrow: 1,
               paddingBottom: 20,

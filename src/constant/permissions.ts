@@ -79,6 +79,7 @@ export const ProtectedRoutes: Record<string, string[]> = Object.freeze({
 
   /* Account */
   '/account/wishlist': [],
+  '/account/profile': [],
   /* Account */
   '/seller/seller-registration': [permissions.CAN_SELLER_REGISTERED],
   // '/seller/refill': [],

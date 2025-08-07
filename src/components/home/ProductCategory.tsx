@@ -22,7 +22,7 @@ const ProductCategory: FC<{
 
   const CategoryItem = styled(View, {
     alignItems: 'center',
-    marginHorizontal: screen.xs ? 18 : 30,
+    marginHorizontal: screen.xs ? 12 : 30,
     minWidth: 80,
   });
 
@@ -92,7 +92,8 @@ const ProductCategory: FC<{
       bordered
       backgroundColor='$cardBackground'
       margin='$3'
-      padding='$4'
+      //padding='$4'
+      paddingTop={'$5'}
       borderRadius='$2'
     >
       <Categories>

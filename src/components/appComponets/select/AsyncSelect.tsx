@@ -20,6 +20,7 @@ import {
   SelectProps,
   View,
   Button,
+  ViewStyle,
 } from 'tamagui';
 import { LinearGradient } from 'tamagui/linear-gradient';
 
@@ -48,6 +49,7 @@ interface AsyncSelectProps {
   searchable?: boolean;
   debounceMs?: number;
   selectProps?: SelectProps;
+  selectTriggerProps?: ViewStyle;
   loading?: boolean;
   menuChildren?: FC<any>;
   footerChildren?: FC<any>;
@@ -78,6 +80,7 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
   menuChildren: MenuChildren,
   footerChildren: FooterChildren,
   allowCancel = false,
+  selectTriggerProps,
 }) => {
   const [position, setPosition] = useState(0);
   const [selectedValue, setSelectedValue] = useState<string>(value || '');
@@ -186,6 +189,7 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
         {allowCancel && selectedValue ? (
           <XStack flex={1} minWidth={200} maxWidth={400} position='relative'>
             <Select.Trigger
+              {...selectTriggerProps}
               width={width}
               iconAfter={loading ? <Spinner /> : <FaAngleDown />}
               disabled={disabled}

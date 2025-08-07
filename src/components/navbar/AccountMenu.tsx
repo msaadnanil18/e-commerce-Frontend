@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, Separator, Text, View } from 'tamagui';
 import Link from 'next/link';
 import { FaHeart } from 'react-icons/fa';
-import { FiPackage } from 'react-icons/fi';
+import { FiHeart, FiPackage, FiUser } from 'react-icons/fi';
 import AsyncSelect from '../appComponets/select/AsyncSelect';
 import { startCase } from 'lodash-es';
 import { useRouter } from 'next/navigation';
@@ -62,6 +62,19 @@ const AccountMenu: React.FC<AccountMenuProps> = ({
           <Button
             size='$3.5'
             onPress={() => {
+              router.push('/account/profile');
+            }}
+            icon={<FiUser size={16} color={isDark ? '#f0f2f5' : ''} />}
+            justifyContent='flex-start'
+            backgroundColor='transparent'
+            color='$text'
+            marginBottom='$1'
+          >
+            My Profile
+          </Button>
+          <Button
+            size='$3.5'
+            onPress={() => {
               router.push('/account/orders');
             }}
             icon={<FiPackage size={16} color={isDark ? '#f0f2f5' : ''} />}
@@ -77,7 +90,7 @@ const AccountMenu: React.FC<AccountMenuProps> = ({
             onPress={() => {
               router.push('/account/wishlist');
             }}
-            icon={<FaHeart size={16} color={isDark ? '#f0f2f5' : ''} />}
+            icon={<FiHeart size={16} color={isDark ? '#f0f2f5' : ''} />}
             justifyContent='flex-start'
             backgroundColor='transparent'
             color='$text'

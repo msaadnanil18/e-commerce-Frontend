@@ -70,7 +70,6 @@ const Checkout: FC = () => {
             scrollbarWidth='thin'
             flex={1}
             maxHeight={500}
-            paddingHorizontal='$6'
             contentContainerStyle={{ paddingBottom: 30 }}
           >
             <AddressList />

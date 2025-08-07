@@ -50,7 +50,7 @@ const Wishlist: FC = () => {
             </Card>
           </YStack>
         ) : (
-          <ScrollView padding='$4'>
+          <ScrollView padding='$4' scrollbarWidth='thin'>
             <AnimatePresence>
               {wishList?.products.map((product) => (
                 <WishlistItem
@@ -71,6 +71,7 @@ const Wishlist: FC = () => {
 export default Wishlist;
 
 const WishlistHeader: FC<{ wishList: IWishlist | null }> = ({ wishList }) => {
+  const screen = useScreen();
   return (
     <XStack
       paddingVertical='$4'
@@ -80,8 +81,7 @@ const WishlistHeader: FC<{ wishList: IWishlist | null }> = ({ wishList }) => {
       borderBottomWidth={1}
       borderBottomColor='$borderColor'
     >
-      <FaHeart size={24} />
-      <Text fontSize='$4' fontWeight='bold'>
+      <Text fontSize='$4' marginLeft={screen.xs ? '$10' : ''} fontWeight='bold'>
         My Wishlist
       </Text>
       <Text fontSize='$3.5' color='$gray10' marginLeft='auto'>

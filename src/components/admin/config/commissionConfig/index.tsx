@@ -25,7 +25,6 @@ import {
   Separator,
   ScrollView,
   Spinner,
-  Tooltip,
   Avatar,
   H6,
 } from 'tamagui';
@@ -33,6 +32,7 @@ import CommissionFilters from './CommissionFilters';
 import CommissionConfigHeader from './CommissionConfigHeader';
 import { usePagination } from '@/hook/usePagination';
 import Pagination from '@/components/appComponets/Pagination';
+import Tooltip from '@/components/appComponets/tooltip/Tootip';
 
 const Commission: FC = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>('');
@@ -174,7 +174,7 @@ const Commission: FC = () => {
           </XStack>
         </Card>
 
-        <Card bordered>
+        <Card>
           <YStack>
             <CommissionConfigHeader
               {...{
@@ -224,56 +224,22 @@ const Commission: FC = () => {
                     const category = startCase(config?.category?.title);
 
                     return (
-                      <Card
-                        key={config._id}
-                        bordered
-                        animation='bouncy'
-                        scale={0.97}
-                        hoverStyle={{ scale: 1 }}
-                        pressStyle={{ scale: 0.96 }}
-                      >
+                      <Card key={config._id} bordered>
                         <XStack
                           padding='$4'
                           alignItems='center'
                           flexWrap='wrap'
                           gap='$4'
                         >
-                          <Tooltip placement='top'>
-                            <Tooltip.Trigger>
-                              <Avatar
-                                circular
-                                size='$3'
-                                backgroundColor='$blue5'
-                              >
-                                <Text color='$blue11' fontSize='$4'>
-                                  {head(startCase(config.createdBy.name))}
-                                </Text>
-                              </Avatar>
-                            </Tooltip.Trigger>
-                            <Tooltip.Content
-                              enterStyle={{
-                                x: 0,
-                                y: -5,
-                                opacity: 0,
-                                scale: 0.9,
-                              }}
-                              exitStyle={{
-                                x: 0,
-                                y: -5,
-                                opacity: 0,
-                                scale: 0.9,
-                              }}
-                              scale={1}
-                              x={0}
-                              y={0}
-                              opacity={1}
-                              paddingVertical='$2'
-                            >
-                              <Tooltip.Arrow />
-                              <Text fontSize='$3' lineHeight='$1'>
-                                {config.createdBy.name}
+                          <Tooltip
+                            position='bottom'
+                            text={config.createdBy.name}
+                          >
+                            <Avatar circular size='$3' backgroundColor='$blue5'>
+                              <Text color='$blue11' fontSize='$4'>
+                                {head(startCase(config.createdBy.name))}
                               </Text>
-                            </Tooltip.Content>
+                            </Avatar>
                           </Tooltip>
 
                           <YStack flex={1} minWidth={200} space='$1'>
@@ -302,7 +268,7 @@ const Commission: FC = () => {
 
                             <XStack space='$4' flexWrap='wrap' gap='$2'>
                               <XStack alignItems='center' space='$1'>
-                                <Tooltip>
+                                <Tooltip text=''>
                                   {getCommissionTypeIcon(config.commissionType)}
                                 </Tooltip>
                                 <Text fontSize='$3' color='$gray11'>
@@ -340,13 +306,11 @@ const Commission: FC = () => {
                           </YStack>
 
                           <XStack space='$2' alignSelf='center'>
-                            <Tooltip>
-                              <Button
-                                size='$3'
-                                onPress={() => editConfig(config)}
-                                icon={<RiEdit2Fill size={16} />}
-                              />
-                            </Tooltip>
+                            <Button
+                              size='$3'
+                              onPress={() => editConfig(config)}
+                              icon={<RiEdit2Fill size={16} />}
+                            />
                           </XStack>
                         </XStack>
                       </Card>

@@ -12,4 +12,6 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
   permissions: [string];
+  avatar: any;
+  gender: string;
 }

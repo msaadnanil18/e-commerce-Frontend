@@ -1,9 +1,9 @@
 'use client';
 import React from 'react';
-import { Button, Text, XStack, YStack } from 'tamagui';
+import { Avatar, Button, Text, XStack, YStack } from 'tamagui';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { FiPackage } from 'react-icons/fi';
+import { FiHeart, FiPackage, FiUser } from 'react-icons/fi';
 import { FaHeart, FaUserCircle, FaRegUser } from 'react-icons/fa';
 import { LiaGiftsSolid } from 'react-icons/lia';
 import { RiShoppingCart2Line } from 'react-icons/ri';
@@ -12,6 +12,7 @@ import { startCase } from 'lodash-es';
 import ThemeToggle from './ThemeToggle';
 import { RootState } from '@/states/store/store';
 import useAuth from '../auth/useAuth';
+import RenderDriveFile from '../appComponets/fileupload/RenderDriveFile';
 
 interface Props {
   onRoleChange: (role: string) => void;
@@ -48,10 +49,24 @@ const MobileMenu: React.FC<Props> = ({ onRoleChange, roleChangeLoading }) => {
       <YStack space='$2' marginTop='$10'>
         <Button
           onPress={() => {
+            if (isLoggedIn) return;
             router.push('/login');
           }}
           icon={
-            isLoggedIn ? <FaUserCircle size={18} /> : <FaRegUser size={18} />
+            isLoggedIn && user?.avatar ? (
+              <Avatar
+                circular
+                size='$2'
+                backgroundColor='$blue5'
+                pressStyle={{ scale: 0.95 }}
+              >
+                <RenderDriveFile file={user.avatar} />
+              </Avatar>
+            ) : isLoggedIn ? (
+              <FaUserCircle size={18} />
+            ) : (
+              <FaRegUser size={18} />
+            )
           }
           backgroundColor='$background'
           color='$text'
@@ -77,6 +92,20 @@ const MobileMenu: React.FC<Props> = ({ onRoleChange, roleChangeLoading }) => {
         {isLoggedIn && (
           <>
             <Button
+              size='$3.5'
+              onPress={() => {
+                router.push('/account/profile');
+              }}
+              icon={<FiUser size={16} />}
+              justifyContent='flex-start'
+              backgroundColor='$background'
+              color='$text'
+              marginBottom='$2'
+            >
+              My Profile
+            </Button>
+            <Button
+              marginBottom='$2'
               onPress={() => router.push('/account/orders')}
               icon={<FiPackage size={18} />}
               backgroundColor='$background'
@@ -87,7 +116,7 @@ const MobileMenu: React.FC<Props> = ({ onRoleChange, roleChangeLoading }) => {
             </Button>
             <Button
               onPress={() => router.push('/account/wishlist')}
-              icon={<FaHeart size={18} />}
+              icon={<FiHeart size={18} />}
               backgroundColor='$background'
               color='$text'
               justifyContent='flex-start'

@@ -12,6 +12,7 @@ import { Controller, UseControllerProps, UseFormReturn } from 'react-hook-form';
 import RenderFileList from './RenderFileList';
 
 interface FileUploadProps {
+  id?: string;
   onFileChange?: (files: File[]) => void;
   maxFiles?: number;
   accept?: string | string[];
@@ -35,6 +36,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   onFileChange,
   maxFiles = 5,
   fileListClassName,
+  id = 'fileUploadInput',
   accept = [
     '.pdf',
     '.doc',
@@ -254,6 +256,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           <div style={style} className={twMerge(className)}>
             {renderUploadArea()}
             <input
+              id={id}
               type='file'
               ref={fileInputRef}
               onChange={(e) => {
@@ -284,6 +287,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       {renderUploadArea()}
       <input
         type='file'
+        id={id}
         ref={fileInputRef}
         onChange={(e) => handleFileSelect(e.target.files)}
         multiple={multiple}

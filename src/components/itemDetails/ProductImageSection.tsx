@@ -11,6 +11,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/states/store/store';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { RiShoppingCart2Line } from 'react-icons/ri';
+import { CiCircleMinus, CiCirclePlus } from 'react-icons/ci';
+import QuantityRulesIndicator from './QuantityRulesIndicator';
 
 interface ProductImageSectionProps {
   product: IProduct;
@@ -160,9 +162,8 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
                   setQuantity((q) => Math.max(q - step, min));
                 }
               }}
-            >
-              -
-            </Button>
+              icon={<CiCircleMinus />}
+            />
 
             <Input
               value={quantity.toString()}
@@ -211,31 +212,11 @@ const ProductImageSection: FC<ProductImageSectionProps> = ({
                   setQuantity((q) => Math.min(q + step, max));
                 }
               }}
-            >
-              +
-            </Button>
+              icon={<CiCirclePlus />}
+            />
           </XStack>
 
-          {product.quantityRules?.predefined &&
-            product.quantityRules.predefined.length > 0 && (
-              <XStack
-                marginLeft={isMobile ? '$0' : '$4'}
-                marginTop={isMobile ? '$2' : '$0'}
-                flexWrap='wrap'
-                gap='$1'
-              >
-                {product.quantityRules.predefined.map((q, idx) => (
-                  <Button
-                    key={idx}
-                    size='$2'
-                    variant='outlined'
-                    onPress={() => setQuantity(q)}
-                  >
-                    {q}
-                  </Button>
-                ))}
-              </XStack>
-            )}
+          <QuantityRulesIndicator product={product} />
         </XStack>
       </YStack>
 
