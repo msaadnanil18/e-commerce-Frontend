@@ -31,6 +31,7 @@ export interface IHomePageConfig {
   name: string;
   isActive: boolean;
   featuredProducts: IProduct[] | [string];
+  recentAddedProduct: IProduct[] | [string];
   bannerProducts?: IBannerProduct[];
   categoryDisplay: ICategoryDisplay;
   lastModifiedBy?: Types.ObjectId;

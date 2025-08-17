@@ -35,6 +35,8 @@ import { NewTableHOC } from '@/components/admin/organism/NewTableHOC';
 import AdminSidebar from '@/components/admin/organism/AdminSidebar';
 import { truncate } from 'lodash-es';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { RiEdit2Fill } from 'react-icons/ri';
+import dayjs from 'dayjs';
 
 interface DataType {
   _id: string;
@@ -45,22 +47,8 @@ interface DataType {
   action: ReactElement;
 }
 
-const Name = ({
-  config,
-  router,
-}: {
-  config: IHomePageConfig;
-  router: AppRouterInstance;
-}) => (
-  <Text
-    onPress={() => router.push(`/admin/config/home-page/details/${config._id}`)}
-    hoverStyle={{
-      color: '$linkColor',
-      cursor: 'pointer',
-    }}
-  >
-    {truncate(config.name, { length: 20 })}
-  </Text>
+const Name = ({ config }: { config: IHomePageConfig }) => (
+  <Text>{truncate(config.name, { length: 20 })}</Text>
 );
 
 const HomePageConfig: FC = () => {
@@ -134,7 +122,7 @@ const HomePageConfig: FC = () => {
 
   const rows: DataType[] = homeConfigList.map((config) => ({
     _id: config._id,
-    name: <Name config={config} router={router} />,
+    name: <Name config={config} />,
     isActive: (
       <Switch
         checked={config.isActive as boolean}
@@ -175,22 +163,26 @@ const HomePageConfig: FC = () => {
     lastModified: (
       <Text>
         {config.updatedAt
-          ? new Date(config.updatedAt).toLocaleDateString()
+          ? dayjs(config.updatedAt).format('DD/MM/YYYY')
           : 'N/A'}
       </Text>
     ),
     action: (
-      <RemoveHomeConfigurations
-        homePageConfigList={config}
-        setHomePageConfigList={action.setItems}
-        shouldAdapt={screen.xs}
-      />
-      // <Button
-      //   size='$3'
-      //   chromeless
-      //   icon={<RiEdit2Fill size={16} />}
-      //   onPress={() => handleEdit(config)}
-      // />
+      <XStack alignItems='center'>
+        <Button
+          size='$3'
+          unstyled
+          marginTop='$2'
+          chromeless
+          icon={<RiEdit2Fill size={16} />}
+          onPress={() => handleEdit(config)}
+        />
+        <RemoveHomeConfigurations
+          homePageConfigList={config}
+          setHomePageConfigList={action.setItems}
+          shouldAdapt={screen.xs}
+        />
+      </XStack>
     ),
   }));
 

@@ -90,7 +90,6 @@ const HomePageConfigDetails: FC<HomePageConfigDetailsProps> = ({ params }) => {
       },
     ];
 
-    console.log(JSON.stringify(populate), 'soidhfsli');
     const [err, data] = await ServiceErrorManager(
       GetHomePageConfigService(unwrappedParams.configId)({
         params: { populate: JSON.stringify(populate) },

@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { getPreviousMediaFiles, getRealFiles } from '@/helpers/utils';
 import useFileUpload from '@/components/appComponets/fileupload/useFileUpload';
+import { startCase } from 'lodash-es';
 
 interface ProductManagePageProps {
   params: Promise<{ productId: string }>;
@@ -43,8 +44,16 @@ const ProductManage: FC<ProductManagePageProps> = ({ params }) => {
 
     form.reset({
       ...response,
-      category: response?.category?._id,
-      subCategory: response?.subCategory?._id,
+      category: {
+        _id: response?.category?._id,
+        value: response?.category?._id,
+        label: startCase(response?.category.title),
+      },
+      subCategory: {
+        _id: response?.subCategory?._id,
+        value: response?.subCategory?._id,
+        label: startCase(response?.subCategory?.title),
+      },
     });
     setIsLoading(false);
   };

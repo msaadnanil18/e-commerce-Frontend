@@ -142,40 +142,6 @@ const MainCategoriesCreate: FC<{
                 </Text>
               )}
             </YStack>
-
-            <YStack space='$2'>
-              <Label
-                htmlFor={`categoryDisplay.mainCategories.${index}.customName`}
-              >
-                Custom Name (Optional)
-              </Label>
-              <Controller
-                control={control}
-                name={`categoryDisplay.mainCategories.${index}.customName`}
-                render={({ field }) => (
-                  <Input
-                    id={`categoryDisplay.mainCategories.${index}.customName`}
-                    placeholder='Custom display name'
-                    {...field}
-                  />
-                )}
-              />
-            </YStack>
-
-            <YStack space='$2'>
-              <Label
-                htmlFor={`categoryDisplay.mainCategories.${index}.customImage`}
-              >
-                Custom Image (Optional)
-              </Label>
-              <FileUpload
-                form={form}
-                className='w-full max-w-md mx-auto '
-                multiple={false}
-                accept={['.jpg', '.jpeg', '.png']}
-                name={`bannerProducts.${index}.bannerThumbnail`}
-              />
-            </YStack>
           </YStack>
         ))}
         <Button

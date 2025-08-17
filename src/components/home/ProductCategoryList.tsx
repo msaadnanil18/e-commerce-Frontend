@@ -45,13 +45,12 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
 
     homeScreenData.featuredProducts.forEach((_product) => {
       const product = _product as IProduct;
-
-      const categoryId = (product.category.title || '').toString();
+      const categoryId = (product.category._id || '').toString();
 
       if (!categoryMap[categoryId]) {
         categoryMap[categoryId] = {
           categoryId,
-          categoryName: startCase(categoryId),
+          categoryName: startCase(product.category.title),
           products: [],
         };
       }
@@ -59,12 +58,41 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
       categoryMap[categoryId].products.push(product);
     });
 
-    return Object.values(categoryMap).sort((a, b) =>
-      a.categoryName.localeCompare(b.categoryName)
-    );
+    let categoryGroups = Object.values(categoryMap);
+
+    if (homeScreenData?.categoryDisplay?.mainCategories?.length) {
+      const positionMap: Record<string, number> = {};
+      homeScreenData.categoryDisplay.mainCategories.forEach((cat) => {
+        if (cat.category) {
+          positionMap[cat.category.toString()] = cat.position ?? Infinity;
+        }
+      });
+
+      categoryGroups = categoryGroups.sort((a, b) => {
+        const posA = positionMap[a.categoryId] ?? Infinity;
+        const posB = positionMap[b.categoryId] ?? Infinity;
+        if (posA === posB) {
+          return a.categoryName.localeCompare(b.categoryName);
+        }
+        return posA - posB;
+      });
+    }
+
+    if (homeScreenData?.recentAddedProduct?.length) {
+      const recentProducts = homeScreenData.recentAddedProduct as IProduct[];
+      categoryGroups.unshift({
+        categoryId: 'recent',
+        categoryName: 'Recently Added',
+        products: recentProducts,
+      });
+    }
+
+    return categoryGroups;
   };
 
   const categoryGroups = groupProductsByCategory();
+
+  console.log(categoryGroups, 'categoryGroupscategoryGroups');
 
   return (
     <>

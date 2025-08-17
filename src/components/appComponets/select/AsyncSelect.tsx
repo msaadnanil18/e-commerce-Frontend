@@ -40,6 +40,7 @@ interface AsyncSelectProps {
   loadOptions?: (searchQuery: string) => Promise<SelectOption[]>;
   isAsync?: boolean;
   label?: string;
+  defaultLabel?: React.ReactNode;
   noOptionsMessage?: string;
   loadingMessage?: string;
   groupLabel?: string;
@@ -68,6 +69,7 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
   loadOptions,
   isAsync = false,
   label,
+  defaultLabel,
   noOptionsMessage = 'No options available',
   loadingMessage = 'Loading options...',
   groupLabel = 'Options',
@@ -121,7 +123,7 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
           setIsLoading(false);
         });
     }
-  }, [isAsync, loadOptions]);
+  }, [isAsync]);
 
   useEffect(() => {
     if (!isAsync) {
@@ -146,6 +148,7 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
   };
 
   const getSelectedLabel = () => {
+    if (defaultLabel) return defaultLabel;
     const selected = options.find((opt) => opt.value === selectedValue);
     return selected ? selected.label : placeholder;
   };
@@ -240,20 +243,6 @@ const AsyncSelect: FC<AsyncSelectProps> = ({
             zIndex={100000}
           >
             <Sheet.Frame>
-              {searchable && (
-                <XStack padding='$2' alignItems='center'>
-                  <Input
-                    flex={1}
-                    size='$3'
-                    placeholder='Search...'
-                    value={searchQuery}
-                    onChangeText={handleSearchChange}
-                    autoCapitalize='none'
-                    //@ts-ignore
-                    leftIconAfter={<FaSearch size={16} color='$gray10' />}
-                  />
-                </XStack>
-              )}
               <Sheet.ScrollView scrollbarWidth='thin'>
                 <Adapt.Contents />
               </Sheet.ScrollView>

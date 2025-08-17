@@ -3,10 +3,9 @@ import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
 import { ServiceErrorManager } from '@/helpers/service';
 import { Product } from '@/types/products';
 import { startCase } from 'lodash-es';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import { Input, Separator, SizableText, Text, YStack } from 'tamagui';
-import CreateProductCategory from './CreateProductCategory';
 import { ListCategoriesService } from '@/services/categories';
 
 const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
@@ -14,15 +13,18 @@ const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
     control,
     formState: { errors },
   } = form;
+
+  const category = form.watch('category');
+
   const getProductCategory = useCallback(
     async (search: string, type: string, categoryId?: string) => {
       const [_, data] = await ServiceErrorManager(
-        ListCategoriesService(1, 50, search, type, true, categoryId)(),
+        ListCategoriesService(1, 20, search, type, true, categoryId)(),
         {
           failureMessage: 'Error while getting product category list',
         }
       );
-      return (data.docs || []).map((category: any) => ({
+      return (data?.docs || []).map((category: any) => ({
         label: startCase(category?.title),
         value: category?._id,
       }));
@@ -30,7 +32,6 @@ const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
     []
   );
 
-  console.log(form.watch('category'), '___category___');
   return (
     <YStack space='$4'>
       <SizableText size='$5' fontWeight='bold'>
@@ -38,6 +39,7 @@ const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
       </SizableText>
       <Separator />
 
+      {/* Product Name */}
       <YStack space='$2'>
         <Text>Product Name *</Text>
         <Controller
@@ -79,24 +81,26 @@ const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
           rules={{ required: 'Category is required' }}
           render={({ field }) => (
             <AsyncSelect
-              // menuChildren={({ reload }) => (
-              //   <CreateProductCategory reload={reload} type='category' />
-              // )}
-              searchable={true}
+              searchable
               loadOptions={(searchQuery) =>
                 getProductCategory(searchQuery, 'category')
               }
-              isAsync={true}
-              {...field}
+              value={field.value?.value}
+              defaultLabel={field.value?.label}
+              onChange={(value) => {
+                field.onChange(value);
+                form.setValue('subCategory', { value: '', label: '' });
+              }}
+              isAsync
             />
           )}
         />
-
         {errors.category && (
           <Text color='$red10'>{errors.category.message}</Text>
         )}
       </YStack>
-      {form.watch('category') ? (
+
+      {category && (
         <YStack space='$2'>
           <Text>Sub Category *</Text>
           <Controller
@@ -105,28 +109,27 @@ const BasicInformation = ({ form }: { form: UseFormReturn<Product> }) => {
             rules={{ required: 'Sub category is required' }}
             render={({ field }) => (
               <AsyncSelect
-                // menuChildren={({ reload }) => (
-                //   <CreateProductCategory reload={reload} type='subCategory' />
-                // )}
-                searchable={true}
+                key={category?.value || category}
+                searchable
                 loadOptions={(searchQuery) =>
                   getProductCategory(
                     searchQuery,
                     'subCategory',
-                    form.watch('category')
+                    category?.value || category
                   )
                 }
-                isAsync={true}
-                {...field}
+                isAsync
+                value={field.value?.value}
+                defaultLabel={field?.value?.label}
+                onChange={(value) => field.onChange(value)}
               />
             )}
           />
-
-          {errors.category && (
-            <Text color='$red10'>{errors.category.message}</Text>
+          {errors.subCategory && (
+            <Text color='$red10'>{errors.subCategory.message}</Text>
           )}
         </YStack>
-      ) : null}
+      )}
     </YStack>
   );
 };

@@ -112,7 +112,7 @@ const AdminSidebar: FC = () => {
         </Card>
         <DivOne location={pathname} />
         {/* <DivTwo location={pathname} /> */}
-        <DivThree location={pathname} />
+        {/* <DivThree location={pathname} /> */}
 
         {screen.xs && (
           <button id='close-sidebar' onClick={() => setShowModal(false)}>
@@ -170,12 +170,12 @@ const DivOne = ({ location }: { location: string }) => {
           />
         )}
 
-        <Li
+        {/* <Li
           url='/admin/transaction'
           text='Transaction'
           Icon={AiFillFileText}
           location={location}
-        />
+        /> */}
         {hasPermission(permissions.CAN_VIEW_DELIVERY_ZONE) && (
           <Li
             url='/admin/config/delivery-zone'
@@ -230,34 +230,6 @@ const DivOne = ({ location }: { location: string }) => {
     </div>
   );
 };
-
-// const DivTwo = ({ location }: { location: string }) => (
-//   <div>
-//     <Paragraph size='$4' fontWeight='400'>
-//       Charts
-//     </Paragraph>
-//     <ul>
-//       <Li
-//         url='/admin/chart/bar'
-//         text='Bar'
-//         Icon={FaChartBar}
-//         location={location}
-//       />
-//       <Li
-//         url='/admin/chart/pie'
-//         text='Pie'
-//         Icon={FaChartPie}
-//         location={location}
-//       />
-//       <Li
-//         url='/admin/chart/line'
-//         text='Line'
-//         Icon={FaChartLine}
-//         location={location}
-//       />
-//     </ul>
-//   </div>
-// );
 
 const DivThree = ({ location }: { location: string }) => (
   <div>

@@ -135,6 +135,7 @@ const AddProduct: FC<AddnewproductProps> = ({
           onClose={setOpenConfirmModal}
           onConfirm={async () => {
             await handleSubmit(onSubmit)();
+            setOpenConfirmModal(false);
           }}
           isLoading={isSubmitting}
           confirmButtonProps={{

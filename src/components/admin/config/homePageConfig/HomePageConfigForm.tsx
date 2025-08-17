@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useCallback } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Controller, UseFormReturn } from 'react-hook-form';
 import { FaSave } from 'react-icons/fa';
 import {
@@ -23,8 +23,9 @@ import MainCategoriesCreate from './MainCategoriesCreate';
 import { ServiceErrorManager } from '@/helpers/service';
 import { ProductListService } from '@/services/products';
 import RenderDriveFile from '@/components/appComponets/fileupload/RenderDriveFile';
-import { debounce, startCase, truncate } from 'lodash-es';
+import { startCase, truncate } from 'lodash-es';
 import { IProduct } from '@/types/products';
+import RecentProduct from './RecentProduct';
 
 interface BannerProduct {
   product: string;
@@ -46,9 +47,11 @@ interface FeaturedCategory {
   badgeText?: string;
 }
 export interface HomePageConfigFormProps {
+  _id: string;
   name: string;
   isActive: boolean;
   featuredProducts: string[] | Array<object>;
+  recentAddedProduct: string[] | Array<object>;
   bannerProducts: BannerProduct[];
   categoryDisplay: {
     mainCategories: MainCategory[];
@@ -62,62 +65,49 @@ const HomePageConfigForm: FC<{
   isSubmitting: boolean;
   isEdit?: boolean;
 }> = ({ form, onSubmit, isEdit = false, isSubmitting }) => {
+  const [productSearch, setProductSearch] = useState<string>();
+  const [productData, setProductData] = useState<
+    Array<{ value: string; label: React.ReactNode }>
+  >([]);
   const {
     control,
     handleSubmit,
-
     formState: { errors },
   } = form;
 
-  const fetchProductList = useCallback((search: string) => {
-    return new Promise<any[]>((resolve) => {
-      debounce(async (search: string) => {
-        const [err, data] = await ServiceErrorManager(
-          ProductListService({
-            data: {
-              options: {
-                limit: 50,
-              },
-              query: {
-                searchFields: ['name', 'productID'],
-                search,
-                isApproved: true,
-              },
-            },
-          }),
-          {
-            failureMessage: 'Error while fetching products',
-          }
-        );
+  const fetchProductList = async () => {
+    const [err, data] = await ServiceErrorManager(
+      ProductListService({
+        data: {
+          options: {
+            limit: 20,
+          },
+          query: {
+            searchFields: ['name', 'productID'],
+            search: productSearch,
+            isApproved: true,
+          },
+        },
+      }),
+      {
+        failureMessage: 'Error while fetching products',
+      }
+    );
+    if (err || !data) return;
+    setProductData(data.docs);
+  };
 
-        resolve(
-          (data.docs || []).map((product: IProduct) => ({
-            label: (
-              <div className='flex items-center text-sm space-x-2'>
-                <RenderDriveFile
-                  style={{
-                    width: '64px',
-                    height: '64px',
-                    objectFit: 'cover',
-                    borderRadius: '4px',
-                  }}
-                  file={product.thumbnail}
-                />
-                <div>{startCase(truncate(product.name, { length: 20 }))}</div>
-                <div className=' text-blue-800 text-xs'>
-                  {product?.productID}
-                </div>
-              </div>
-            ),
-            value: product?._id,
-          }))
-        );
-      }, 540)(search);
-    });
-  }, []);
+  useEffect(() => {
+    fetchProductList();
+  }, [productSearch]);
+
+  const searchProductList = async (search: string) => {
+    setProductSearch(search);
+    return productData;
+  };
 
   return (
-    <YStack padding='$4' space='$4'>
+    <YStack padding='$4' space='$2'>
       <XStack justifyContent='space-between' alignItems='center'>
         <H6>{isEdit ? 'Edit Home Page Config' : 'Create Home Page Config'}</H6>
       </XStack>
@@ -160,14 +150,15 @@ const HomePageConfigForm: FC<{
           </XStack>
           <FeaturedProductsCreate
             form={form}
-            fetchProductList={fetchProductList}
+            fetchProductList={searchProductList}
           />
           <BannerProductsCreate
-            fetchProductList={fetchProductList}
+            fetchProductList={searchProductList}
             form={form}
           />
+          <RecentProduct fetchProductList={searchProductList} form={form} />
           <MainCategoriesCreate form={form} />
-          <FeaturedCategory form={form} />
+          {/* <FeaturedCategory form={form} /> */}
           <Button
             size='$3'
             backgroundColor='$primary'

@@ -1,13 +1,13 @@
-import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Controller, useFieldArray, UseFormReturn } from 'react-hook-form';
-import { FiPlus, FiTrash2 } from 'react-icons/fi';
-import { Button, Text, XStack, YStack, Label } from 'tamagui';
 import { HomePageConfigFormProps } from './HomePageConfigForm';
+import { Label, XStack, YStack, Text, Button } from 'tamagui';
+import AsyncSelect from '@/components/appComponets/select/AsyncSelect';
 import RenderDriveFile from '@/components/appComponets/fileupload/RenderDriveFile';
 import { startCase, truncate } from 'lodash-es';
+import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
-const FeaturedProductsCreate: FC<{
+const RecentProduct: FC<{
   form: UseFormReturn<HomePageConfigFormProps>;
   fetchProductList: (r: string) => Promise<any[]>;
 }> = ({ form, fetchProductList }) => {
@@ -16,13 +16,10 @@ const FeaturedProductsCreate: FC<{
     watch,
     formState: { errors },
   } = form;
-
-  const featuredProductsArray = useFieldArray({
+  const recentAddedProductArray = useFieldArray({
     control,
-    name: 'featuredProducts',
+    name: 'recentAddedProduct',
   });
-
-  const watchedProducts = watch('featuredProducts');
 
   const getProductDetails = (productValue: any) => {
     if (typeof productValue === 'string') {
@@ -37,13 +34,13 @@ const FeaturedProductsCreate: FC<{
     }
     return productValue?._id || '';
   };
-
+  const watchedRecentProducts = watch('recentAddedProduct');
   return (
-    <YStack space='$4'>
-      <Label>Featured Products</Label>
-      <YStack space='$3'>
-        {featuredProductsArray.fields.map((field, index) => {
-          const currentProduct = watchedProducts?.[index];
+    <YStack>
+      <Label>Recent Added Product</Label>
+      <YStack flex={1}>
+        {recentAddedProductArray.fields.map((field, index) => {
+          const currentProduct = watchedRecentProducts?.[index];
           const productDetails = getProductDetails(currentProduct);
           const productId = getProductId(currentProduct);
 
@@ -52,12 +49,10 @@ const FeaturedProductsCreate: FC<{
               <XStack flex={1}>
                 <Controller
                   control={control}
-                  name={`featuredProducts.${index}`}
-                  rules={{ required: 'Product is required' }}
-                  render={({ field: controllerField }) => (
+                  name={`recentAddedProduct.${index}`}
+                  render={({ field }) => (
                     <AsyncSelect
-                      id={`featuredProducts.${index}`}
-                      placeholder='Select a product'
+                      id={`recentAddedProduct.${index}`}
                       searchable={true}
                       //@ts-ignore
                       loadOptions={async (searchQuery) => {
@@ -117,16 +112,15 @@ const FeaturedProductsCreate: FC<{
                       }
                       value={productId}
                       onChange={(value) => {
-                        controllerField.onChange(value);
+                        field.onChange(value);
                       }}
                     />
                   )}
                 />
               </XStack>
-
               <Button
                 icon={<FiTrash2 />}
-                onPress={() => featuredProductsArray.remove(index)}
+                onPress={() => recentAddedProductArray.remove(index)}
                 size='$2'
                 backgroundColor='$red2'
                 borderColor='$red7'
@@ -136,24 +130,18 @@ const FeaturedProductsCreate: FC<{
           );
         })}
 
-        {errors.featuredProducts && (
-          <Text color='$red10' fontSize='$2'>
-            Featured products are required
-          </Text>
-        )}
-
         <Button
           size='$3'
           variant='outlined'
           icon={<FiPlus />}
-          onPress={() => featuredProductsArray.append('')}
+          onPress={() => recentAddedProductArray.append('')}
           alignSelf='flex-start'
         >
-          Add Featured Product
+          Add Recent Product
         </Button>
       </YStack>
     </YStack>
   );
 };
 
-export default FeaturedProductsCreate;
+export default RecentProduct;

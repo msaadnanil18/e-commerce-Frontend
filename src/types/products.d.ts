@@ -11,8 +11,8 @@ export interface Product {
   name: string;
   reason?: string;
   description: string;
-  category: string;
-  subCategory: string;
+  category: Record<string, any>;
+  subCategory: Record<string, any>;
   thumbnail: File;
 
   variants: {
