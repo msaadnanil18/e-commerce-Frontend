@@ -53,7 +53,7 @@ const AnimatedCard = styled(Card, {
 const ImageContainer = styled(View, {
   position: 'relative',
   overflow: 'hidden',
-  borderRadius: '$4',
+  borderRadius: '$3',
   backgroundColor: '$gray2',
 });
 
@@ -123,7 +123,7 @@ const Name = React.memo<{
   return (
     <Text
       onPress={handleClick}
-      fontSize={isSmallScreen ? '$3' : '$4'}
+      fontSize={isSmallScreen ? '$2.5' : '$4'}
       fontWeight='500'
       color='$color'
       textAlign='center'
@@ -133,7 +133,7 @@ const Name = React.memo<{
         cursor: 'pointer',
       }}
     >
-      {truncate(product.name, { length: 25 })}
+      {truncate(product.name, { length: isSmallScreen ? 10 : 25 })}
     </Text>
   );
 });
@@ -247,22 +247,14 @@ const ResponsiveProductCard: React.FC<
     if (screenWidth < 400) return 120;
     if (screenWidth < 410) return 125;
     if (screenWidth < 420) return 140;
-    // if (screenWidth < 430) return 140;
-    // if (screenWidth < 440) return 132;
-
-    // if (screenWidth < 450) return 134;
-    // if (screenWidth < 460) return 136;
-    // if (screenWidth < 470) return 138;
-    // if (screenWidth < 480) return 140;
-
     return 140;
   }, [screenWidth]);
 
   return (
     <AnimatedCard
       bordered
-      padding='$2'
-      margin='$2'
+      padding='$1'
+      margin='$1'
       width={isCategoryLayout ? cardWidth : 120}
       height={isCategoryLayout ? 184 : 180}
       backgroundColor='$background'
@@ -307,27 +299,27 @@ const ResponsiveProductCard: React.FC<
           file={product.thumbnail}
           style={{
             width: '100%',
-            height: 80,
+            height: 95,
             borderRadius: 8,
             objectFit: 'cover',
           }}
         />
       </ImageContainer>
 
-      <YStack flex={1} paddingTop='$1' gap='$1'>
+      <YStack marginTop='$1' flex={1}>
         <Name
           product={product}
           productOnClick={productOnClick}
           isSmallScreen={true}
         />
 
-        <YStack gap='$1'>
+        <YStack>
           {hasDiscount ? (
             <XStack
               alignItems='center'
               flex={1}
               flexDirection='column'
-              gap='$-0.25'
+              // gap='$-0.25'
             >
               <Text fontSize='$3' fontWeight='bold' color='$primary'>
                 <PriceFormatter value={product?.variants?.[0]?.originalPrice} />
@@ -344,19 +336,21 @@ const ResponsiveProductCard: React.FC<
         </YStack>
 
         <Button
-          size='$1.5'
+          size='$1'
           backgroundColor={productInCart ? '$green9' : '$primary'}
           color='white'
           fontSize='$2'
           fontWeight='600'
-          padding='$1'
+          textAlign='center'
+          padding={0}
+          //   paddingVertical='$-0.75'
           marginTop='$1'
           borderRadius='$2'
           icon={
             cartSuccess ? (
               <Spinner color='white' size='small' />
             ) : (
-              <ShoppingCart size={12} color='white' />
+              <ShoppingCart size={10} color='white' />
             )
           }
           disabled={cartSuccess}
@@ -370,7 +364,9 @@ const ResponsiveProductCard: React.FC<
             transform: 'translateY(0)',
           }}
         >
-          {productInCart ? 'IN CART' : 'ADD TO CART'}
+          <Text marginTop='$1' fontSize='$2'>
+            {productInCart ? 'IN CART' : 'ADD TO CART'}
+          </Text>
         </Button>
       </YStack>
     </AnimatedCard>

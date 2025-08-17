@@ -65,49 +65,7 @@ const UpdateHomePageConfig: FC<HomePageConfigUpdatePageProps> = ({
 
     if (err || !data) return;
 
-    const normalizedData = {
-      ...data,
-
-      featuredProducts:
-        data.featuredProducts?.map((product: any) =>
-          typeof product === 'string' ? product : product
-        ) || [],
-
-      bannerProducts:
-        data.bannerProducts?.map((banner: any) => ({
-          product:
-            typeof banner.product === 'string'
-              ? banner.product
-              : banner.product?._id,
-          bannerThumbnail: banner.bannerThumbnail,
-          displayOrder: banner.displayOrder || 0,
-        })) || [],
-
-      categoryDisplay: {
-        mainCategories:
-          data.categoryDisplay?.mainCategories?.map((cat: any) => ({
-            category:
-              typeof cat.category === 'string'
-                ? cat.category
-                : cat.category?._id,
-            position: cat.position || 0,
-            customName: cat.customName,
-            customThumbnail: cat.customThumbnail,
-          })) || [],
-        featuredCategories:
-          data.categoryDisplay?.featuredCategories?.map((cat: any) => ({
-            category:
-              typeof cat.category === 'string'
-                ? cat.category
-                : cat.category?._id,
-            position: cat.position || 0,
-            highlightText: cat.highlightText,
-            badgeText: cat.badgeText,
-          })) || [],
-      },
-    };
-
-    form.reset(normalizedData);
+    form.reset(data);
 
     setLoading(false);
   };

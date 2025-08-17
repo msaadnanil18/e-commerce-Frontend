@@ -92,8 +92,6 @@ const ProductCategoryList: FC<{ homeScreenData: IHomePageConfig | null }> = ({
 
   const categoryGroups = groupProductsByCategory();
 
-  console.log(categoryGroups, 'categoryGroupscategoryGroups');
-
   return (
     <>
       {categoryGroups.map((category, index) => (

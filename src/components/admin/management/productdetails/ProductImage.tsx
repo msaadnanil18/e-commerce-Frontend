@@ -42,7 +42,7 @@ const ProductImage: FC<{
   };
 
   return (
-    <YStack paddingLeft='$3'>
+    <YStack paddingLeft={screen.xs ? undefined : '$3'}>
       <XStack
         alignItems='center'
         height='24rem'
@@ -57,7 +57,7 @@ const ProductImage: FC<{
           if (screen.xs) handleSwipe();
         }}
       >
-        <YStack marginLeft='$4' flex={1}>
+        <YStack marginLeft={screen.xs ? undefined : '$4'} flex={1}>
           <RenderDriveFile
             MediaHTMLAttributes={{
               controls: false,

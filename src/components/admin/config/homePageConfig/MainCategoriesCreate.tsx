@@ -121,15 +121,14 @@ const MainCategoriesCreate: FC<{
                 rules={{ required: 'Category is required' }}
                 render={({ field }) => (
                   <AsyncSelect
-                    // menuChildren={({ reload }) => (
-                    //   <CreateProductCategory reload={reload} type='category' />
-                    // )}
                     searchable={true}
                     loadOptions={(searchQuery) =>
                       getProductCategory(searchQuery, 'category')
                     }
                     isAsync={true}
-                    {...field}
+                    onChange={(value) => field.onChange(value)}
+                    value={(field.value as any)?._id}
+                    defaultLabel={startCase((field.value as any)?.title)}
                   />
                 )}
               />
